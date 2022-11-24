@@ -44,24 +44,29 @@ for i in range(len(standing_Epl.values)):
     
 print(df.columns)
 print(standing_Epl.columns)
-df = df.merge(standing_Epl, left_on=['Season_End_Year','Team'],right_on=['Year','Team'])
 
 
-home = df[['Home', 'HomeGoals']].rename(columns={'Home':'team', 'HomeGoals':'score'})
-print(home)
-
-away = df[['AwayGoals', 'Away']].rename(columns={'Away':'team', 'AwayGoals':'score'})
+home = df[['Date','Home', 'HomeGoals']].rename(columns={'Home':'team', 'HomeGoals':'score'})
+home['Date'] = pd.to_datetime(home['Date'])
 
 
-home = home.groupby(['team'], as_index=False)['score'].sum()
-away = away.groupby(['team'], as_index=False)['score'].sum()
+latestSeasonH = (home['Date'] > '2018-10-26') & (home['Date'] <= '2019-05-12')
+print(home.loc[latestSeasonH])
+
+away = df[['Date','AwayGoals', 'Away']].rename(columns={'Away':'team', 'AwayGoals':'score'})
+latestSeasonA = (away['Date'] > '2018-10-26') & (away['Date'] <= '2019-05-12')
+
+
+home = home.loc[latestSeasonH].groupby(['team'], as_index=False)['score'].sum()
+away = away.loc[latestSeasonA].groupby(['team'], as_index=False)['score'].sum()
 
 team_score = home.append(away).reset_index(drop=True)
 plt.figure(figsize = (15,10))
 sns.set_style("whitegrid")
 
 country_info = team_score.groupby('team')['score'].agg(['sum','count','mean']).reset_index()
-country_info = country_info.rename(columns={'sum':'nb_goals', 'count':'nb_matches', 'mean':'goal_avg'})
+country_info = country_info.rename(columns={'sum':'nb_goals', '38':'nb_matches', 'mean':'goal_avg'})
+print(country_info)
 plt_data = country_info.sort_values(by='goal_avg', ascending=False)[:10]
 ax = sns.barplot(x="team", y="goal_avg", data=plt_data, palette="Blues_r")
 ax.set_xlabel('Team', size=16)
