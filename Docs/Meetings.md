@@ -16,3 +16,9 @@ Discussed project timeline
 -Poster 6th January
 -setup matlab environment by december
 -Mockup of Algorithm by january for demonstration
+
+### Meeting 4 24/11/22
+
+-Discussed Challenges
+-Poster Layout
+-Defined Project
