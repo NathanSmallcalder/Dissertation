@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<link id="favicon" rel="shortcut icon" type="image/png" href="data:image/png;base64,....==" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+	<title>freecycle</title>
+	<style>
+	</style>
+	<script src="https://unpkg.com/vue@next"></script> <!-- https://v3.vuejs.org/guide/installation.html#cdn -->
+	<!-- <script src="vue.js"></script> -->
+</head>
+<body>
+	<!---Navbar---->
+	<nav>
+	<div id="navbarBasicExample" class="navbar-menu">
+		<div class="navbar-start">
+		  <a class="navbar-item">
+			Home
+		  </a>
+	
+		  <a class="navbar-item">
+			Clips
+		  </a>
+		  
+		  <a class="navbar-item">
+			Group Finder
+		  </a>
+
+		  <a class="navbar-item">
+			Featured Profiles
+		  </a>
+
+		  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+			<span aria-hidden="true"></span>
+			<span aria-hidden="true"></span>
+			<span aria-hidden="true"></span>
+		  </a>
+		</div>
+		<div class="navbar-end">
+			<div class="navbar-item">
+			  <div class="buttons">
+				<a class="button is-primary" action="{{ link }}/login">
+				  <strong>Sign up</strong>
+				</a>
+				<a class="button is-light">
+				  Log in
+				</a>
+			  </div>
+			</div>
+	  </nav>
+	</div>
+    </div>
+</div>
+    <div class="columns">
+        <div class="column is-two-thirds">is-two-thirds
+            <form>
+                <input v-model="summoner" placeholder="edit me" />
+                <div class="select">
+                    <select  v-model=region>
+                    <option>EUN1</option>
+                    <option>EUW1</option>
+                    <option>JP1</option>
+                    <option>KR</option>
+                    <option>LA1</option>
+                    <option>LA2</option>
+                    <option>NA1</option>
+                    <option>RU</option>
+                    </select>
+                </div>
+                <button class="button is-info" @click="searchSummoner(summoner,region)">Search</button>
+			</form>
+    </div>
+        <div class="column">Auto</div>
+
+        <div class="column">Auto</div>
+</div>
+	
+
+<script type="module">
+	const { createApp } = Vue
+	link = new URL(location.href).searchParams.get('page')
+createApp({
+	data(){
+		return{
+			link:'',
+			summoner:'',
+			region:''
+		}
+	},
+	methods:{
+		searchSummoner(summoner,region) {
+			fetch(`${URL}/summonner`, { ///Sends request to retrieve json data from server
+				method:'GET'
+			})
+			.then(response => response.json())
+				.then(json => this.items = json)
+			.catch(err => console.error(err))
+		}
+	}
+    }).mount('#app')
+
+</script>
+
+</body>
+</html>
