@@ -1,46 +1,25 @@
-<head>
-	<meta charset="utf-8" />
-	<link id="favicon" rel="shortcut icon" type="image/png" href="data:image/png;base64,....==" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-	<title>freecycle</title>
-	<style>
-	</style>
-	<script src="https://unpkg.com/vue@next"></script> <!-- https://v3.vuejs.org/guide/installation.html#cdn -->
-	<!-- <script src="vue.js"></script> -->
-</head>
-
-<section class="hero is-primary is-fullheight">
-    <div class="hero-body">
-      <div class="container">
-        <div class="columns is-centered">
-          <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-            <form method="POST" action="/signup">
-              <div class="field">
-                <label for="" class="label">Username</label>
-                <div class="control has-icons-left">
-                  <input type="email" placeholder="e.g. bobsmith@gmail.com" class="input" required>
-                  <span class="icon is-small is-left">
-                    <i class="fa fa-envelope"></i>
-                  </span>
-                </div>
-              </div>
-              <div class="field">
-                <label for="" class="label">Password</label>
-                <div class="control has-icons-left">
-                  <input type="password" placeholder="*******" class="input" required>
-                  <span class="icon is-small is-left">
-                    <i class="fa fa-lock"></i>
-                  </span>
-                </div>
-              </div>
-              <div class="field">
-                <button class="button is-success">
-                  Login
-                </button>
-              </div>
-            </form>
-          </div>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Login </title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body></br></br></br></br></br>
+    <div align="center">
+        <div align="center" class="border">
+            <div class="header">
+                <h1 class="word">Login</h1>
+            </div></br></br></br>
+            <h2 class="word">
+                <form action="{{ url_for('login') }}" method="post">
+                    <div class="msg">{{ msg }}</div>
+                                        <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/></br></br>
+                                        <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/></br></br></br>
+                                        <input type="submit" class="btn" value="Sign In"></br></br>
+                </form>
+            </h2>
+            
         </div>
-      </div>
-    </div>
-  </section>
+</div>
+</body>
+</html>
