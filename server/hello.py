@@ -1,70 +1,101 @@
-from flask import Flask, request, render_template
-import requests
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
-import mysql.connector
+import MySQLdb.cursors
+import re
+import requests
+import secrets
+from config import *
 
 app = Flask(__name__)
+key = secrets.token_urlsafe(16)
+key = secrets.token_hex(16)
 
-app.config['MYSQL_HOST'] = '109.73.175.66'
-app.config['MYSQL_USER'] = 'o1gbu42_StatTracker'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['SECRET_KEY'] = 'key'
+app.config['MYSQL_HOST'] = host 
+app.config['MYSQL_USER'] = sql_user
+app.config['MYSQL_PASSWORD'] = sql_password
 app.config['MYSQL_DB'] = 'o1gbu42_StatTracker'
-API = ''
+API = api_key
 
 mysql = MySQL(app)
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods =['GET', 'POST'])
 def login():
-    return render_template('Login.html')
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    return render_template('signup.html')
-
-@app.route('/signup', methods=['POST'])
-def signup_post():
-    email = request.form.get('email')
-    name = request.form.get('name')
-    password = request.form.get('password')
-    if request.method == 'GET':
-        return "Login via the login Form"
-     
-    if request.method == 'POST':
-        name = request.form['name']
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
         password = request.form['password']
-        cursor = mysql.connection.cursor()
-        cursor.execute(''' INSERT INTO info_table VALUES(%s,%s)''',(name,password))
-        mysql.connection.commit()
-        cursor.close()
-        return f"Done!!"
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-@app.route('/summoner',methods=['GET'])
+        cursor.execute('SELECT * FROM Account WHERE AccountName = % s AND Password = % s', (username, password, ))
+        
+        account = cursor.fetchone()
+        if account:
+            session['loggedin'] = True
+            session['AccountName'] = account['AccountName']
+            msg = 'Logged in successfully !'
+            return render_template('index.html', msg = msg)
+        else:
+            msg = 'Incorrect username / password !'
+        
+    return render_template('Login.html', msg = msg)
+
+@app.route('/register', methods =['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password'  in request.form:
+        username = request.form['username']
+        password = request.form['password']
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+   
+        
+        cursor.execute('SELECT * FROM Account WHERE AccountName = % s', (username,))
+
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists !'
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            msg = 'Username must contain only characters and numbers !'
+        elif not username or not password:
+            msg = 'Please fill out the form !'
+        else:
+            cursor.execute("INSERT INTO `Account`(`AccountName`, `Password`) VALUES (%s , %s)", (username, password,))
+            mysql.connection.commit()
+            msg = 'You have successfully registered !'
+    return render_template('signup.html', msg = msg)
+
+
+@app.route('/summoner',methods=['GET','POST'])
 def getSummoner():
     summonerName = request.args.get('summoner')
-    Region = "euw1"
-    print(summonerName)
+    Region = request.args.get('region')
+
     SummonerInfo = requests.get("https://" + Region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + API)
     SummonerInfo = SummonerInfo.json()
-    id = SummonerInfo['id'] 
-    SummonerInfo['profileIconId'] = getImageLink(SummonerInfo['profileIconId'])
-    RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key=" + API)
-    print("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key=" + API)
+
+    RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + SummonerInfo['id'] + "?api_key=" + API)
     Ranked = RankedMatches.json()
+
     FLEX = Ranked[0]
     SOLO = Ranked[1]
 
-    masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
+    getImageLink(SummonerInfo)
+    RankedImages(FLEX)
+    RankedImages(SOLO)
+    masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + SummonerInfo['id'] + "?api_key=" + API)
     masteryScore = masteryScore.json()
     getChampImages(masteryScore)
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore)
 
-def getImageLink(profileIcon):
-    profileIcon = str(profileIcon)
-    link = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
-    return link
-
+#Gets Profile Image
+def getImageLink(SummonerInfo):
+    profileIcon = str(SummonerInfo['profileIconId'])
+    SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
+   
+#Gets ChampionImage URLS into masteryScore JSON file
 def getChampImages(masteryScore):
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/9.18.1/data/en_US/champion.json")
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
     for item in DDRAGON:
@@ -73,7 +104,9 @@ def getChampImages(masteryScore):
             if int(temp['key']) == int(mastery['championId']):
                 mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
             
-
+def RankedImages(RankedMode):
+    RankedMode['ImageUrl'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/" + RankedMode['tier'].lower() + ".png"
+    
 
 @app.route('/')
 def index():
