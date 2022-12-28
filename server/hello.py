@@ -5,6 +5,10 @@ import re
 import requests
 import secrets
 from config import *
+from RiotApiCalls import *
+import pandas as pd
+import matplotlib.pyplot as plt 
+import numpy as np
 
 app = Flask(__name__)
 key = secrets.token_urlsafe(16)
@@ -15,10 +19,10 @@ app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = sql_user
 app.config['MYSQL_PASSWORD'] = sql_password
 app.config['MYSQL_DB'] = 'o1gbu42_StatTracker'
-API = api_key
 
 mysql = MySQL(app)
 
+#Login
 @app.route('/login', methods =['GET', 'POST'])
 def login():
     msg = ''
@@ -40,16 +44,14 @@ def login():
         
     return render_template('Login.html', msg = msg)
 
+#Register
 @app.route('/register', methods =['GET', 'POST'])
 def register():
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password'  in request.form:
         username = request.form['username']
         password = request.form['password']
-
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-   
-        
         cursor.execute('SELECT * FROM Account WHERE AccountName = % s', (username,))
 
         account = cursor.fetchone()
@@ -65,48 +67,28 @@ def register():
             msg = 'You have successfully registered !'
     return render_template('signup.html', msg = msg)
 
-
+#Summoner Routing
 @app.route('/summoner',methods=['GET','POST'])
 def getSummoner():
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
-
-    SummonerInfo = requests.get("https://" + Region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + API)
-    SummonerInfo = SummonerInfo.json()
-
-    RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + SummonerInfo['id'] + "?api_key=" + API)
-    Ranked = RankedMatches.json()
-
-    FLEX = Ranked[0]
-    SOLO = Ranked[1]
-
+    SummonerInfo = getSummonerDetails(Region,summonerName)
+    RankedDetails = getRankedStats(Region,SummonerInfo['id'])
+    FLEX = RankedDetails[0]
+    SOLO = RankedDetails[1]
     getImageLink(SummonerInfo)
     RankedImages(FLEX)
     RankedImages(SOLO)
-    masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + SummonerInfo['id'] + "?api_key=" + API)
-    masteryScore = masteryScore.json()
-    getChampImages(masteryScore)
-    return render_template('summonerPage.html', SummonerInfo = SummonerInfo,soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore)
+    masteryScore = getMasteryStats(Region,SummonerInfo['id'])
 
-#Gets Profile Image
-def getImageLink(SummonerInfo):
-    profileIcon = str(SummonerInfo['profileIconId'])
-    SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
-   
-#Gets ChampionImage URLS into masteryScore JSON file
-def getChampImages(masteryScore):
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
-    DDRAGON = DDRAGON.json()
-    DDRAGON = DDRAGON['data']
-    for item in DDRAGON:
-        temp = DDRAGON.get(item)
-        for mastery in masteryScore:
-            if int(temp['key']) == int(mastery['championId']):
-                mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
-            
-def RankedImages(RankedMode):
-    RankedMode['ImageUrl'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/" + RankedMode['tier'].lower() + ".png"
-    
+    data = getMatchData(Region, SummonerInfo['id'], SummonerInfo['puuid'])
+
+
+    print(data[1]['GameDuration'])
+
+    MeanData = getMatchTimeline(Region, SummonerInfo['id'], SummonerInfo['puuid'],data)
+    return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
+    soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, MeanData = MeanData)
 
 @app.route('/')
 def index():

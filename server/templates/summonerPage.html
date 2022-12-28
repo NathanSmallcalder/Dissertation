@@ -1,10 +1,8 @@
-<!DOCTYPE html>
+{% extends 'base.html'%}
+
+{%block content %}
 <html>
-<head>
-	<meta charset="utf-8" />
-	<link id="favicon" rel="shortcut icon" type="image/png" href="data:image/png;base64,....==" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-	<title>freecycle</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<style>
 		.card {
 			height: 100%;
@@ -22,50 +20,13 @@
 		}
 		
 	</style>
-	<!--- https://stackoverflow.com/questions/44897794/how-to-vertically-center-elements-in-bulma---->
-	<script src="https://unpkg.com/vue@next"></script> <!-- https://v3.vuejs.org/guide/installation.html#cdn -->
-	<!-- <script src="vue.js"></script> -->
+
+
+<script>
+	
+</script>
 </head>
 <body>
-	<!---Navbar---->
-	<nav>
-	<div id="navbarBasicExample" class="navbar-menu">
-		<div class="navbar-start">
-		  <a class="navbar-item">
-			Home
-		  </a>
-		  <a class="navbar-item">
-			Clips
-		  </a>
-		  
-		  <a class="navbar-item">
-			Group Finder
-		  </a>
-
-		  <a class="navbar-item">
-			Features Profiles
-		  </a>
-
-		  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-			<span aria-hidden="true"></span>
-			<span aria-hidden="true"></span>
-			<span aria-hidden="true"></span>
-		  </a>
-		</div>
-		<div class="navbar-end">
-			<div class="navbar-item">
-			  <div class="buttons">
-				<a class="button is-primary">
-				  <strong>Sign up</strong>
-				</a>
-				<a class="button is-light">
-				  Log in
-				</a>
-			  </div>
-			</div>
-	  </nav>
-	</div>
-
 	<div class="columns is-multiline">
 		<div class="column is-three-fifths">
 			<div class="card">
@@ -94,7 +55,9 @@
 					</figure>
 					<div class ="has-text-right">
 						<p>Ranked Points :{{soloRanked.leaguePoints}}</p>
+						<p>Ranked Played: {{soloRanked.wins + soloRanked.losses}}</p>	
 						<p>Ranked Wins: {{soloRanked.wins}}</p>	
+						<p>Ranked Loses: {{soloRanked.losses}}</p>	
 						<p>{{soloRanked.wins / soloRanked.wins + soloRanked.losses}}  %</p>
 					</div>
 				  </div>
@@ -121,50 +84,42 @@
 			</div>
 		</div>
 	</div>
+		
+	<table class="table">
+		<thead>
+		  <tr>
+			<th><abbr title="Champion">Champion</abbr></th>
+			<th><abbr title="GameDuration">GD</abbr></th>
+			<th><abbr title="Kills">K</abbr></th>
+			<th><abbr title="Deaths">D</abbr></th>
+			<th><abbr title="Assists">A</abbr></th>
+			<th><abbr title="Won">W</abbr></th>
+		  </tr>
+		</thead>
 
-	
-	<section class="hero is-success">
-		<div class="hero-body">
-		  <div class="container has-text-centered">
-			  <h1 class="title">
-				JS for Bulma Tabs 
-			  </h1>
-			</div>
-		</div> 
-		  
-		<div class="hero-foot">
-		<nav class="tabs is-boxed is-fullwidth is-large">
-				<div class="container">
-				  <ul>
-					<li class="tab is-active" onclick="openTab(event,'WebDev')"><a >Web Development</a></li>
-					<li class="tab" onclick="openTab(event,'WebAud')"><a >Website Audit</a></li>
-					<li class="tab" onclick="openTab(event,'Support')"><a >Support</a></li>
-				  </ul>
-				</div>
-			  </nav>
-		  </div>
-		</section>
-		
-		<div class="container section">
-			<div id="WebDev" class="content-tab" >
-			  <p>
-				test1<br>
-			  Overview Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-			</div>
-			<div id="WebAud" class="content-tab" style="display:none">
-				<p>
-				  test2<br>
-				Details Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-			</div>
-			<div id="Support" class="content-tab" style="display:none">
-			   <p>
-				 test3 <br>  
-			   Specification Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-			</div>
-		</div>
-		
-			
-			
+		{% for matches in data %}
+		<tr>
+			<td>{{ matches.champion }}</td>
+			<td>{{ matches.GameDuration }}</td>
+			<td>{{ matches.kills }}</td>
+			<td>{{ matches.deaths }}</td>
+			<td>{{ matches.assists }}</td>
+			<td>{{ matches.win }}</td>
+		</tr>
+		{% endfor %}
+
+
+
+	</tbody>
+</table>
+
+
+<img src="/static/avgGoldPerMin.png">
+<img src="/static/creepScore.png">
+<img src="/static/DmgTaken.png">
+<img src="/static/totalDamageDonePerMin.png">
+
+
 	<div class = "px-5">
 		<div class="columns is-multiline">
 		{% for user in masteryScore %}
@@ -180,8 +135,8 @@
 									<figure class="image is-64x64">
 										<img class="is-rounded" src='https://raw.communitydragon.org/latest/game/assets/ux/mastery/mastery_icon_{{user.championLevel}}.png'>
 									</figure>
-								
-							
+									<h1>{{user.name}}</h1>
+									<p>Champion Points : {{user.championPoints}}</p>
 
 									
 									<!---https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/hextech-images/chest.png-->
@@ -197,40 +152,11 @@
 		{% endfor %}
 	
 	</div>
-	
-
-	  
-	  
-</li>
-
-<script>
-function openTab(evt, tabName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("content-tab");
-  for (i = 0; i < x.length; i++) {
-      x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tab");
-  for (i = 0; i < x.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" is-active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " is-active";
-}
-
-function masteryImage(src, width, height, alt) {
-    var img = document.createElement("img");
-    img.src = "https://raw.communitydragon.org/latest/game/assets/ux/mastery/mastery_icon_" + src +".png";
-    img.width = width;
-    img.height = height;
-    img.alt = alt;
-
-    // This next line will just add it to the <body> tag
-    document.body.appendChild(img);
-}
+	{% endblock %}
 
 
 
-</script>
+
 </body>
+
 </html>
