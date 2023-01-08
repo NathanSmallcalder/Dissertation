@@ -1,26 +1,36 @@
 {% extends 'base.html'%}
 
 {%block content %}
-    <div class="columns">
-        <div class="column is-two-thirds">is-two-thirds
-            <form onsubmit='searchSummoner(summoner,Region); return false;'>
-                <input name="summoner" placeholder="Summoner Name" />
-                <div class="select">
-                    <select  name=Region>
-                    <option>EUN1</option>
-                    <option>EUW1</option>
-                    <option>JP1</option>
-                    <option>KR</option>
-                    <option>LA1</option>
-                    <option>LA2</option>
-                    <option>NA1</option>
-                    <option>RU</option>
-                    </select>
-                </div>
-                <button class="button is-info">Search</button>
-			</form>
-</div>
-	
+<section class="hero is-primary is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+            <div class="columns">
+                <div class="column is-two-thirds is-multiline">
+                    <form onsubmit='searchSummoner(summoner,Region); return false;'>
+                        <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                        <div class="select is-info">
+                            <select name=Region>
+                            <option>EUN1</option>
+                            <option>EUW1</option>
+                            <option>JP1</option>
+                            <option>KR</option>
+                            <option>LA1</option>
+                            <option>LA2</option>
+                            <option>NA1</option>
+                            <option>RU</option>
+                            </select>
+                        </div>
+                        <button class="button is-info">Search</button>
+                    </form>
+        </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
 
 <script>
 	function searchSummoner(summonerName, Region) {

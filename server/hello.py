@@ -74,21 +74,27 @@ def getSummoner():
     Region = request.args.get('region')
     SummonerInfo = getSummonerDetails(Region,summonerName)
     RankedDetails = getRankedStats(Region,SummonerInfo['id'])
-    FLEX = RankedDetails[0]
-    SOLO = RankedDetails[1]
+    try:
+        FLEX = RankedDetails[0]
+        SOLO = RankedDetails[1]
+        RankedImages(FLEX)
+        RankedImages(SOLO)
+    except:
+        FLEX = "Unranked"
+        SOLO = "Unranked"
+
     getImageLink(SummonerInfo)
-    RankedImages(FLEX)
-    RankedImages(SOLO)
+
     masteryScore = getMasteryStats(Region,SummonerInfo['id'])
 
     data = getMatchData(Region, SummonerInfo['id'], SummonerInfo['puuid'])
-
-
-    print(data[1]['GameDuration'])
-
+    fullMatch = getPlayerMatchData()
+    participants = getGameParticipantsList()
+    print(participants[4])
     MeanData = getMatchTimeline(Region, SummonerInfo['id'], SummonerInfo['puuid'],data)
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
-    soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, MeanData = MeanData)
+    soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
+    MeanData = MeanData, fullMatch = fullMatch,participants = participants)
 
 @app.route('/')
 def index():

@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 
-{%block content %}
+{% block content %}
 <html>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<style>
@@ -18,12 +18,28 @@
 			align-items: center; /* if an only child */
 			display: inline
 		}
-		
+		ul {
+		list-style-type: none;
+		}
+
+
 	</style>
 
 
 <script>
-	
+	function openTab(evt, tabName) {
+		var i, x, tablinks;
+		x = document.getElementsByClassName("content-tab");
+		for (i = 0; i < x.length; i++) {
+			x[i].style.display = "none";
+		}
+		tablinks = document.getElementsByClassName("tab");
+		for (i = 0; i < x.length; i++) {
+			tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+		}
+		document.getElementById(tabName).style.display = "block";
+		evt.currentTarget.className += " is-active";
+	}
 </script>
 </head>
 <body>
@@ -39,6 +55,7 @@
 					<div class ="has-text-right">
 						<p>{{SummonerInfo.summonerLevel}}</p>
 						<p>{{SummonerInfo.name}}</p>
+						<button class = "button is-info"> In-Game</button>
 						
 					</div>
 				  </div>
@@ -84,50 +101,18 @@
 			</div>
 		</div>
 	</div>
-		
-	<table class="table">
-		<thead>
-		  <tr>
-			<th><abbr title="Champion">Champion</abbr></th>
-			<th><abbr title="GameDuration">GD</abbr></th>
-			<th><abbr title="Kills">K</abbr></th>
-			<th><abbr title="Deaths">D</abbr></th>
-			<th><abbr title="Assists">A</abbr></th>
-			<th><abbr title="Won">W</abbr></th>
-		  </tr>
-		</thead>
-
-		{% for matches in data %}
-		<tr>
-			<td>{{ matches.champion }}</td>
-			<td>{{ matches.GameDuration }}</td>
-			<td>{{ matches.kills }}</td>
-			<td>{{ matches.deaths }}</td>
-			<td>{{ matches.assists }}</td>
-			<td>{{ matches.win }}</td>
-		</tr>
-		{% endfor %}
+	
 
 
 
-	</tbody>
-</table>
-
-
-<img src="/static/avgGoldPerMin.png">
-<img src="/static/creepScore.png">
-<img src="/static/DmgTaken.png">
-<img src="/static/totalDamageDonePerMin.png">
-
-
-	<div class = "px-5">
-		<div class="columns is-multiline">
+<div class = "columns is-multiline">
+	<div class = "column is-two-fifths">
 		{% for user in masteryScore %}
-			<div class="column is-two-fifths">
+			<div class="column">
 				<div class="card">
 					<div class="card-content">
 						<div class ="column is-narrow">
-					  		<div class="content">
+							<div class="content">
 								<div class="column is-half-inline">
 									<figure class="image is-64x64">
 										<img class="is-rounded" src="{{user.link}}">
@@ -148,12 +133,130 @@
 					</div>
 				</div>
 			</div>
-		</div>	
-		{% endfor %}
-	
+	{% endfor %}
 	</div>
-	{% endblock %}
+	
+		
+	<div class = "column">
+		<section class="hero is-success">
+			<div class="hero-body">
+			  <div class="container has-text-centered">
+				  <h1 class="title">
+					Match Stats 
+				  </h1>
+				</div>
+			</div> 
+			  
+			<div class="hero-foot">
+			<nav class="tabs is-boxed is-fullwidth is-large">
+					<div class="container">
+					  <ul>
+						<li class="tab is-active" onclick="openTab(event,'GraphsPanel')"><a> Graphs </a></li>
+						<li class="tab" onclick="openTab(event,'MatchHistory')"><a >Match History</a></li>
+						<li class="tab" onclick="openTab(event,'Summary')"><a >Summary</a></li>
+					  </ul>
+					</div>
+				  </nav>
+			  </div>
+			</section>
+			
+			<div class="container section">
+				<div id="MatchHistory" class="content-tab" style="display:none">
+					{% for match in fullMatch %}
 
+						<div class = "column">
+							<div class = "card">
+								<div class="card-content">
+									<div class ="column is-narrow">
+										<div class="content">
+											<div class="columns is-multiline">
+												<figure class="image is-64x64">
+													<img class="is-rounded" src="https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{match.championName}}.png">
+												</figure>
+											
+											
+													<div>  
+														<h2>{{match.kills}} / {{match.deaths}} / {{match.assists}}</h2>
+														<p> {{match.challenges.killParticipation * 100}} % Kill Participation</p>
+							
+									
+													</div>
+													<div>
+														<div>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][0]}}.png"></img> {{participants[loop.index0]['name'][0]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][1]}}.png"></img> {{participants[loop.index0]['name'][1]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][2]}}.png"></img> {{participants[loop.index0]['name'][2]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][3]}}.png"></img> {{participants[loop.index0]['name'][3]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][4]}}.png"></img> {{participants[loop.index0]['name'][4]}}</ul>
+														</div>
+													</div>
+
+													<div>
+														<div>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img> {{participants[loop.index0]['name'][5]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][6]}}.png"></img> {{participants[loop.index0]['name'][6]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][7]}}.png"></img> {{participants[loop.index0]['name'][7]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][8]}}.png"></img> {{participants[loop.index0]['name'][8]}}</ul>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][9]}}.png"></img> {{participants[loop.index0]['name'][9]}}</ul>
+														</div>
+													</div>
+											</div>
+
+											<img src="{{match.summoner1Id}}">
+											<img src="{{match.summoner2Id}}">
+											
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				<div id="GraphsPanel" class="content-tab" >
+						<div class = "column">
+							<div class=" is-multiline">
+								<img src="/static/avgGoldPerMin.png" width="350" height="450">
+								<img src="/static/creepScore.png" width="350" height="450">
+								<img src="/static/DmgTaken.png" width="350" height="450">
+								<img src="/static/totalDamageDonePerMin.png" width="350" height="450">
+						</div>
+					</div>
+				</div>
+
+
+
+				</div>
+				<div id="Summary" class="content-tab" style="display:none">
+					<table class="table">
+						<thead>
+						  <tr>
+							<th><abbr title="Champion">Champion</abbr></th>
+							<th><abbr title="GameDuration">GD</abbr></th>
+							<th><abbr title="Kills">K</abbr></th>
+							<th><abbr title="Deaths">D</abbr></th>
+							<th><abbr title="Assists">A</abbr></th>
+							<th><abbr title="Won">W</abbr></th>
+						  </tr>
+						</thead>
+				
+						{% for matches in data %}
+						<tr>
+							<td>{{ matches.champion }}</td>
+							<td>{{ matches.GameDuration }}</td>
+							<td>{{ matches.kills }}</td>
+							<td>{{ matches.deaths }}</td>
+							<td>{{ matches.assists }}</td>
+							<td>{{ matches.win }}</td>
+						</tr>
+						{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+				</div>
+			</div>
+
+	{% endblock %}
 
 
 
