@@ -1,12 +1,24 @@
 import requests
 from config import api_key
 import pandas as pd
+import time
 
 API = api_key
 MatchIDG = []
 playerMatchData = []
 participants = []
 
+class SummonerInGameObj:
+  def __init__(self, SummonerName, Rank, WinRate, AvgGold, AvgDmg, AvgDmgTaken, ProfileIcon):
+    self.SummonerName = SummonerName
+    self.Rank = Rank
+    self.WinRate = WinRate
+    self.AvgGold = AvgGold
+    self.AvgDmg = AvgDmg
+    self.AvgDmgTaken = AvgDmgTaken
+    self.profileIcon = ProfileIcon
+
+Summoners = []
 
 summonerSpells = {
     21: 'summonerbarrier.png',
@@ -22,6 +34,18 @@ summonerSpells = {
     12: 'summoner_teleport.png',
     55: 'summoner_smite.png'
 }
+itemList = {}
+
+def ItemRequest():
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/item.json")
+    DDRAGON = DDRAGON['data']
+
+    for item in DDRAGON:
+        itemList[item] = item[name]
+
+
+
+
 #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/
 def getSummonerSpellsImages(match):
         spellId1 = match['summoner1Id']
@@ -48,7 +72,12 @@ def getChampImages(masteryScore):
 #Gets RankTierIcon     
 def RankedImages(RankedMode):
     RankedMode['ImageUrl'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/" + RankedMode['tier'].lower() + ".png"
-    
+
+def CalcWinRate(RankedMode):
+    GamesPlayed = RankedMode['losses'] + RankedMode['wins']
+    WinRate = RankedMode['wins'] / GamesPlayed
+    RankedMode['WinRate'] = WinRate * 100
+
 #Gets Profile Image
 def getImageLink(SummonerInfo):
     profileIcon = str(SummonerInfo['profileIconId'])
@@ -61,7 +90,7 @@ def getSummonerDetails(Region,summonerName):
 
 def getRankedStats(Region,id):
     RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
-
+    print("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
     Ranked = RankedMatches.json()
     return Ranked
 
@@ -100,7 +129,6 @@ def getMatches(region,MatchIDs,puuid):
                 'baronKills':[]
         }
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
-        print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         MatchData = MatchData.json()
         getGameParticipants(MatchData)
         participants = MatchData['metadata']['participants']
@@ -150,8 +178,8 @@ def getPlayerMatchData():
 def getGameParticipants(game):
     x=0
     participantsTemp = {
-    'name': [],
-    'champion':[]
+        'name': [],
+        'champion':[]
     }
     while x < 10:
         summonerTemp = game['info']['participants'][x]['summonerName']
@@ -232,7 +260,7 @@ def getMatchTimeline(region,id,puuid,data):
 
     i = 0
     count = 0
-    mean = 0
+
     while i < 11:
             for line in ListS:
                 dmgTaken = line['totalDamageTaken'][i]
@@ -245,7 +273,7 @@ def getMatchTimeline(region,id,puuid,data):
                 meanGold =+ gold
                 count=count +1
             
-            mean = mean / count
+       
             count=0
             MeanData['totalDamageTakenPerMin'].append(meanDmgTaken)
             MeanData['avgGoldPerMin'].append(meanGold)
@@ -257,33 +285,24 @@ def getMatchTimeline(region,id,puuid,data):
 
 
 def SummonerInGame(LiveGame,region):
-    class SummonerInGame:
-        def __init__(self, SummonerName, Rank, WinRate,AvgGold,AvgDmg,AvgDmgTaken):
-            self.SummonerName = SummonerName
-            self.Rank = Rank
-            self.WinRate = WinRate
-            self.AvgGold = AvgGold
-            self.AvgDmg = AvgDmg
-            self.AvgDmgTaken = AvgDmgTaken
 
-    Summoners = []
-
-    while iee < 10:
-        summonerIds.append(LiveGame[iee]['summonerId'])
-        iee = iee +1
-
+    LiveGame = LiveGame['participants']
+    i = 0
+    summonerIds = []
+    while i < 10:
+        summonerIds.append(LiveGame[i]['summonerId'])
+        i = i + 1
 
     for summonerId in summonerIds:
-        puuid = requests.get("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/" +summonerId + "?api_key=RGAPI-546ff69b-0cba-44ac-b79d-be1472f09bc1")
+        puuid = requests.get("https://"+ region + ".api.riotgames.com/lol/summoner/v4/summoners/" +summonerId + "?api_key=" + api_key)
         puuid = puuid.json()
         name = puuid['name']
         puuid = puuid['puuid']
-
-
         Rank = "Unranked"
         MatchIDs = getMatchIds(region,puuid)
-
-        time.sleep(5)
+        SummonerDetails = getSummonerDetails(region, name)
+        Image = getImageLink(SummonerDetails)
+        img = str(SummonerDetails['profileIconId'])
         ##GetMatch
         Last5Games = getMatches(region, MatchIDs, puuid)
         MeanData = getMatchTimeline(region, summonerId, puuid, Last5Games)
@@ -301,25 +320,20 @@ def SummonerInGame(LiveGame,region):
         avgGoldPerMin = MeanData['avgGoldPerMin'].pop()
         totalDamageTakenPerMin = MeanData['totalDamageTakenPerMin'].pop()
         totalDamageTakenPerMin = MeanData['totalDamageTakenPerMin'].pop()
-        summ = SummonerInGame(Rank, WinRate, avgGoldPerMin,totalDamageTakenPerMin,totalDamageTakenPerMin)
+        summ = SummonerInGameObj(name,Rank, WinRate, avgGoldPerMin,totalDamageTakenPerMin,totalDamageTakenPerMin,img)
         Summoners.append(summ)
-        time.sleep(10)
+        time.sleep(30)
     return Summoners
     
 
 
 
 def summonerInGameCheck(region,summonerId):
-    LiveGame = requests.get("https://"+ region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/RUhQYj8Cq9Ku5VtGIpmI_nve_3rM_Z7S5sk6o02D4pzSfBI?api_key=RGAPI-546ff69b-0cba-44ac-b79d-be1472f09bc1")
+    print("https://" + region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
+    LiveGame = requests.get("https://"+ region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
     LiveGame = LiveGame.json()
     if LiveGame == 404:
-        pass
+        return 404
     else:
-        LiveGame = LiveGame['participants']
-        Summoners = summonerInGame(LiveGame,region)
+        Summoners = SummonerInGame(LiveGame,region)
         return Summoners
-
-
-
-
-    

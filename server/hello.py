@@ -73,28 +73,39 @@ def getSummoner():
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
     SummonerInfo = getSummonerDetails(Region,summonerName)
-    RankedDetails = getRankedStats(Region,SummonerInfo['id'])
+    SummId = SummonerInfo['id']
+    RankedDetails = getRankedStats(Region,SummId)
     try:
         FLEX = RankedDetails[0]
         SOLO = RankedDetails[1]
+        CalcWinRate(FLEX)
+        CalcWinRate(SOLO)
         RankedImages(FLEX)
         RankedImages(SOLO)
     except:
-        FLEX = "Unranked"
-        SOLO = "Unranked"
+        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
+        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
     getImageLink(SummonerInfo)
-
-    masteryScore = getMasteryStats(Region,SummonerInfo['id'])
-
-    data = getMatchData(Region, SummonerInfo['id'], SummonerInfo['puuid'])
+  
+    masteryScore = getMasteryStats(Region,SummId)
+    data = getMatchData(Region, SummId, SummonerInfo['puuid'])
     fullMatch = getPlayerMatchData()
     participants = getGameParticipantsList()
-    print(participants[4])
-    MeanData = getMatchTimeline(Region, SummonerInfo['id'], SummonerInfo['puuid'],data)
+    MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
+
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
-    MeanData = MeanData, fullMatch = fullMatch,participants = participants)
+    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region)
+
+@app.route('/summoner/in-game',methods=['GET','POST'])
+def SummonerInGame():
+    SummonerName = request.args.get('summoner')
+    Region = request.args.get('region')
+    Summoners = summonerInGameCheck(Region,SummonerName)
+    return render_template('summonerInGame.html', Summoners = Summoners)
 
 @app.route('/')
 def index():

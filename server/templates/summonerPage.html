@@ -1,7 +1,6 @@
 {% extends 'base.html'%}
 
 {% block content %}
-<html>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<style>
 		.card {
@@ -55,7 +54,7 @@
 					<div class ="has-text-right">
 						<p>{{SummonerInfo.summonerLevel}}</p>
 						<p>{{SummonerInfo.name}}</p>
-						<button class = "button is-info"> In-Game</button>
+						<button onclick = "inGame()" class = "button is-info"> In-Game</button>
 						
 					</div>
 				  </div>
@@ -75,7 +74,7 @@
 						<p>Ranked Played: {{soloRanked.wins + soloRanked.losses}}</p>	
 						<p>Ranked Wins: {{soloRanked.wins}}</p>	
 						<p>Ranked Loses: {{soloRanked.losses}}</p>	
-						<p>{{soloRanked.wins / soloRanked.wins + soloRanked.losses}}  %</p>
+						<p>{{soloRanked.WinRate}}</p>
 					</div>
 				  </div>
 				</div>
@@ -94,7 +93,7 @@
 						<p>Ranked Played: {{flexRanked.wins + flexRanked.losses}}</p>	
 						<p>Ranked Wins: {{flexRanked.wins}}</p>	
 						<p>Ranked Loses: {{flexRanked.losses}}</p>	
-						<p>{{flexRanked.wins / flexRanked.wins + flexRanked.losses}}  %</p>
+						<p>{{flexRanked.WinRate}}</p>
 					</div>
 				  </div>
 				</div>
@@ -177,9 +176,6 @@
 											
 													<div>  
 														<h2>{{match.kills}} / {{match.deaths}} / {{match.assists}}</h2>
-														<p> {{match.challenges.killParticipation * 100}} % Kill Participation</p>
-							
-									
 													</div>
 													<div>
 														<div>
@@ -256,10 +252,19 @@
 				</div>
 			</div>
 
-	{% endblock %}
 
 
+<script>
+	alert("EEEEEEEEEEEEEE")
+	function inGame() {
+		var summonerId= '{{ SummonerInfo.id }}';
+		var Region = '{{ Region }}';
 
+		var url = window.location.href.split('?')[0];
+		url = url + "/in-game" + "?summoner=" +  summonerId  + "&region=" + Region;
+		window.location.href = url
+	}
+		
+	</script>
 </body>
-
-</html>
+{% endblock %}
