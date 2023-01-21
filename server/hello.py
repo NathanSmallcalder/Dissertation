@@ -76,8 +76,8 @@ def getSummoner():
     SummId = SummonerInfo['id']
     RankedDetails = getRankedStats(Region,SummId)
     try:
-        FLEX = RankedDetails[0]
         SOLO = RankedDetails[1]
+        FLEX = RankedDetails[0]
         CalcWinRate(FLEX)
         CalcWinRate(SOLO)
         RankedImages(FLEX)
@@ -89,13 +89,17 @@ def getSummoner():
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
     getImageLink(SummonerInfo)
-  
+    
     masteryScore = getMasteryStats(Region,SummId)
     data = getMatchData(Region, SummId, SummonerInfo['puuid'])
+
     fullMatch = getPlayerMatchData()
+
+    print(fullMatch)
+
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
-
+ 
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
     MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region)

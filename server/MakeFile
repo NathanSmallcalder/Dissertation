@@ -1,2 +1,5 @@
 #pip install mysql-connector-python
 #pip install flask
+pip install pandas
+matplotlib
+flask_mysqldb

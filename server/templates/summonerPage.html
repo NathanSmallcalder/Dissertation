@@ -176,6 +176,10 @@
 											
 													<div>  
 														<h2>{{match.kills}} / {{match.deaths}} / {{match.assists}}</h2>
+
+														<img width="20" height="20" src = "static/icon_gold.png" ></img> {{ data[loop.index0 -1]['goldEarned'] }} <br> 
+
+														<img width="20" height="20" src = "static/icon_minions.png"></img> {{ data[loop.index0 -1]['cs'] }}
 													</div>
 													<div>
 														<div>
@@ -195,6 +199,14 @@
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][8]}}.png"></img> {{participants[loop.index0]['name'][8]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][9]}}.png"></img> {{participants[loop.index0]['name'][9]}}</ul>
 														</div>
+													</div>
+													<div>
+															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][0]}}"></img>
+															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][1]}}"></img>
+															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][2]}}"></img>
+															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][3]}}"></img>
+															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][4]}}"></img>
+															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][5]}}"></img>
 													</div>
 											</div>
 

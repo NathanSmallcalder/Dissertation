@@ -2,6 +2,7 @@ import requests
 from config import api_key
 import pandas as pd
 import time
+from items import *
 
 API = api_key
 MatchIDG = []
@@ -34,15 +35,18 @@ summonerSpells = {
     12: 'summoner_teleport.png',
     55: 'summoner_smite.png'
 }
-itemList = {}
 
-def ItemRequest():
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/item.json")
-    DDRAGON = DDRAGON['data']
 
-    for item in DDRAGON:
-        itemList[item] = item[name]
+def GetItemImages(itemList):
+    itemE =[]
+    for item in itemList:
+        itemTemp = ItemsDict[item]
+        item = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/" + itemTemp
+        itemE.append(item)
 
+    ItemList = itemE
+    return ItemList
+    
 
 
 
@@ -50,7 +54,7 @@ def ItemRequest():
 def getSummonerSpellsImages(match):
         spellId1 = match['summoner1Id']
         spellId2 = match['summoner2Id']
-        print(summonerSpells[spellId1])
+
         spellId1 = summonerSpells[spellId1]
         spellId2 = summonerSpells[spellId2]
         match['summoner1Id'] = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/' + spellId1
@@ -90,7 +94,7 @@ def getSummonerDetails(Region,summonerName):
 
 def getRankedStats(Region,id):
     RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
-    print("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
+   
     Ranked = RankedMatches.json()
     return Ranked
 
@@ -126,19 +130,34 @@ def getMatches(region,MatchIDs,puuid):
                 'physicalDamageTaken':[],
                 'cs':[],
                 'dragonKills':[],
-                'baronKills':[]
+                'baronKills':[],
+                'Items':[]
         }
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
+
         MatchData = MatchData.json()
         getGameParticipants(MatchData)
         participants = MatchData['metadata']['participants']
         player_index = participants.index(puuid)
-
+        
+ 
         player_data = MatchData['info']['participants'][player_index]
 
         player_data = getSummonerSpellsImages(player_data)
         playerMatchData.append(player_data)
+        
+        Items = [
+            player_data['item0'],
+            player_data['item1'],
+            player_data['item2'],
+            player_data['item3'],
+            player_data['item4'],
+            player_data['item5'],
+            player_data['item6'],
+        ]
 
+        ItemInGame = GetItemImages(Items)
+   
         gameMins = MatchData['info']['gameDuration']
         champion = player_data['championName']
         k = player_data['kills']
@@ -152,14 +171,11 @@ def getMatches(region,MatchIDs,puuid):
         dragonKills = player_data['dragonKills']
         baronKills = player_data['baronKills']
 
-
-
         data['champion'].append(champion)
         data['kills'].append(k)
         data['deaths'].append(d)
         data['assists'].append(a)
         data['win'].append(win)    
-
         data['goldEarned'].append(GoldPerMin)
         data['physicalDamageDealtToChampions'].append(physicalDamageDealtToChampions)
         data['physicalDamageTaken'].append(physicalDamageTaken)
@@ -167,8 +183,8 @@ def getMatches(region,MatchIDs,puuid):
         data['dragonKills'].append(dragonKills)    
         data['baronKills'].append(baronKills)
         data['GameDuration'].append(gameMins)
-        df = pd.DataFrame(data)    
-        df['win'] = df['win'].astype(int) 
+
+        data['Items'] = ItemInGame
         dataList.append(data)
     return dataList
 
@@ -184,14 +200,12 @@ def getGameParticipants(game):
     while x < 10:
         summonerTemp = game['info']['participants'][x]['summonerName']
         championTemp = game['info']['participants'][x]['championName']
-        print(summonerTemp)
 
         participantsTemp['name'].append(summonerTemp)
         participantsTemp['champion'].append(championTemp)
         x = x + 1
 
     participants.append(participantsTemp)
-    print(participants[0]['name'][0])
 
 def getGameParticipantsList():
     return participants
@@ -224,7 +238,7 @@ def getMatchTimeline(region,id,puuid,data):
                     'totalDamageTakenPerMin': []
             }
             MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/" + matchID + "/timeline?api_key=" + api_key)
-            print("https://europe.api.riotgames.com/lol/match/v5/matches/" + matchID + "/timeline?api_key=" + api_key)
+     
             MatchData = MatchData.json()
       
 
@@ -329,7 +343,6 @@ def SummonerInGame(LiveGame,region):
 
 
 def summonerInGameCheck(region,summonerId):
-    print("https://" + region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
     LiveGame = requests.get("https://"+ region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
     LiveGame = LiveGame.json()
     if LiveGame == 404:
