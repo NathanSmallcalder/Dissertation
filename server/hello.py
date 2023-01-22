@@ -22,6 +22,7 @@ app.config['MYSQL_DB'] = 'o1gbu42_StatTracker'
 
 mysql = MySQL(app)
 
+
 #Login
 @app.route('/login', methods =['GET', 'POST'])
 def login():

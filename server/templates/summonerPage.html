@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 
 {% block content %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 	<style>
 		.card {
 			height: 100%;
@@ -39,6 +39,7 @@
 		document.getElementById(tabName).style.display = "block";
 		evt.currentTarget.className += " is-active";
 	}
+
 </script>
 </head>
 <body>
@@ -177,9 +178,9 @@
 													<div>  
 														<h2>{{match.kills}} / {{match.deaths}} / {{match.assists}}</h2>
 
-														<img width="20" height="20" src = "static/icon_gold.png" ></img> {{ data[loop.index0 -1]['goldEarned'] }} <br> 
+														<img width="20" height="20" src = "static/icon_gold.png" ></img> {{ data[loop.index0]['goldEarned'] }} <br> 
 
-														<img width="20" height="20" src = "static/icon_minions.png"></img> {{ data[loop.index0 -1]['cs'] }}
+														<img width="20" height="20" src = "static/icon_minions.png"></img> {{ data[loop.index0]['cs'] }}
 													</div>
 													<div>
 														<div>
@@ -223,17 +224,17 @@
 				<div id="GraphsPanel" class="content-tab" >
 						<div class = "column">
 							<div class=" is-multiline">
-								<img src="/static/avgGoldPerMin.png" width="350" height="450">
-								<img src="/static/creepScore.png" width="350" height="450">
-								<img src="/static/DmgTaken.png" width="350" height="450">
-								<img src="/static/totalDamageDonePerMin.png" width="350" height="450">
+									<canvas id="AvgDamageTakenChart" width="350" height="450"></canvas>
+									<canvas id="AvgDamageDealtChart" width="350" height="450"></canvas>
+									<canvas id="AvgCreepScoreChart" width="350" height="450"></canvas>
+									<canvas id="AvgGoldPerMinChart" width="350" height="450"></canvas>
+	
+							</div>
 						</div>
 					</div>
 				</div>
 
 
-
-				</div>
 				<div id="Summary" class="content-tab" style="display:none">
 					<table class="table">
 						<thead>
@@ -267,7 +268,6 @@
 
 
 <script>
-	alert("EEEEEEEEEEEEEE")
 	function inGame() {
 		var summonerId= '{{ SummonerInfo.id }}';
 		var Region = '{{ Region }}';
@@ -276,7 +276,151 @@
 		url = url + "/in-game" + "?summoner=" +  summonerId  + "&region=" + Region;
 		window.location.href = url
 	}
-		
+	
+	//Damage Taken Per Min Graph
+	const DamageTaken = document.getElementById('AvgDamageTakenChart').getContext('2d');
+	DamageTaken.canvas.parentNode.style.width = "500px";
+	DamageTaken.canvas.parentNode.style.height = "500px";
+		var someJavaScriptVar =
+		 ['{{ MeanData.totalDamageTakenPerMin[0] }}' ,'{{ MeanData.totalDamageTakenPerMin[1] }}',
+		 '{{ MeanData.totalDamageTakenPerMin[2] }}','{{ MeanData.totalDamageTakenPerMin[3] }}',
+		 '{{ MeanData.totalDamageTakenPerMin[4] }}','{{ MeanData.totalDamageTakenPerMin[5] }}',
+		 '{{ MeanData.totalDamageTakenPerMin[6] }}','{{ MeanData.totalDamageTakenPerMin[7] }}',
+		 '{{ MeanData.totalDamageTakenPerMin[8] }}','{{ MeanData.totalDamageTakenPerMin[9] }}',
+		 '{{ MeanData.totalDamageTakenPerMin[10] }}'];
+
+		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
+		var yValues = someJavaScriptVar
+
+		new Chart("AvgDamageTakenChart", {
+		type: "line",
+		data: {
+			labels: xValues,
+			datasets: [{
+			backgroundColor: "rgba(0,0,0,0)",
+			borderColor: "rgba(0,0,0,0.1)",
+			data: yValues
+			}]
+		},
+		options: {
+			legend: {display: false},
+			title:{
+				display:true,
+				text:"Average Damage Taken (20 Mins)"
+			},
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+	});
+
+
+	//Damage Dealt Per Min Graph
+	const AvgDamageDealtChart = document.getElementById('AvgDamageDealtChart').getContext('2d');
+	AvgDamageDealtChart.canvas.parentNode.style.width = "500px";
+	AvgDamageDealtChart.canvas.parentNode.style.height = "500px";
+		var DamageDealt =
+		 ['{{ MeanData.totalDamageDonePerMin[0] }}' ,'{{ MeanData.totalDamageDonePerMin[1] }}',
+		 '{{ MeanData.totalDamageDonePerMin[2] }}','{{ MeanData.totalDamageDonePerMin[3] }}',
+		 '{{ MeanData.totalDamageDonePerMin[4] }}','{{ MeanData.totalDamageDonePerMin[5] }}',
+		 '{{ MeanData.totalDamageDonePerMin[6] }}','{{ MeanData.totalDamageDonePerMin[7] }}',
+		 '{{ MeanData.totalDamageDonePerMin[8] }}','{{ MeanData.totalDamageDonePerMin[9] }}',
+		 '{{ MeanData.totalDamageDonePerMin[10] }}'];
+
+		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
+		var yValues = DamageDealt
+
+		new Chart("AvgDamageDealtChart", {
+		type: "line",
+		data: {
+			labels: xValues,
+			datasets: [{
+			backgroundColor: "rgba(0,0,0,0)",
+			borderColor: "rgba(0,0,0,0.1)",
+			data: yValues
+			}]
+		},
+		options: {
+			legend: {display: false},
+			title:{
+				display:true,
+				text:"Average Damage Dealt (20 Mins)"
+			},
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+	});
+
+	const AvgGoldPerMinChart = document.getElementById('AvgGoldPerMinChart').getContext('2d');
+	AvgGoldPerMinChart.canvas.parentNode.style.width = "500px";
+	AvgGoldPerMinChart.canvas.parentNode.style.height = "500px";
+		var avgGoldPerMin =
+		 ['{{ MeanData.avgGoldPerMin[0] }}' ,'{{ MeanData.avgGoldPerMin[1] }}',
+		 '{{ MeanData.avgGoldPerMin[2] }}','{{ MeanData.avgGoldPerMin[3] }}',
+		 '{{ MeanData.avgGoldPerMin[4] }}','{{ MeanData.avgGoldPerMin[5] }}',
+		 '{{ MeanData.avgGoldPerMin[6] }}','{{ MeanData.avgGoldPerMin[7] }}',
+		 '{{ MeanData.avgGoldPerMin[8] }}','{{ MeanData.avgGoldPerMin[9] }}',
+		 '{{ MeanData.avgGoldPerMin[10] }}'];
+
+		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
+		var yValues = avgGoldPerMin
+
+		new Chart("AvgGoldPerMinChart", {
+		type: "line",
+		data: {
+			labels: xValues,
+			datasets: [{
+			backgroundColor: "rgba(0,0,0,0)",
+			borderColor: "rgba(0,0,0,0.1)",
+			data: yValues
+			}]
+		},
+		options: {
+			legend: {display: false},
+			title:{
+				display:true,
+				text:"Average Gold Per Min (20 Mins)"
+			},
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+	});
+
+	const AvgCreepScoreChart = document.getElementById('AvgCreepScoreChart').getContext('2d');
+	AvgCreepScoreChart.canvas.parentNode.style.width = "500px";
+	AvgCreepScoreChart.canvas.parentNode.style.height = "500px";
+	var creepScore =
+		 ['{{ MeanData.creepScore[0] }}' ,'{{ MeanData.creepScore[1] }}',
+		 '{{ MeanData.creepScore[2] }}','{{ MeanData.creepScore[3] }}',
+		 '{{ MeanData.creepScore[4] }}','{{ MeanData.creepScore[5] }}',
+		 '{{ MeanData.creepScore[6] }}','{{ MeanData.creepScore[7] }}',
+		 '{{ MeanData.creepScore[8] }}','{{ MeanData.creepScore[9] }}',
+		 '{{ MeanData.creepScore[10] }}'];
+
+		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
+		var yValues = creepScore
+
+		new Chart("AvgCreepScoreChart", {
+		type: "line",
+		data: {
+			labels: xValues,
+			datasets: [{
+			backgroundColor: "rgba(0,0,0,0)",
+			borderColor: "rgba(0,0,0,0.1)",
+			data: yValues
+			}]
+		},
+		options: {
+			legend: {display: false},
+			title:{
+				display:true,
+				text:"Creep Score Damage (20 Mins)"
+			},
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+	});
+
+
 	</script>
 </body>
 {% endblock %}
