@@ -8,6 +8,7 @@ API = api_key
 MatchIDG = []
 playerMatchData = []
 participants = []
+fullMatch = []
 
 class SummonerInGameObj:
   def __init__(self, SummonerName, Rank, WinRate, AvgGold, AvgDmg, AvgDmgTaken, ProfileIcon):
@@ -94,7 +95,6 @@ def getSummonerDetails(Region,summonerName):
 
 def getRankedStats(Region,id):
     RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
-   
     Ranked = RankedMatches.json()
     return Ranked
 
@@ -116,7 +116,8 @@ def getMatchIds(region,puuid):
     return MatchIDs
 
 def getMatches(region,MatchIDs,puuid):
-    dataList = []
+    temp = []
+    playerMatchDataTemp = []
     for matchID in MatchIDs:
         data = {
                 'GameDuration':[], 
@@ -144,7 +145,10 @@ def getMatches(region,MatchIDs,puuid):
         player_data = MatchData['info']['participants'][player_index]
 
         player_data = getSummonerSpellsImages(player_data)
-        playerMatchData.append(player_data)
+        player_data = getRoleImages(player_data)
+     
+        playerMatchDataTemp.append(player_data)
+  
         
         Items = [
             player_data['item0'],
@@ -185,11 +189,27 @@ def getMatches(region,MatchIDs,puuid):
         data['GameDuration'].append(gameMins)
 
         data['Items'] = ItemInGame
-        dataList.append(data)
+        data2 = dict(data)
+        del data
+        temp.append(data2)
+    
+
+   
+    array2 = playerMatchDataTemp[:]
+    setPlayerMatchData(array2)
+    dataList = list(temp)
+    del temp
     return dataList
 
+#Sets Player Match Data
+def setPlayerMatchData(match):
+    global fullMatch
+    fullMatch = match
+
+#Returns Player Match Data
 def getPlayerMatchData():
-    return playerMatchData
+    global fullMatch
+    return fullMatch
 
 def getGameParticipants(game):
     x=0
@@ -247,8 +267,7 @@ def getMatchTimeline(region,id,puuid,data):
             player_index = participants.index(puuid)
             player_index = str(player_index + 1)
 
-
-
+   
             i = 0
             matchLength = data[ie]['GameDuration'][0]
             matchLength = int(matchLength)
@@ -350,3 +369,13 @@ def summonerInGameCheck(region,summonerId):
     else:
         Summoners = SummonerInGame(LiveGame,region)
         return Summoners
+
+
+def getRoleImages(data):
+    role = data['role'].lower()
+    if role == "support":
+        role = "utility"
+    if role == "solo":
+        role = "middle"
+    data['role'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-"+ role +".png"
+    return data

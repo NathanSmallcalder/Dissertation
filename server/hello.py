@@ -23,6 +23,7 @@ app.config['MYSQL_DB'] = 'o1gbu42_StatTracker'
 mysql = MySQL(app)
 
 
+
 #Login
 @app.route('/login', methods =['GET', 'POST'])
 def login():
@@ -91,19 +92,23 @@ def getSummoner():
 
     getImageLink(SummonerInfo)
     
+
+  
     masteryScore = getMasteryStats(Region,SummId)
     data = getMatchData(Region, SummId, SummonerInfo['puuid'])
 
-    fullMatch = getPlayerMatchData()
-
-    print(fullMatch)
 
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
- 
+
+    fullMatch = getPlayerMatchData()
+    print(fullMatch)
+    for matches in fullMatch:
+        print(matches['goldEarned'])
+
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
-    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region)
+    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region, len = len(fullMatch))
 
 @app.route('/summoner/in-game',methods=['GET','POST'])
 def SummonerInGame():
