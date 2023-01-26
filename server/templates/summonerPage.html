@@ -192,7 +192,11 @@
 					{% for match in fullMatch %}
 
 						<div class = "column">
-							<div class = "card">
+						{% if data[loop.index0]['win'] == [True] %}
+							<div class = "card has-background-primary">
+						{% elif data[loop.index0]['win'] == [False] %}
+							<div class = "card has-background-danger">
+						{% endif %}
 								<div class="card-content">
 									<div class ="column is-narrow">
 										<div class="content">
@@ -200,11 +204,10 @@
 												<figure class="image is-64x64">
 													<img class="is-rounded" src="https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{match.championName}}.png">
 												</figure>
-											
-											
+						
 													<div>  
 														<h2>{{match.kills}} / {{match.deaths}} / {{match.assists}}</h2>
-														<p>{{loop.index0}}</p>
+										
 														<img width="20" height="20" src = "static/icon_gold.png" ></img> {{ data[loop.index0]['goldEarned'] }} <br> 
 
 														<img width="20" height="20" src = "static/icon_minions.png"></img> {{ data[loop.index0]['cs'] }}
