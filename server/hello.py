@@ -102,7 +102,7 @@ def getSummoner():
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
 
     fullMatch = getPlayerMatchData()
-    print(fullMatch)
+    print(data)
     for matches in fullMatch:
         print(matches['goldEarned'])
 
