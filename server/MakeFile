@@ -1,5 +1,10 @@
-#pip install mysql-connector-python
-#pip install flask
-pip install pandas
-matplotlib
-flask_mysqldb
+DOCKER_IMAGE:=express
+
+help:
+	# This is some help
+
+build:
+	docker build --tag ${DOCKER_IMAGE} .
+
+run:
+	docker run --rm -it --publish 5000:5000 ${DOCKER_IMAGE}
