@@ -58,6 +58,7 @@ fig, ax = plt.subplots()
 x = 1,2,3,4,5
 ax.plot(x,predictionsArray, linewidth=2.0)
 ax.set_title('Model Accuracy')
+plt.savefig("HEATMAP.PNG")
 plt.show()
 
 
@@ -66,5 +67,6 @@ ax = plt.axes()
 sns.set(font_scale=1.4)
 sns.heatmap(df_for_corr_first.corr(), annot=True, cmap="YlGnBu")
 ax.set_title('Feature Importance')
+plt.savefig("HEATMAP.PNG")
 plt.show()
 

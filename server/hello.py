@@ -91,24 +91,18 @@ def getSummoner():
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
     getImageLink(SummonerInfo)
-    
-
-  
     masteryScore = getMasteryStats(Region,SummId)
     data = getMatchData(Region, SummId, SummonerInfo['puuid'])
-
-
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
-
     fullMatch = getPlayerMatchData()
-    print(data)
-    for matches in fullMatch:
-        print(matches['goldEarned'])
+    
+    stri = "https://5000-nathansmall-dissertatio-8z3sdftfozh.ws-eu84.gitpod.io/summoner?summoner=Mealsz&region=EUW1"
+    s = stri.split('/s', 1)[0]
 
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
-    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region, len = len(fullMatch))
+    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region, weblink = s)
 
 @app.route('/summoner/in-game',methods=['GET','POST'])
 def SummonerInGame():

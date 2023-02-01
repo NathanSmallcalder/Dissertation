@@ -1,14 +1,18 @@
 import requests
-from config import api_key
+from config import *
 import pandas as pd
 import time
-from items import *
+import pymysql
+
 
 API = api_key
 MatchIDG = []
 playerMatchData = []
 participants = []
 fullMatch = []
+
+db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
+cursor = db.cursor()
 
 class SummonerInGameObj:
   def __init__(self, SummonerName, Rank, WinRate, AvgGold, AvgDmg, AvgDmgTaken, ProfileIcon):
@@ -41,9 +45,16 @@ summonerSpells = {
 def GetItemImages(itemList):
     itemE =[]
     for item in itemList:
-        itemTemp = ItemsDict[item]
-        item = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/" + itemTemp
-        itemE.append(item)
+        print(item)
+        cursor.execute("SELECT `ItemLink` FROM `ItemTbl` WHERE `ItemID` = % s", (item,))
+        data = str(cursor.fetchall())
+        data = data.replace(')', '')
+        data = data.replace('(', '')
+        data = data.replace(',', '')
+        data = data.replace("'", '')
+        print(data)
+
+        itemE.append(data)
 
     ItemList = itemE
     return ItemList
@@ -105,13 +116,13 @@ def getMasteryStats(Region,id):
     return masteryScore
 
 def getMatchData(region,id,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=5&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, puuid)
     return data
 
 def getMatchIds(region,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=5&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     return MatchIDs
 
@@ -135,8 +146,9 @@ def getMatches(region,MatchIDs,puuid):
                 'Items':[]
         }
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
-
+        print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         MatchData = MatchData.json()
+        #http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json
         getGameParticipants(MatchData)
         participants = MatchData['metadata']['participants']
         player_index = participants.index(puuid)

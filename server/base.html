@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<link id="favicon" rel="shortcut icon" type="image/png" href="data:image/png;base64,....==" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+	<script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
+	<title>Tracker</title>
+	<style>
+	</style>
+	<script src="https://unpkg.com/vue@next"></script> <!-- https://v3.vuejs.org/guide/installation.html#cdn -->
+	<!-- <script src="vue.js"></script> -->
+</head>
+<body >
+	<!---Navbar---->
+	<nav class = "navbar is-link">
+	<div id="navbarBasicExample" class="navbar-menu">
+		<div class="navbar-start">
+		  <a class="navbar-item" href="{{ url_for('index')}}">
+			Home
+		  </a>
+	
+		  <a class="navbar-item">
+			Clips
+		  </a>
+		  
+		  <a class="navbar-item">
+			Group Finder
+		  </a>
+
+		  <a class="navbar-item">
+			Featured Profiles
+		  </a>
+
+		  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+			<span aria-hidden="true"></span>
+			<span aria-hidden="true"></span>
+			<span aria-hidden="true"></span>
+		  </a>
+		</div>
+		<div class="navbar-end">
+			<div class="navbar-item">
+			  <div class="buttons">
+				<a class="button is-primary" href="{{ url_for('register') }}">
+				  <strong>Sign up</strong>
+				</a>
+				<a class="button is-light" href="{{ url_for('login') }}">
+				  Log in
+				</a>
+			  </div>
+			</div>
+	  </nav>
+	</div>
+    </div>
+</div>
+
+
+{% block content%}
+
+
+
+{% endblock %}
+	
+</body>
+</html>
+
