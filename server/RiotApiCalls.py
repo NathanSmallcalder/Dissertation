@@ -10,6 +10,7 @@ MatchIDG = []
 playerMatchData = []
 participants = []
 fullMatch = []
+matchData = []
 
 db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
 cursor = db.cursor()
@@ -126,25 +127,57 @@ def getMatchIds(region,puuid):
     MatchIDs = MatchIDs.json()
     return MatchIDs
 
-def getMatches(region,MatchIDs,puuid):
+def getMatches(region,MatchIDs,SummonerInfo):
+    puuid = SummonerInfo['puuid']
+    SummId = SummonerInfo['id']
+    RankedDetails = getRankedStats(region,SummId)
+    try:
+        SOLO = RankedDetails[1]
+        FLEX = RankedDetails[0]
+    except:
+        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
+        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
+
+    matchIdsData = {
+        'MatchIDS':[],
+        'GameType':[],
+        'Rank':[]
+    }
+
     temp = []
+    tempMatchIds = []
     playerMatchDataTemp = []
+
     for matchID in MatchIDs:
         data = {
-                'GameDuration':[], 
-                'champion': [],
-                'kills':[] ,
-                'deaths': [],
-                'assists': [],
-                'win': [],
-                'goldEarned':[],
-                'physicalDamageDealtToChampions':[],
-                'physicalDamageTaken':[],
-                'cs':[],
-                'dragonKills':[],
-                'baronKills':[],
-                'Items':[]
+                'GameDuration':None, 
+                'champion': None,
+                'kills':None ,
+                'deaths': None,
+                'assists': None,
+                'win': None,
+                'goldEarned':None,
+                'physicalDamageDealtToChampions':None,
+                'physicalDamageTaken':None,
+                'cs':None,
+                'dragonKills':None,
+                'baronKills':None,
+                'Items':None,
+                "TowerDamageDealt":None,
+                "Role":None,
+                "PrimaryKeyStone":None,
+                "SecondaryKeyStone":None,
+                "EnemyChamp":None
         }
+
+        matchIdsData = {
+            'MatchIDS':[],
+            'GameType':[],
+            'Rank':[]
+        }
+
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         MatchData = MatchData.json()
@@ -157,11 +190,9 @@ def getMatches(region,MatchIDs,puuid):
         player_data = MatchData['info']['participants'][player_index]
 
         player_data = getSummonerSpellsImages(player_data)
-        player_data = getRoleImages(player_data)
-     
+        #player_data = getRoleImages(player_data)
         playerMatchDataTemp.append(player_data)
   
-        
         Items = [
             player_data['item0'],
             player_data['item1'],
@@ -171,8 +202,20 @@ def getMatches(region,MatchIDs,puuid):
             player_data['item5'],
             player_data['item6'],
         ]
+        print(player_data["perks"]['styles'][0]['selections'][0]['perk'])
+        KeyStone1=[
+            player_data["perks"]['styles'][0]['selections'][0]['perk'],
+            player_data["perks"]['styles'][0]['selections'][1]['perk'],
+            player_data["perks"]['styles'][0]['selections'][2]['perk'],
+            player_data["perks"]['styles'][0]['selections'][3]['perk']
+        ]
+        
+        KeyStone2= [
+            player_data["perks"]['styles'][1]['selections'][0]['perk'],
+            player_data["perks"]['styles'][1]['selections'][1]['perk'],
 
-        ItemInGame = GetItemImages(Items)
+        ]
+        #ItemInGame = GetItemImages(Items)
    
         gameMins = MatchData['info']['gameDuration']
         champion = player_data['championName']
@@ -186,31 +229,49 @@ def getMatches(region,MatchIDs,puuid):
         cs = player_data['totalMinionsKilled']
         dragonKills = player_data['dragonKills']
         baronKills = player_data['baronKills']
+        role = player_data['lane']
+        turretDmg = player_data['turretTakedowns']
 
-        data['champion'].append(champion)
-        data['kills'].append(k)
-        data['deaths'].append(d)
-        data['assists'].append(a)
-        data['win'].append(win)    
-        data['goldEarned'].append(GoldPerMin)
-        data['physicalDamageDealtToChampions'].append(physicalDamageDealtToChampions)
-        data['physicalDamageTaken'].append(physicalDamageTaken)
-        data['cs'].append(cs)
-        data['dragonKills'].append(dragonKills)    
-        data['baronKills'].append(baronKills)
-        data['GameDuration'].append(gameMins)
+        data['champion'] = champion
+        data['kills'] = k
+        data['deaths'] = d
+        data['assists'] = a
+        data['win'] = win  
+        data['goldEarned'] = GoldPerMin
+        data['physicalDamageDealtToChampions'] = physicalDamageDealtToChampions
+        data['physicalDamageTaken'] = physicalDamageTaken
+        data['cs'] = cs
+        data['dragonKills'] = dragonKills
+        data['baronKills'] = baronKills
+        data['GameDuration'] = gameMins
+        data['Role'] = role
+        data['Items'] = Items
+        data['PrimaryKeyStone'] = KeyStone1
+        data['SecondaryKeyStone'] = KeyStone2
+        data['TowerDamageDealt'] = turretDmg
+        gameType = MatchData['info']['gameMode']
+        matchIdsData['MatchIDS'].append(matchID)
+        matchIdsData['GameType'].append(gameType)
+        matchIdsData['Rank'].append(SOLO['tier'])
 
-        data['Items'] = ItemInGame
         data2 = dict(data)
+        matchIds2 = dict(matchIdsData)
         del data
+        del matchIdsData
         temp.append(data2)
-    
+        tempMatchIds.append(matchIds2)
 
-   
-    array2 = playerMatchDataTemp[:]
-    setPlayerMatchData(array2)
+    tempPlayerMatch = playerMatchDataTemp[:]
+    tempMatchIds1 = tempMatchIds
+
+    setPlayerMatchData(tempPlayerMatch)
+    setsMatchData(tempMatchIds1)
+
     dataList = list(temp)
+    matchIDS = list(tempMatchIds)
+
     del temp
+    del tempMatchIds 
     return dataList
 
 #Sets Player Match Data
@@ -222,6 +283,17 @@ def setPlayerMatchData(match):
 def getPlayerMatchData():
     global fullMatch
     return fullMatch
+
+#Sets Match Data
+def setsMatchData(match):
+    global matchData
+    matchData = match
+
+#Returns Match Data
+def getsMatchData():
+    global matchData
+    return matchData
+
 
 def getGameParticipants(game):
     x=0
