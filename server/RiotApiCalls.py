@@ -131,13 +131,13 @@ def getMatches(region,MatchIDs,SummonerInfo):
     puuid = SummonerInfo['puuid']
     SummId = SummonerInfo['id']
     RankedDetails = getRankedStats(region,SummId)
+    print(RankedDetails)
     try:
-        SOLO = RankedDetails[1]
-        FLEX = RankedDetails[0]
+        SOLO = RankedDetails[0]
     except:
-        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
-        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
     matchIdsData = {
@@ -181,6 +181,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         MatchData = MatchData.json()
+        FullMatchData = MatchData
         #http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json
         getGameParticipants(MatchData)
         participants = MatchData['metadata']['participants']
@@ -190,6 +191,17 @@ def getMatches(region,MatchIDs,SummonerInfo):
         player_data = MatchData['info']['participants'][player_index]
 
         player_data = getSummonerSpellsImages(player_data)
+        role = player_data['lane']
+        champion = player_data['championName']
+        i = 0
+        while i <= 9:
+            enemyLane = FullMatchData['info']['participants'][i]['lane']
+            enemyChampTemp = FullMatchData['info']['participants'][i]['championName']
+            if (role == enemyLane and enemyChampTemp != champion):
+                enemyChampion = FullMatchData['info']['participants'][i]['championName']
+                break
+            i = i + 1
+      
         #player_data = getRoleImages(player_data)
         playerMatchDataTemp.append(player_data)
   
@@ -218,7 +230,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         #ItemInGame = GetItemImages(Items)
    
         gameMins = MatchData['info']['gameDuration']
-        champion = player_data['championName']
+       
         k = player_data['kills']
         d = player_data['deaths']
         a = player_data['assists']
@@ -249,10 +261,12 @@ def getMatches(region,MatchIDs,SummonerInfo):
         data['PrimaryKeyStone'] = KeyStone1
         data['SecondaryKeyStone'] = KeyStone2
         data['TowerDamageDealt'] = turretDmg
+        data['EnemyChamp'] = enemyChampion
         gameType = MatchData['info']['gameMode']
         matchIdsData['MatchIDS'].append(matchID)
         matchIdsData['GameType'].append(gameType)
         matchIdsData['Rank'].append(SOLO['tier'])
+        print(SOLO['tier'])
 
         data2 = dict(data)
         matchIds2 = dict(matchIdsData)
