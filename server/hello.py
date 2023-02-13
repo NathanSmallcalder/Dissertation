@@ -9,6 +9,9 @@ from RiotApiCalls import *
 import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
+import warnings
+
+warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 key = secrets.token_urlsafe(16)
@@ -19,6 +22,7 @@ app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = sql_user
 app.config['MYSQL_PASSWORD'] = sql_password
 app.config['MYSQL_DB'] = 'o1gbu42_StatTracker'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
@@ -110,6 +114,20 @@ def SummonerInGame():
     Region = request.args.get('region')
     Summoners = summonerInGameCheck(Region,SummonerName)
     return render_template('summonerInGame.html', Summoners = Summoners)
+
+@app.route('/champions', methods=['GET','POST'])
+def ChampionTablePage():
+    query = ('SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`kills`,`MatchStatsTbl`.`deaths`,`MatchStatsTbl`.`assists`, `MatchStatsTbl`.`Win`, `MatchTbl`.`GameDuration` FROM `SummonerMatchTbl`  JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId  JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  WHERE `MatchTbl`.`QueueType` = "CLASSIC";')
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    for d in data:
+        print(d[0])
+
+    #columns = ['ChampionFk', 'kills', 'deaths','assists', 'Win', 'GameDuration']
+    
+    return render_template('champions.html',data=  data)
+
 
 @app.route('/')
 def index():

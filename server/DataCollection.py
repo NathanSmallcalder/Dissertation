@@ -19,7 +19,7 @@ connection = mysql.connector.connect(host=host,
                                      password=sql_password)
                                 
 Region = "EUW1"
-summonerName = "Mininini56 "
+summonerName = ""
 
 db_Info = connection.get_server_info()
 print("Connected to MySQL Server version ", db_Info)
@@ -29,6 +29,7 @@ SummonerInfo = getSummonerDetails(Region,summonerName)
 SummId = SummonerInfo['id']
 RankedDetails = getRankedStats(Region,SummId)
 Name = SummonerInfo['name']
+
 
 cursor.execute("INSERT INTO `SummonerTbl`(`SummonerName`) VALUES (%s )", (SummonerInfo['name'],))
 connection.commit()
