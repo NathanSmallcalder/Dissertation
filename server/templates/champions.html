@@ -1,0 +1,32 @@
+{% extends 'base.html'%}
+
+{%block content %}
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th><abbr title="Champion">Champion</abbr></th>
+        <th><abbr title="Kills">K</abbr></th>
+        <th><abbr title="Deaths">D</abbr></th>
+        <th><abbr title="Assists">A</abbr></th>
+        <th><abbr title="Won">W</abbr></th>
+        <th><abbr title="Won">GameDuration</abbr></th>
+      </tr>
+    </thead>
+
+    {% for matches in data %}
+    <tr>
+        <td>{{ matches[0] }}</td>
+        <td>{{ matches[1] }}</td>
+        <td>{{ matches[2] }}</td>
+        <td>{{ matches[3] }}</td>
+        <td>{{ matches[4] }}</td>
+        <td>{{ matches[5] }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+{% endblock %}
