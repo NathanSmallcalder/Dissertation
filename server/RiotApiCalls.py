@@ -42,7 +42,7 @@ summonerSpells = {
     55: 'summoner_smite.png'
 }
 
-
+#Get Item Images - Pass in itemList []
 def GetItemImages(itemList):
     itemE =[]
     for item in itemList:
@@ -59,11 +59,9 @@ def GetItemImages(itemList):
 
     ItemList = itemE
     return ItemList
-    
-
-
 
 #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/
+#Gets Summoner Spell Icons and Replaces them in the match data store
 def getSummonerSpellsImages(match):
         spellId1 = match['summoner1Id']
         spellId2 = match['summoner2Id']
@@ -86,10 +84,23 @@ def getChampImages(masteryScore):
                 mastery['name'] = temp['id']
                 mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
 
+#Gets ChampionImage URLS into masteryScore JSON file
+def getChampImagesSingle(ChampId):
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
+    DDRAGON = DDRAGON.json()
+    DDRAGON = DDRAGON['data']
+    for item in DDRAGON:
+        temp = DDRAGON.get(item)
+        for champs in ChampId:
+            if int(temp['key']) == (champs[0]):
+                champs[0] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
+
+
 #Gets RankTierIcon     
 def RankedImages(RankedMode):
     RankedMode['ImageUrl'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/" + RankedMode['tier'].lower() + ".png"
 
+#Calculates Win Rate for the RankedStats []
 def CalcWinRate(RankedMode):
     GamesPlayed = RankedMode['losses'] + RankedMode['wins']
     WinRate = RankedMode['wins'] / GamesPlayed
@@ -100,6 +111,7 @@ def getImageLink(SummonerInfo):
     profileIcon = str(SummonerInfo['profileIconId'])
     SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
    
+
 def getSummonerDetails(Region,summonerName):
     SummonerInfo = requests.get("https://" + Region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + API)
     SummonerInfo = SummonerInfo.json()
@@ -116,10 +128,10 @@ def getMasteryStats(Region,id):
     getChampImages(masteryScore)
     return masteryScore
 
-def getMatchData(region,id,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
+def getMatchData(region,id,SummonerInfo):
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
-    data = getMatches("europe", MatchIDs, puuid)
+    data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
 
 def getMatchIds(region,puuid):
@@ -191,6 +203,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         player_data = MatchData['info']['participants'][player_index]
 
         player_data = getSummonerSpellsImages(player_data)
+        player_data = getRoleImages(player_data)
         role = player_data['lane']
         champion = player_data['championName']
         i = 0
@@ -214,6 +227,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
             player_data['item5'],
             player_data['item6'],
         ]
+        Items = GetItemImages(Items)
         print(player_data["perks"]['styles'][0]['selections'][0]['perk'])
         KeyStone1=[
             player_data["perks"]['styles'][0]['selections'][0]['perk'],
@@ -308,7 +322,6 @@ def getsMatchData():
     global matchData
     return matchData
 
-
 def getGameParticipants(game):
     x=0
     participantsTemp = {
@@ -367,7 +380,8 @@ def getMatchTimeline(region,id,puuid,data):
 
    
             i = 0
-            matchLength = data[ie]['GameDuration'][0]
+            print(data[ie]['GameDuration'])
+            matchLength = data[ie]['GameDuration']
             matchLength = int(matchLength)
  
             matchL = matchLength / 60
@@ -456,9 +470,6 @@ def SummonerInGame(LiveGame,region):
         time.sleep(30)
     return Summoners
     
-
-
-
 def summonerInGameCheck(region,summonerId):
     LiveGame = requests.get("https://"+ region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
     LiveGame = LiveGame.json()
@@ -467,7 +478,6 @@ def summonerInGameCheck(region,summonerId):
     else:
         Summoners = SummonerInGame(LiveGame,region)
         return Summoners
-
 
 def getRoleImages(data):
     role = data['role'].lower()

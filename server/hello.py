@@ -27,7 +27,14 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
-
+def create_connection():
+    return pymysql.connect(
+        host=host,
+        db='o1gbu42_StatTracker',
+        user=sql_user,
+        password=sql_password,
+        cursorclass=pymysql.cursors.DictCursor
+    )
 #Login
 @app.route('/login', methods =['GET', 'POST'])
 def login():
@@ -76,6 +83,7 @@ def register():
 #Summoner Routing
 @app.route('/summoner',methods=['GET','POST'])
 def getSummoner():
+    connection = create_connection()
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
     SummonerInfo = getSummonerDetails(Region,summonerName)
@@ -96,7 +104,7 @@ def getSummoner():
 
     getImageLink(SummonerInfo)
     masteryScore = getMasteryStats(Region,SummId)
-    data = getMatchData(Region, SummId, SummonerInfo['puuid'])
+    data = getMatchData(Region, SummId, SummonerInfo)
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
     fullMatch = getPlayerMatchData()
@@ -117,16 +125,21 @@ def SummonerInGame():
 
 @app.route('/champions', methods=['GET','POST'])
 def ChampionTablePage():
-    query = ('SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`kills`,`MatchStatsTbl`.`deaths`,`MatchStatsTbl`.`assists`, `MatchStatsTbl`.`Win`, `MatchTbl`.`GameDuration` FROM `SummonerMatchTbl`  JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId  JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  WHERE `MatchTbl`.`QueueType` = "CLASSIC";')
+    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
     cursor.execute(query)
     data = cursor.fetchall()
 
-    for d in data:
-        print(d[0])
-
+  
     #columns = ['ChampionFk', 'kills', 'deaths','assists', 'Win', 'GameDuration']
     
     return render_template('champions.html',data=  data)
+
+
+@app.route('/champions/:id' , methods=['GET','POST'])
+def championData():
+    champName = request.args.get('Champion')
+
+    return render_template('championData.html')
 
 
 @app.route('/')

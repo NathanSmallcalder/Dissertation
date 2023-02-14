@@ -12,17 +12,21 @@
         <th><abbr title="Assists">A</abbr></th>
         <th><abbr title="Won">W</abbr></th>
         <th><abbr title="Won">GameDuration</abbr></th>
+        
       </tr>
     </thead>
 
     {% for matches in data %}
+    {% set link = ["https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" ~ matches[0] ~ ".png"]|join %}
+    
+    
     <tr>
-        <td>{{ matches[0] }}</td>
-        <td>{{ matches[1] }}</td>
-        <td>{{ matches[2] }}</td>
-        <td>{{ matches[3] }}</td>
-        <td>{{ matches[4] }}</td>
-        <td>{{ matches[5] }}</td>
+        <td><figure class="image is-24x24px"><img src= {{link}}> </figure></td>
+        <td>{{ matches[1]|round(0) }}</td>
+        <td>{{ matches[2]|round(0) }}</td>
+        <td>{{ matches[3]|round(0) }}</td>
+        <td> <progress class="progress is-success" value="{{matches[4] * 100|round(0)}}" max="100"></progress>{{(matches[4] * 100)|round(0)}}%</td>
+        <td>{{ matches[5]|round(0) }}</td>
     </tr>
     {% endfor %}
 </tbody>

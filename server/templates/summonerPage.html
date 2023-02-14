@@ -224,7 +224,7 @@
 
 													<div>
 														<div>
-														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img><a href="{{weblink}} + /summoner?summoner={{participants[loop.index0]['name'][5]}}&region=EUW1">{{participants[loop.index0]['name'][5]}} </a>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img> {{participants[loop.index0]['name'][5]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][6]}}.png"></img> {{participants[loop.index0]['name'][6]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][7]}}.png"></img> {{participants[loop.index0]['name'][7]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][8]}}.png"></img> {{participants[loop.index0]['name'][8]}}</ul>
@@ -389,7 +389,7 @@
 		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
 		var yValues = someJavaScriptVar;
 		var yValues2 = totalDamageTakenPerMinRank;
-	
+		alert(yValues2)
 		new Chart("AvgDamageTakenChart", {
 		type: "line",
 		data: {
