@@ -1,0 +1,115 @@
+{% extends 'base.html'%}
+
+{%block content %}
+
+
+<div class="columns is-multiline">
+    <div class="column is-three-fifths">
+        <div class="card">
+            <div class="card-content">
+  
+              <div class="content">
+                <h1>{{ championStats.id }}</h1>
+                <figure class="image is-128x128">
+                     <img class="is-rounded" src="{{ championStats.imageLink }}">
+                </figure>
+                <div class ="has-text-right">
+
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <div class="card-content">
+              <div class="content">
+                <figure class="image is-128x128">
+                    <img class="is-rounded" src=>
+                </figure>
+    
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero is-success">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title">
+              Champion Abilities
+            </h1>
+          </div>
+      </div> 
+        
+      <div class="hero-foot">
+      <nav class="tabs is-boxed is-fullwidth is-large">
+              <div class="container">
+                <ul>
+                  <li class="tab is-active" onclick="openTab(event,'Passive')"><a >Passive</a></li>
+                  <li class="tab" onclick="openTab(event,'Q')"><a >Q</a></li>
+                  <li class="tab" onclick="openTab(event,'W')"><a >W</li>
+                  <li class="tab" onclick="openTab(event,'E')"><a >E</a></li>
+                  <li class="tab" onclick="openTab(event,'R')"><a >R</a></li>
+                </ul>
+              </div>
+            </nav>
+        </div>
+      </section>
+      
+      <div class="container section">
+        <div id="Passive" class="content-tab" >
+          <video autoplay="autoplay" controls="controls" preload="preload">
+            <source src="{{ ChampionAbilities.passive.abilityVideoPath }}" type="video/mp4"></source>
+          </video>
+          <p> {{ChampionAbilities.passive.name}}</p>
+          <p> {{ChampionAbilities.passive.description}}</p>
+        </div>
+          <div id="Q" class="content-tab" >
+            <video autoplay="autoplay" controls="controls" preload="preload">
+              <source src="{{ ChampionAbilities.spells[0].abilityVideoPath }}" type="video/mp4"></source>
+            </video>
+            <p> {{ChampionAbilities.spells[1].name}}</p>
+            <p> {{ChampionAbilities.spells[1].description}}</p>
+          </div>
+          <div id="W" class="content-tab" style="display:none">
+            <video autoplay="autoplay" controls="controls" preload="preload">
+              <source src="{{ ChampionAbilities.spells[1].abilityVideoPath }}" type="video/mp4"></source>
+            </video>
+            <p> {{ChampionAbilities.spells[3].name}}</p>
+            <p> {{ChampionAbilities.spells[3].description}}</p>
+          </div>
+          <div id="E" class="content-tab" style="display:none">
+            <video autoplay="autoplay" controls="controls" preload="preload">
+              <source src="{{ ChampionAbilities.spells[2].abilityVideoPath }}" type="video/mp4"></source>
+            </video>
+            <p> {{ChampionAbilities.spells[2].name}}</p>
+            <p> {{ChampionAbilities.spells[2].description}}</p>
+          </div>
+          <div id="R" class="content-tab" style="display:none">
+            <video autoplay="autoplay" controls="controls" preload="preload">
+              <source src="{{ ChampionAbilities.spells[3].abilityVideoPath }}" type="video/mp4"></source>
+            </video>
+            <p> {{ChampionAbilities.spells[3].name}}</p>
+            <p> {{ChampionAbilities.spells[3].description}}</p>
+         </div>
+      </div>
+      
+          
+<script>
+function openTab(evt, tabName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("content-tab");
+  for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tab");
+  for (i = 0; i < x.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " is-active";
+}
+</script>
+{% endblock %}

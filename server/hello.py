@@ -10,6 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
 import warnings
+from championsRequest import *
 
 warnings.filterwarnings('ignore')
 
@@ -35,6 +36,7 @@ def create_connection():
         password=sql_password,
         cursorclass=pymysql.cursors.DictCursor
     )
+
 #Login
 @app.route('/login', methods =['GET', 'POST'])
 def login():
@@ -135,12 +137,16 @@ def ChampionTablePage():
     return render_template('champions.html',data=  data)
 
 
-@app.route('/champions/:id' , methods=['GET','POST'])
+#InDepth Champion Stats
+@app.route('/champion' , methods=['GET','POST'])
 def championData():
     champName = request.args.get('Champion')
+    championStats = getChampDetails(champName)
+    print(championStats)
+    ChampionAbilities = getChampAbilities(championStats)
 
-    return render_template('championData.html')
 
+    return render_template('championData.html',championStats = championStats, ChampionAbilities = ChampionAbilities)
 
 @app.route('/')
 def index():

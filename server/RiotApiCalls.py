@@ -3,7 +3,7 @@ from config import *
 import pandas as pd
 import time
 import pymysql
-
+from championsRequest import *
 
 API = api_key
 MatchIDG = []
@@ -72,29 +72,6 @@ def getSummonerSpellsImages(match):
         match['summoner2Id'] = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/' + spellId2
         return match
 
-#Gets ChampionImage URLS into masteryScore JSON file
-def getChampImages(masteryScore):
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
-    DDRAGON = DDRAGON.json()
-    DDRAGON = DDRAGON['data']
-    for item in DDRAGON:
-        temp = DDRAGON.get(item)
-        for mastery in masteryScore:
-            if int(temp['key']) == int(mastery['championId']):
-                mastery['name'] = temp['id']
-                mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
-
-#Gets ChampionImage URLS into masteryScore JSON file
-def getChampImagesSingle(ChampId):
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
-    DDRAGON = DDRAGON.json()
-    DDRAGON = DDRAGON['data']
-    for item in DDRAGON:
-        temp = DDRAGON.get(item)
-        for champs in ChampId:
-            if int(temp['key']) == (champs[0]):
-                champs[0] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
-
 
 #Gets RankTierIcon     
 def RankedImages(RankedMode):
@@ -129,13 +106,13 @@ def getMasteryStats(Region,id):
     return masteryScore
 
 def getMatchData(region,id,SummonerInfo):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=15&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
 
 def getMatchIds(region,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=15&api_key=" + API)
     MatchIDs = MatchIDs.json()
     return MatchIDs
 
@@ -203,7 +180,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         player_data = MatchData['info']['participants'][player_index]
 
         player_data = getSummonerSpellsImages(player_data)
-        player_data = getRoleImages(player_data)
+  
         role = player_data['lane']
         champion = player_data['championName']
         i = 0
@@ -214,8 +191,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
                 enemyChampion = FullMatchData['info']['participants'][i]['championName']
                 break
             i = i + 1
-      
-        #player_data = getRoleImages(player_data)
+
         playerMatchDataTemp.append(player_data)
   
         Items = [
@@ -227,7 +203,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
             player_data['item5'],
             player_data['item6'],
         ]
-        Items = GetItemImages(Items)
+     
         print(player_data["perks"]['styles'][0]['selections'][0]['perk'])
         KeyStone1=[
             player_data["perks"]['styles'][0]['selections'][0]['perk'],
@@ -242,7 +218,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
         ]
         #ItemInGame = GetItemImages(Items)
-   
+        #player_data = getRoleImages(player_data)
         gameMins = MatchData['info']['gameDuration']
        
         k = player_data['kills']

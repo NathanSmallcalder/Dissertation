@@ -19,7 +19,7 @@ connection = mysql.connector.connect(host=host,
                                      password=sql_password)
                                 
 Region = "EUW1"
-summonerName = ""
+summonerName = "ChristianPShovv "
 
 db_Info = connection.get_server_info()
 print("Connected to MySQL Server version ", db_Info)
@@ -110,6 +110,8 @@ for MatchId in MatchIDs:
     Item3 = matchData[i]['Items'][2]
     Item4 = matchData[i]['Items'][3]
     Item5 = matchData[i]['Items'][4]
+    dragonKills = matchData[i]['dragonKills']
+    baronKills = matchData[i]['baronKills']
     Item6 = matchData[i]['Items'][5]
     print(Item1)
     print(Item2)
@@ -128,6 +130,7 @@ for MatchId in MatchIDs:
     SK1 = matchData[i]['SecondaryKeyStone'][0]
     SK2 = matchData[i]['SecondaryKeyStone'][1]
     EmemyLane = matchData[i]['EnemyChamp']
+    print(EmemyLane)
     cursor.execute("SELECT `ChampionId` FROM `ChampionTbl` WHERE `ChampionName` = (%s)", (EmemyLane, ))
     Enemy = cursor.fetchone()
     Enemy = Normalise(Enemy)
@@ -136,7 +139,7 @@ for MatchId in MatchIDs:
         Enemy = 0
 
 
-    cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `EnemyChampionFk`)VALUES(%s , %s ,%s , %s , %s, %s , %s , %s ,%s , %s , %s,%s , %s , %s ,%s , %s , %s,%s , %s , %s ,%s , %s , %s, %s)", (str(SummMatchId), cs ,dmgDealt,dmgTaken ,TurretDmgDealt,goldEarned,Role,win,Item1 ,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,Enemy))
+    cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `EnemyChampionFk`,`DragonKills`,`BaronKills`)VALUES(%s , %s ,%s , %s , %s, %s , %s , %s ,%s , %s , %s,%s , %s , %s ,%s , %s , %s,%s , %s , %s ,%s , %s , %s, %s, %s, %s)", (str(SummMatchId), cs ,dmgDealt,dmgTaken ,TurretDmgDealt,goldEarned,Role,win,Item1 ,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,Enemy,dragonKills,baronKills))
 
 
     MatchDataTimeline = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/" + MatchId + "/timeline?api_key=" + api_key)

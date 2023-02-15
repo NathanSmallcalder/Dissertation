@@ -35,7 +35,7 @@ while i < 5:
 
     print(df_games)
     X = df_games
-    y = winner - 1
+    y = winner
     X_train, X_validation, Y_train, Y_validation = train_test_split(X, y, test_size=0.10, random_state=1)
 
     print(X_train)
