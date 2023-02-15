@@ -48,10 +48,19 @@ def getChampImagesSingle(ChampId):
                 champs[0] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
 
 def getChampSpellImages(champion):
+    n= 29
+    passive = champion['passive']['abilityIconPath'] 
+    champion['passive']['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/" + passive[n:].lower()
+    print(champion['passive']['abilityIconPath'])
     for spells in champion['spells']:
-        spell = spells['abilityVideoPath']
-        spells['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/characters/" + str(champion['alias']).lower()  +"/hud/icons2d/"  + str(champion['alias']).lower() + "_" + spells['spellKey'] + ".png"
-        print(spells['abilityIconPath'])
+        spell = spells['abilityIconPath']
+        spell = str(spell)
 
-    
+        spell = spell[n:]
+        spell = "https://raw.communitydragon.org/latest/game/assets/" + spell.lower()
+        spells['abilityIconPath'] = spell
+   
+def getRunesImages():
+    pass
 
+    #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1

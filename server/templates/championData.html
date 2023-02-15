@@ -27,15 +27,26 @@
 		width: 0;
 		height: 0;
 		}
+   .columns.is-multiline {
+    padding-top:15px;
+    padding-left: 5px;
+    padding-right: 5px;
+   }
+
+   .level-item.has-text-centered p {
+    font-size: 32px;
+   }
+    
+    
 	</style>
 
 <div class="columns is-multiline">
-    <div class="column">
+    <div class="column is-four-fifths">
         <div class="card">
             <div class="card-content">
   
               <div class="content">
-                <h1>{{ championStats.id }} <h2>{{ championStats.title }}</h2> </h1>
+                <h1>{{ championStats.id }} {{ championStats.title }}</h1>
                 <figure class="image is-128x128">
                      <img class="is-rounded" src="{{ championStats.imageLink }}">
                 </figure>
@@ -49,6 +60,39 @@
             </div>
         </div>
     </div>
+    <div class="column">
+      <div class="card">
+          <div class="card-content">
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Games Recorded</p>
+                <p class="title">{{totalGames}}</p>
+              </div>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Wins</p>
+                <p class="title">{{wins}}</p>
+              </div>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Position</p>
+                <p class="title">Top</p>
+              </div>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Kills</p>
+                <p class="title">{{champKills}}</p>
+              </div>
+            </div>
+
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
 </div>
 <div class = "columns is-multiline">
     <div class = "column is-two-fifths">
@@ -82,7 +126,7 @@
             <div class="card-content">
               <div class="content">
                 <figure class="image is-128x128">
-                  <img class="is-rounded" src="{{ championStats.passive.abilityIconPath }}">
+                  <img src="{{ ChampionAbilities.passive.abilityIconPath }}">
                 </figure>
                 <video autoplay="autoplay" controls="controls" preload="preload"width="400" height="140">
                   <source src="{{ ChampionAbilities.passive.abilityVideoPath }}" type="video/mp4"></source>
@@ -94,7 +138,7 @@
         </div>
       </div>
         
-      <div id="Q" class="content-tab" >
+      <div id="Q" class="content-tab" style="display:none">
         <div class = "card"> 
               <div class="card-content">
                 <div class="content">
@@ -111,7 +155,7 @@
             </div>
         </div>
 
-        <div id="W" class="content-tab" >
+        <div id="W" class="content-tab" style="display:none">
           <div class = "card"> 
                 <div class="card-content">
                   <div class="content">
@@ -128,7 +172,7 @@
               </div>
           </div>
 
-          <div id="E" class="content-tab" >
+          <div id="E" class="content-tab"style="display:none" >
             <div class = "card"> 
                 <div class="card-content">
                   <div class="content">
@@ -145,7 +189,7 @@
               </div>
           </div>
 
-          <div id="R" class="content-tab" >
+          <div id="R" class="content-tab"style="display:none" >
             <div class = "card"> 
                   <div class="card-content">
                     <div class="content">
@@ -178,6 +222,20 @@
             </div>
           </div>
       </div>
+
+      <div class="column">
+        <div class="card">
+            <div class="card-content">
+              <div class="content">
+                <h1> Runes </h1>
+                <figure class="image is-128x128">
+                    <img class="is-rounded" src=>
+                </figure>
+    
+                </div>
+              </div>
+            </div>
+        </div>
  </div>
           
 <script>

@@ -147,8 +147,16 @@ def championData():
     print(ChampionAbilities)
     getChampSpellImages(ChampionAbilities)
 
+    TotalGames = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `SummonerMatchTbl`.`ChampionFk` = % s", (int(championStats['key']), ))
+    TotalGames = cursor.fetchall()
 
-    return render_template('championData.html',championStats = championStats, ChampionAbilities = ChampionAbilities)
+    ChampWins = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `MatchStatsTbl`.Win = 1 and `SummonerMatchTbl`.`ChampionFk` = % s", (int(championStats['key']), ))
+    ChampWins = cursor.fetchall()
+
+    ChampKills = cursor.execute("SELECT SUM(`MatchStatsTbl`.kills) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `SummonerMatchTbl`.`ChampionFk` = % s", (int(championStats['key']), ))
+    ChampKills = cursor.fetchall()
+    
+    return render_template('championData.html',championStats = championStats, ChampionAbilities = ChampionAbilities,wins = ChampWins,totalGames = TotalGames,champKills = ChampKills)
 
 @app.route('/')
 def index():
