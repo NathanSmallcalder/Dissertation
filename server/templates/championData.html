@@ -2,6 +2,7 @@
 
 {%block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
 	<style>
 		.card {
 			height: 100%;
@@ -208,8 +209,6 @@
       </div>
     </div>
 
-
-
     <div class="column">
       <div class="card">
           <div class="card-content">
@@ -217,7 +216,8 @@
               <figure class="image is-128x128">
                   <img class="is-rounded" src=>
               </figure>
-  
+
+               
               </div>
             </div>
           </div>
@@ -232,12 +232,50 @@
                     <img class="is-rounded" src=>
                 </figure>
     
-                </div>
               </div>
             </div>
+          </div>
         </div>
- </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="columns is-multiline">
+  <div class="column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+
+        <div class ="has-text-right">
+          <canvas id="AvgMinions" width="350" height="450"></canvas>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <canvas id="TotalGoldAvg" width="350" height="450"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <canvas id="DmgDealtAvg" width="350" height="450"></canvas>
           
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 <script>
 function openTab(evt, tabName) {
   var i, x, tablinks;
@@ -252,5 +290,82 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " is-active";
 }
+
+
+var xValues = ["{{AvgMinions[0][0]}}","{{AvgMinions[1][0]}}",];
+var yValues = ["{{AvgMinions[0][1]}}","{{AvgMinions[1][1]}}",];
+var barColors = ["Grey", "green","blue","orange","brown"];
+
+
+new Chart("AvgMinions", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Minions Killed Avg (Per Rank)"
+    }
+  }
+});
+
+var xValues = ["{{TotalGoldAvg[0][0]}}","{{TotalGoldAvg[1][0]}}",];
+var yValues = ["{{TotalGoldAvg[0][1]}}","{{TotalGoldAvg[1][1]}}",];
+var barColors = ["Grey", "green","blue","orange","brown"];
+
+
+new Chart("TotalGoldAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Minions Killed Avg (Per Rank)"
+    }
+ 
+  }
+});
+
+
+var xValues = ["{{DmgDealtAvg[0][0]}}","{{DmgDealtAvg[1][0]}}",];
+var yValues = ["{{DmgDealtAvg[0][1]}}","{{DmgDealtAvg[1][1]}}",];
+var barColors = ["Grey", "green","blue","orange","brown"];
+
+new Chart("DmgDealtAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Minions Killed Avg (Per Rank)"
+    }
+  }
+});
+
+
+
 </script>
 {% endblock %}

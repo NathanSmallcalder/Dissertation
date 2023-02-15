@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 
 {% block content %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<style>
 		.card {
 			height: 100%;
@@ -21,32 +21,6 @@
 		list-style-type: none;
 		}
 
-		[type=radio] { 
-		position: absolute;
-		opacity: 0;
-		width: 0;
-		height: 0;
-		}
-
-		/* IMAGE STYLES */
-		[type=radio] + img {
-		cursor: pointer;
-		}
-
-		/* CHECKED STYLES */
-		[type=radio]:checked + img {
-			opacity: 1;
-		}
-
-		[type=radio]:not(:checked) + img {
-			 opacity: 0.6;
-		}
-		
-		input[type=radio] {
-			border: 0px;
-			height: 2em;
-
-		}
 
 	</style>
 
@@ -65,7 +39,6 @@
 		document.getElementById(tabName).style.display = "block";
 		evt.currentTarget.className += " is-active";
 	}
-
 </script>
 </head>
 <body>
@@ -140,15 +113,14 @@
 						<div class ="column is-narrow">
 							<div class="content">
 								<div class="column is-half-inline">
-									<div class = "is-multiline">
-										<img height = 64 width = 64 class="is-rounded" src="{{user.link}}">
-										<img height = 48 width = 48 src = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/hextech-images/chest.png">
-									</div>
-										<img height = 64 width = 64 class="is-rounded" src='https://raw.communitydragon.org/latest/game/assets/ux/mastery/mastery_icon_{{user.championLevel}}.png'>
-		
+									<figure class="image is-64x64">
+										<img class="is-rounded" src="{{user.link}}">
+									</figure>
+									<figure class="image is-64x64">
+										<img class="is-rounded" src='https://raw.communitydragon.org/latest/game/assets/ux/mastery/mastery_icon_{{user.championLevel}}.png'>
+									</figure>
 									<h1>{{user.name}}</h1>
 									<p>Champion Points : {{user.championPoints}}</p>
-									
 
 									
 									<!---https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/hextech-images/chest.png-->
@@ -192,11 +164,7 @@
 					{% for match in fullMatch %}
 
 						<div class = "column">
-						{% if data[loop.index0]['win'] == [True] %}
-							<div class = "card has-background-primary">
-						{% elif data[loop.index0]['win'] == [False] %}
-							<div class = "card has-background-danger">
-						{% endif %}
+							<div class = "card">
 								<div class="card-content">
 									<div class ="column is-narrow">
 										<div class="content">
@@ -204,13 +172,10 @@
 												<figure class="image is-64x64">
 													<img class="is-rounded" src="https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{match.championName}}.png">
 												</figure>
-						
+											
+											
 													<div>  
 														<h2>{{match.kills}} / {{match.deaths}} / {{match.assists}}</h2>
-										
-														<img width="20" height="20" src = "static/icon_gold.png" ></img> {{ data[loop.index0]['goldEarned'] }} <br> 
-
-														<img width="20" height="20" src = "static/icon_minions.png"></img> {{ data[loop.index0]['cs'] }}
 													</div>
 													<div>
 														<div>
@@ -224,26 +189,17 @@
 
 													<div>
 														<div>
-														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img><a href="{{weblink}} + /summoner?summoner={{participants[loop.index0]['name'][5]}}&region=EUW1">{{participants[loop.index0]['name'][5]}} </a>
+														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img> {{participants[loop.index0]['name'][5]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][6]}}.png"></img> {{participants[loop.index0]['name'][6]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][7]}}.png"></img> {{participants[loop.index0]['name'][7]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][8]}}.png"></img> {{participants[loop.index0]['name'][8]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][9]}}.png"></img> {{participants[loop.index0]['name'][9]}}</ul>
 														</div>
 													</div>
-													<div>
-															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][0]}}"></img>
-															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][1]}}"></img>
-															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][2]}}"></img>
-															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][3]}}"></img>
-															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][4]}}"></img>
-															<img width = "40" height="40" src = "{{data[loop.index0]['Items'][5]}}"></img>
-													</div>
 											</div>
 
 											<img src="{{match.summoner1Id}}">
 											<img src="{{match.summoner2Id}}">
-											<img width = "64" height = "64" src="{{match.role}}">
 											
 										</div>
 									</div>
@@ -253,58 +209,19 @@
 					{% endfor %}
 				</div>
 				<div id="GraphsPanel" class="content-tab" >
-					<div class=" is-multiline">
-					<label>
-						<input type="radio" name="test" value="0" checked>
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/iron.png" height = 60 width = 60 alt="Option 1">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="1">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/bronze.png" height = 60 width = 60 alt="Option 2">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="2">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/silver.png"height = 60 width = 60 alt="Option 1">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="3">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/gold.png"height = 60 width = 60 alt="Option 2">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="4">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/platinum.png"height = 60 width = 60 alt="Option 1">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="5">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/diamond.png" height = 60 width = 60  alt="Option 2">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="6">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/master.png" height = 60 width = 60 alt="Option 2">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="7">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/grandmaster.png" height = 60 width = 60 alt="Option 2">
-					  </label>
-					  <label>
-						<input type="radio" name="test" value="8">
-						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/challenger.png" height = 60 width = 60 alt="Option 2">
-					  </label>
-					</div>
 						<div class = "column">
 							<div class=" is-multiline">
-								<div class = collumn>
-									<canvas id="AvgDamageTakenChart" width="350" height="450"></canvas>
-									<canvas id="AvgDamageDealtChart" width="350" height="450"></canvas>
-									<canvas id="AvgCreepScoreChart" width="350" height="450"></canvas>
-									<canvas id="AvgGoldPerMinChart" width="350" height="450"></canvas>
-								</div>
-							</div>
+								<img src="/static/avgGoldPerMin.png" width="350" height="450">
+								<img src="/static/creepScore.png" width="350" height="450">
+								<img src="/static/DmgTaken.png" width="350" height="450">
+								<img src="/static/totalDamageDonePerMin.png" width="350" height="450">
 						</div>
 					</div>
 				</div>
 
 
+
+				</div>
 				<div id="Summary" class="content-tab" style="display:none">
 					<table class="table">
 						<thead>
@@ -332,9 +249,8 @@
 			</table>
 		</div>
 	</div>
-</div>
-</div>
-			
+				</div>
+			</div>
 
 
 
@@ -347,216 +263,7 @@
 		url = url + "/in-game" + "?summoner=" +  summonerId  + "&region=" + Region;
 		window.location.href = url
 	}
-
-	let intVal = parseInt(document.querySelector('input[name="test"]:checked').value);
-	
-	
-	if (parseInt(intVal) == 0)
-	{
-		avgGoldPerMinRank = [500, 500, 544, 734, 904, 1230, 1515, 1978, 2127, 2261, 2416];
-		creepScoreRank = [0, 0, 1, 4, 6, 8, 8, 10, 11, 11, 12];
-		totalDamageDonePerMinRank = [0, 0, 78, 115, 562, 926, 1213, 1784, 1983, 1983, 2801];
-		totalDamageTakenPerMinRank =  [0, 0, 0, 278, 1275, 2005, 2373, 3245, 3499, 3594, 3984];
-	}
-	if (parseInt(intVal) == 1)
-	{
-		avgGoldPerMinRank =  [500, 560, 623, 1015, 1264, 1398, 1613, 1867, 2203, 2379, 2769];
-		creepScoreRank = [0, 0, 0, 0, 3, 3, 3, 3, 4, 5, 5];
-		totalDamageDonePerMinRank = [0, 171, 310, 888, 1159, 1460, 2100, 2543, 2762, 2762, 3317];
-		totalDamageTakenPerMinRank =  [0, 116, 296, 913, 1281, 1439, 1581, 1761, 2451, 2451, 3143];
-	}
-	if (parseInt(intVal) == 2)
-	{
-		avgGoldPerMinRank = [500, 500, 600, 887, 1115, 1477, 1804, 1959, 2313, 2573, 3015];
-		creepScoreRank = [0, 0, 5, 12, 19, 31, 40, 42, 54, 59, 68];
-		totalDamageDonePerMinRank = [0, 0, 68, 747, 893, 893, 1631, 1748, 1748, 2267, 2267];
-		totalDamageTakenPerMinRank =  [0, 0, 222, 1335, 1765, 2152, 2675, 3496, 4280, 5013, 5150];
-	}
-
-
-	//Damage Taken Per Min Graph
-	const DamageTaken = document.getElementById('AvgDamageTakenChart').getContext('2d');
-	DamageTaken.canvas.parentNode.style.width = "500px";
-	DamageTaken.canvas.parentNode.style.height = "500px";
-		var someJavaScriptVar =
-		 ['{{ MeanData.totalDamageTakenPerMin[0] }}' ,'{{ MeanData.totalDamageTakenPerMin[1] }}',
-		 '{{ MeanData.totalDamageTakenPerMin[2] }}','{{ MeanData.totalDamageTakenPerMin[3] }}',
-		 '{{ MeanData.totalDamageTakenPerMin[4] }}','{{ MeanData.totalDamageTakenPerMin[5] }}',
-		 '{{ MeanData.totalDamageTakenPerMin[6] }}','{{ MeanData.totalDamageTakenPerMin[7] }}',
-		 '{{ MeanData.totalDamageTakenPerMin[8] }}','{{ MeanData.totalDamageTakenPerMin[9] }}',
-		 '{{ MeanData.totalDamageTakenPerMin[10] }}'];
-
 		
-		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
-		var yValues = someJavaScriptVar;
-		var yValues2 = totalDamageTakenPerMinRank;
-	
-		new Chart("AvgDamageTakenChart", {
-		type: "line",
-		data: {
-			labels: xValues,
-			datasets: [{
-			backgroundColor: "rgba(0,0,0,0)",
-			borderColor: "rgba(0,0,0,0.1)",
-			data: yValues 
-			}]
-		},
-
-		data: {
-			labels: xValues,
-			datasets: [{
-			backgroundColor: "rgba(0,0,0,0)",
-			borderColor: "rgba(0,0,0,0.1)",
-			data: yValues2 
-			}]
-		},
-		options: {
-			legend: {display: false},
-			title:{
-				display:true,
-				text:"Average Damage Taken (20 Mins)"
-			},
-            responsive: true,
-            maintainAspectRatio: false,
-        }
-	});
-
-
-	//Damage Dealt Per Min Graph
-	const AvgDamageDealtChart = document.getElementById('AvgDamageDealtChart').getContext('2d');
-	AvgDamageDealtChart.canvas.parentNode.style.width = "500px";
-	AvgDamageDealtChart.canvas.parentNode.style.height = "500px";
-		var DamageDealt =
-		 ['{{ MeanData.totalDamageDonePerMin[0] }}' ,'{{ MeanData.totalDamageDonePerMin[1] }}',
-		 '{{ MeanData.totalDamageDonePerMin[2] }}','{{ MeanData.totalDamageDonePerMin[3] }}',
-		 '{{ MeanData.totalDamageDonePerMin[4] }}','{{ MeanData.totalDamageDonePerMin[5] }}',
-		 '{{ MeanData.totalDamageDonePerMin[6] }}','{{ MeanData.totalDamageDonePerMin[7] }}',
-		 '{{ MeanData.totalDamageDonePerMin[8] }}','{{ MeanData.totalDamageDonePerMin[9] }}',
-		 '{{ MeanData.totalDamageDonePerMin[10] }}'];
-
-		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
-		var yValues = DamageDealt;
-
-		new Chart("AvgDamageDealtChart", {
-		type: "line",
-		data: {
-			labels: xValues,
-			datasets: [{
-			backgroundColor: "rgba(0,0,0,0)",
-			borderColor: "rgba(0,0,0,0.1)",
-			data: yValues
-			}]
-		},
-		options: {
-			legend: {display: false},
-			title:{
-				display:true,
-				text:"Average Damage Dealt (20 Mins)"
-			},
-            responsive: true,
-            maintainAspectRatio: false,
-        }
-	});
-
-	const AvgGoldPerMinChart = document.getElementById('AvgGoldPerMinChart').getContext('2d');
-	AvgGoldPerMinChart.canvas.parentNode.style.width = "500px";
-	AvgGoldPerMinChart.canvas.parentNode.style.height = "500px";
-		var avgGoldPerMin =
-		 ['{{ MeanData.avgGoldPerMin[0] }}' ,'{{ MeanData.avgGoldPerMin[1] }}',
-		 '{{ MeanData.avgGoldPerMin[2] }}','{{ MeanData.avgGoldPerMin[3] }}',
-		 '{{ MeanData.avgGoldPerMin[4] }}','{{ MeanData.avgGoldPerMin[5] }}',
-		 '{{ MeanData.avgGoldPerMin[6] }}','{{ MeanData.avgGoldPerMin[7] }}',
-		 '{{ MeanData.avgGoldPerMin[8] }}','{{ MeanData.avgGoldPerMin[9] }}',
-		 '{{ MeanData.avgGoldPerMin[10] }}'];
-
-		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
-		var yValues = avgGoldPerMin;
-
-		new Chart("AvgGoldPerMinChart", {
-		type: "line",
-		data: {
-			labels: xValues,
-			datasets: [{
-			backgroundColor: "rgba(0,0,0,0)",
-			borderColor: "rgba(0,0,0,0.1)",
-			data: yValues
-			}]
-		},
-		options: {
-			legend: {display: false},
-			title:{
-				display:true,
-				text:"Average Gold Per Min (20 Mins)"
-			},
-            responsive: true,
-            maintainAspectRatio: false,
-        }
-	});
-
-	const AvgCreepScoreChart = document.getElementById('AvgCreepScoreChart').getContext('2d');
-	AvgCreepScoreChart.canvas.parentNode.style.width = "500px";
-	AvgCreepScoreChart.canvas.parentNode.style.height = "500px";
-	var creepScore =
-		 ['{{ MeanData.creepScore[0] }}' ,'{{ MeanData.creepScore[1] }}',
-		 '{{ MeanData.creepScore[2] }}','{{ MeanData.creepScore[3] }}',
-		 '{{ MeanData.creepScore[4] }}','{{ MeanData.creepScore[5] }}',
-		 '{{ MeanData.creepScore[6] }}','{{ MeanData.creepScore[7] }}',
-		 '{{ MeanData.creepScore[8] }}','{{ MeanData.creepScore[9] }}',
-		 '{{ MeanData.creepScore[10] }}'];
-
-		var xValues = [1,2,3,4,5,6,7,8,9,10,11];
-		var yValues = creepScore
-
-		new Chart("AvgCreepScoreChart", {
-		type: "line",
-		data: {
-			labels: xValues,
-			datasets: [{
-			backgroundColor: "rgba(0,0,0,0)",
-			borderColor: "rgba(0,0,0,0.1)",
-			data: yValues
-			}]
-		},
-		options: {
-			legend: {display: false},
-			title:{
-				display:true,
-				text:"Creep Score Damage (20 Mins)"
-			},
-            responsive: true,
-            maintainAspectRatio: false,
-        }
-	});
-	var yValues = DamageDealt;
-	var config = {
-  type: 'line',
-  data: {
-		labels: [1,2,3,4,5,6,7,8,9,10],
-		datasets: [{
-			label: "My First dataset",
-			data: yValues
-		},
-		{
-			label: "My second dataset",
-			data: yValues2
-		}
-		]
-	},
-	options: {
-		scales: {
-		xAxes: [{
-			ticks: {
-			autoSkip: false
-			}
-
-		}],
-		},
-	}
-	};
-
-	var ctx = document.getElementById("AvgDamageTakenChart").getContext("2d");
-	new Chart(ctx, config);
-
 	</script>
 </body>
 {% endblock %}
