@@ -6,7 +6,7 @@ def getChampDetails(champion):
     DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data'][champion]
-    DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + str(DDRAGON['name']) + ".png"
+    DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + str(DDRAGON['id']) + ".png"
     print(DDRAGON['imageLink'])
     print(DDRAGON)
     return DDRAGON
@@ -47,4 +47,11 @@ def getChampImagesSingle(ChampId):
             if int(temp['key']) == (champs[0]):
                 champs[0] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
 
+def getChampSpellImages(champion):
+    for spells in champion['spells']:
+        spell = spells['abilityVideoPath']
+        spells['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/characters/" + str(champion['alias']).lower()  +"/hud/icons2d/"  + str(champion['alias']).lower() + "_" + spells['spellKey'] + ".png"
+        print(spells['abilityIconPath'])
+
+    
 

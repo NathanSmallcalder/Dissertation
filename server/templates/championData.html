@@ -1,18 +1,47 @@
 {% extends 'base.html'%}
 
 {%block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+	<style>
+		.card {
+			height: 100%;
+			margin: auto;
+		}.columns.is-vcentered {
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			align-items: center;
+		}
+		.column.is.half-inline{
+			flex-wrap: wrap;
+			align-content: center; /* used this for multiple child */
+			align-items: center; /* if an only child */
+			display: inline
+		}
+		ul {
+		list-style-type: none;
+		}
 
+		[type=radio] { 
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+		}
+	</style>
 
 <div class="columns is-multiline">
-    <div class="column is-three-fifths">
+    <div class="column">
         <div class="card">
             <div class="card-content">
   
               <div class="content">
-                <h1>{{ championStats.id }}</h1>
+                <h1>{{ championStats.id }} <h2>{{ championStats.title }}</h2> </h1>
                 <figure class="image is-128x128">
                      <img class="is-rounded" src="{{ championStats.imageLink }}">
                 </figure>
+             
+                <h2>{{ championStats.tags[0] }}</h2>
+                <h2>{{ championStats.tags[1] }}</h2>
                 <div class ="has-text-right">
 
                 </div>
@@ -20,30 +49,19 @@
             </div>
         </div>
     </div>
-    <div class="column">
-        <div class="card">
-            <div class="card-content">
-              <div class="content">
-                <figure class="image is-128x128">
-                    <img class="is-rounded" src=>
-                </figure>
-    
-                </div>
-              </div>
+</div>
+<div class = "columns is-multiline">
+    <div class = "column is-two-fifths">
+      <section class="hero is-success">
+        <div class="hero-body">
+          <div class="container has-text-centered">
+              <h1 class="title">
+                Champion Abilities
+              </h1>
             </div>
-        </div>
-    </div>
-
-    <section class="hero is-success">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-            <h1 class="title">
-              Champion Abilities
-            </h1>
-          </div>
-      </div> 
+        </div> 
         
-      <div class="hero-foot">
+    <div class="hero-foot">
       <nav class="tabs is-boxed is-fullwidth is-large">
               <div class="container">
                 <ul>
@@ -60,42 +78,107 @@
       
       <div class="container section">
         <div id="Passive" class="content-tab" >
-          <video autoplay="autoplay" controls="controls" preload="preload">
-            <source src="{{ ChampionAbilities.passive.abilityVideoPath }}" type="video/mp4"></source>
-          </video>
-          <p> {{ChampionAbilities.passive.name}}</p>
-          <p> {{ChampionAbilities.passive.description}}</p>
+          <div class = "card"> 
+            <div class="card-content">
+              <div class="content">
+                <figure class="image is-128x128">
+                  <img class="is-rounded" src="{{ championStats.passive.abilityIconPath }}">
+                </figure>
+                <video autoplay="autoplay" controls="controls" preload="preload"width="400" height="140">
+                  <source src="{{ ChampionAbilities.passive.abilityVideoPath }}" type="video/mp4"></source>
+                </video>
+                <p> {{ChampionAbilities.passive.name}}</p>
+                <p> {{ChampionAbilities.passive.description}}</p>
+              </div>
+            </div>
         </div>
-          <div id="Q" class="content-tab" >
-            <video autoplay="autoplay" controls="controls" preload="preload">
-              <source src="{{ ChampionAbilities.spells[0].abilityVideoPath }}" type="video/mp4"></source>
-            </video>
-            <p> {{ChampionAbilities.spells[1].name}}</p>
-            <p> {{ChampionAbilities.spells[1].description}}</p>
-          </div>
-          <div id="W" class="content-tab" style="display:none">
-            <video autoplay="autoplay" controls="controls" preload="preload">
-              <source src="{{ ChampionAbilities.spells[1].abilityVideoPath }}" type="video/mp4"></source>
-            </video>
-            <p> {{ChampionAbilities.spells[3].name}}</p>
-            <p> {{ChampionAbilities.spells[3].description}}</p>
-          </div>
-          <div id="E" class="content-tab" style="display:none">
-            <video autoplay="autoplay" controls="controls" preload="preload">
-              <source src="{{ ChampionAbilities.spells[2].abilityVideoPath }}" type="video/mp4"></source>
-            </video>
-            <p> {{ChampionAbilities.spells[2].name}}</p>
-            <p> {{ChampionAbilities.spells[2].description}}</p>
-          </div>
-          <div id="R" class="content-tab" style="display:none">
-            <video autoplay="autoplay" controls="controls" preload="preload">
-              <source src="{{ ChampionAbilities.spells[3].abilityVideoPath }}" type="video/mp4"></source>
-            </video>
-            <p> {{ChampionAbilities.spells[3].name}}</p>
-            <p> {{ChampionAbilities.spells[3].description}}</p>
-         </div>
       </div>
-      
+        
+      <div id="Q" class="content-tab" >
+        <div class = "card"> 
+              <div class="card-content">
+                <div class="content">
+                  <figure class="image is-128x128">
+                    <img src="{{ChampionAbilities.spells[0].abilityIconPath}}">
+                  </figure>
+                  <video autoplay="autoplay" controls="controls" preload="preload"width="400" height="140">
+                    <source src="{{ ChampionAbilities.spells[0].abilityVideoPath }}" type="video/mp4"></source>
+                  </video>
+                  <p> {{ChampionAbilities.spells[0].name}}</p>
+                  <p> {{ChampionAbilities.spells[0].description}}</p>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div id="W" class="content-tab" >
+          <div class = "card"> 
+                <div class="card-content">
+                  <div class="content">
+                    <figure class="image is-128x128">
+                      <img src="{{ChampionAbilities.spells[1].abilityIconPath}}">
+                    </figure>
+                    <video autoplay="autoplay" controls="controls" preload="preload"width="400" height="140">
+                      <source src="{{ ChampionAbilities.spells[1].abilityVideoPath }}" type="video/mp4"></source>
+                    </video>
+                    <p> {{ChampionAbilities.spells[1].name}}</p>
+                    <p> {{ChampionAbilities.spells[1].description}}</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div id="E" class="content-tab" >
+            <div class = "card"> 
+                <div class="card-content">
+                  <div class="content">
+                    <figure class="image is-128x128">
+                      <img src="{{ChampionAbilities.spells[2].abilityIconPath}}">
+                    </figure>
+                    <video autoplay="autoplay" controls="controls" preload="preload"width="400" height="140">
+                      <source src="{{ ChampionAbilities.spells[2].abilityVideoPath }}" type="video/mp4"></source>
+                    </video>
+                    <p> {{ChampionAbilities.spells[2].name}}</p>
+                    <p> {{ChampionAbilities.spells[2].description}}</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div id="R" class="content-tab" >
+            <div class = "card"> 
+                  <div class="card-content">
+                    <div class="content">
+                      <figure class="image is-128x128">
+                        <img src="{{ChampionAbilities.spells[3].abilityIconPath}}">
+                      </figure>
+                      <video autoplay="autoplay" controls="controls" preload="preload"width="400" height="140">
+                        <source src="{{ ChampionAbilities.spells[3].abilityVideoPath }}" type="video/mp4"></source>
+                      </video>
+                      <p> {{ChampionAbilities.spells[3].name}}</p>
+                      <p> {{ChampionAbilities.spells[3].description}}</p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+      </div>
+    </div>
+
+
+
+    <div class="column">
+      <div class="card">
+          <div class="card-content">
+            <div class="content">
+              <figure class="image is-128x128">
+                  <img class="is-rounded" src=>
+              </figure>
+  
+              </div>
+            </div>
+          </div>
+      </div>
+ </div>
           
 <script>
 function openTab(evt, tabName) {

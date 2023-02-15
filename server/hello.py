@@ -144,6 +144,8 @@ def championData():
     championStats = getChampDetails(champName)
     print(championStats)
     ChampionAbilities = getChampAbilities(championStats)
+    print(ChampionAbilities)
+    getChampSpellImages(ChampionAbilities)
 
 
     return render_template('championData.html',championStats = championStats, ChampionAbilities = ChampionAbilities)
