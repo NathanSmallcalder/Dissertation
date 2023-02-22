@@ -88,7 +88,6 @@ def getImageLink(SummonerInfo):
     profileIcon = str(SummonerInfo['profileIconId'])
     SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
    
-
 def getSummonerDetails(Region,summonerName):
     SummonerInfo = requests.get("https://" + Region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + API)
     SummonerInfo = SummonerInfo.json()

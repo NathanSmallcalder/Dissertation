@@ -19,10 +19,10 @@ connection = mysql.connector.connect(host=host,
                                      password=sql_password)
                                 
 Region = "EUW1"
-summonerName = ""
+summonerName = "Saskio from Wish"
 
 db_Info = connection.get_server_info()
-print("Connected to MySQL Server version ", db_Info)
+
 cursor = connection.cursor()
 
 SummonerInfo = getSummonerDetails(Region,summonerName)
@@ -57,7 +57,7 @@ for MatchId in MatchIDs:
     Match = Normalise(Match)
     GameType = Normalise(GameType)
     Rank = Normalise(Rank)
-    print(Rank)
+   
     cursor.execute("SELECT `RankId` FROM `RankTbl` WHERE `Rank` = (%s)", (Rank ,))
     RankId = cursor.fetchone()
     RankId = int(Normalise(RankId))
@@ -68,7 +68,7 @@ for MatchId in MatchIDs:
     SummonerID = int(Normalise(SummonerID))
 
     champion = matchData[i]['champion']
-    print(champion)
+
     cursor.execute("SELECT `ChampionId` FROM `ChampionTbl` WHERE `ChampionName` = (%s)", (champion, ))
     Champion = cursor.fetchone()
     Champion = Normalise(Champion)
@@ -76,7 +76,7 @@ for MatchId in MatchIDs:
     cursor.execute("SELECT `MatchId` FROM `MatchTbl` WHERE `MatchId` = (%s)", (str(Match) ,))
     MatchVerify = cursor.fetchone()
     MatchVerify = Normalise(MatchVerify)
-    print(MatchVerify)
+   
    
     GameDuration = matchData[i]['GameDuration']
     if MatchVerify == "None":
@@ -85,9 +85,9 @@ for MatchId in MatchIDs:
         cursor.execute("SELECT `MatchId` FROM `MatchTbl` WHERE `MatchId` = (%s)", (str(Match) ,))
         MatchVerify = cursor.fetchone()
         MatchVerify = Normalise(MatchVerify)
-        print(MatchVerify)
+  
     else:
-        print("Pass")
+
         pass
 
     cursor.execute("INSERT INTO `SummonerMatchTbl`(`SummonerFk`, `MatchFk`, `ChampionFk`) VALUES (%s , %s , %s)", (SummonerID,MatchVerify,Champion))
@@ -113,24 +113,20 @@ for MatchId in MatchIDs:
     dragonKills = matchData[i]['dragonKills']
     baronKills = matchData[i]['baronKills']
     Item6 = matchData[i]['Items'][5]
-    print(Item1)
-    print(Item2)
-    print(Item3)
-    print(Item4)
-    print(Item5)
-    print(Item6)
+
 
     kills = matchData[i]['kills']
     deaths = matchData[i]['deaths']
     asssts = matchData[i]['assists']
     PK1 = matchData[i]['PrimaryKeyStone'][0]
+    print(PK1)
     PK2 = matchData[i]['PrimaryKeyStone'][1]
     PK3 = matchData[i]['PrimaryKeyStone'][2]
     PK4 = matchData[i]['PrimaryKeyStone'][3]
     SK1 = matchData[i]['SecondaryKeyStone'][0]
     SK2 = matchData[i]['SecondaryKeyStone'][1]
     EmemyLane = matchData[i]['EnemyChamp']
-    print(EmemyLane)
+
     cursor.execute("SELECT `ChampionId` FROM `ChampionTbl` WHERE `ChampionName` = (%s)", (EmemyLane, ))
     Enemy = cursor.fetchone()
     Enemy = Normalise(Enemy)
