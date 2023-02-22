@@ -74,13 +74,15 @@ def getRunesImages(runes):
     runesLinksList = []
     data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
     data = data.json()
-
+    MainRune = None
     for rune in runes:
-            for data in data:
-                for data in data['slots']:   
+            for runes in data:
+           
+                for data in runes['slots']:   
                         for data in data['runes']:
                                 for r in rune:
                                     if(int(r) == int(data['id'])):
+                                            MainRune = runes
                                             runesLinks = {
                                             'Name': None,
                                             'Desc':None,
@@ -93,9 +95,22 @@ def getRunesImages(runes):
                                             temp = dict(runesLinks)
                                             runesLinksList.append(temp)
                                             del runesLinks
-    print(runesLinksList)
+    
+
+    runesLinks = {
+        'Name': None,
+        'Desc':None,
+        'LinkRef':None
+    }
+    runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + MainRune['icon'].lower()
+    runesLinks['Name'] = MainRune['name']
+
+                                            
+    temp = dict(runesLinks)
+    runesLinksList.append(temp)
+    del runesLinks
     return runesLinksList
-        #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1
+    #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1
 
 
 def getItemDescriptions(itemList):

@@ -18,7 +18,7 @@
       line-height: 30px;
       margin: 0 auto;
       position: absolute;
-      text-align: center;
+      text-align: left;
       text-transform: uppercase;
       top: 0px;
       left:0px;
@@ -26,23 +26,25 @@
 
 
     }
-    span:after{
-        content:'';
-        position:absolute;
-        height:relative;
-        border-bottom: solid #dfdfdf;
-        border-right: solid #dfdfdf;
-        background:#d61414;
-        left:0%;
-        margin-left:0px;
-        -moz-transform:rotate(45deg);
-        -webkit-transform:rotate(45deg);
-        transform:rotate(45deg);
+    span:after        
+    {   
+      position:relative;
+      background: #fff;
+      margin-left:100px;
+      display: block;
+      width: 1000px;
+      height: 220px;
+      padding: 10px;
+      border-radius: 2px 2px 2px 2px;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
     }
     p{
         float:left;
         position:relative;
         cursor:pointer;
+        
         
     }
 
@@ -50,7 +52,11 @@
         display: block;
         height: auto;
         width: auto;  
-        position:absolute;
+        position:-webkit-sticky;
+        top:50px;
+        left:50px;
+        z-index: 1;
+  
     }
     .inlineB{
       display: inline-block;
@@ -97,7 +103,7 @@
 	</style>
 
 <div class="columns is-multiline">
-    <div class="column is-four-fifths">
+    <div class="column is-three-fifths">
         <div class="card">
             <div class="card-content">
   
@@ -116,6 +122,15 @@
             </div>
         </div>
     </div>
+    <div class="column">
+      <div class="card">
+          <div class="card-content">
+            <div class="level-item has-text-centered">
+            </div>
+          </div>
+      </div>
+    </div>
+
     <div class="column">
       <div class="card">
           <div class="card-content">
@@ -308,22 +323,21 @@
             <div class="card-content">
               <div class="content">
                 <h3> Popular Primary Runes</h3>
-                  <p><img height = 200 width = 200 src = "{{ runes[0]['LinkRef'] }}"><span>{{ runes[0]['Desc'] }}</span></p>
+                  <p><img height = 100 width = 100  src = "{{ runes[4]['LinkRef'] }}"><span>{{ runes[4]['Desc'] }}</span></p>
+
+                  <p><img height = 100 width = 100 src = "{{ runes[0]['LinkRef'] }}"><span>{{ runes[0]['Desc'] }}</span></p>
      
-                  <p><img height = 200 width = 200 src = "{{ runes[1]['LinkRef'] }}"><span>{{ runes[1]['Desc'] }}</span></p>
+                  <p><img height = 100 width = 100 src = "{{ runes[1]['LinkRef'] }}"><span>{{ runes[1]['Desc'] }}</span></p>
 
-                  <p><img height = 200 width = 200 src = "{{ runes[2]['LinkRef'] }}"><span>{{ runes[2]['Desc'] }}</span></p>
+                  <p><img height = 100 width = 100 src = "{{ runes[2]['LinkRef'] }}"><span>{{ runes[2]['Desc'] }}</span></p>
   
-                  <p><img height = 200 width = 200  src = "{{ runes[3]['LinkRef'] }}"><span>{{ runes[3]['Desc'] }}</span></p>
+                  <p><img height = 100 width = 100  src = "{{ runes[3]['LinkRef'] }}"><span>{{ runes[3]['Desc'] }}</span></p>
 
-                <h3> Highest Win Rate Primary Runes</h3>
-                  <p><img height = 200 width = 200 src = "{{ BestRunes[0]['LinkRef'] }}"><span>{{ BestRunes[0]['Desc'] }}</span></p>
-     
-                  <p><img height = 200 width = 200 src = "{{ BestRunes[1]['LinkRef'] }}"><span>{{ BestRunes[1]['Desc'] }}</span></p>
+                    
+                  <p><img height = 100 width = 100  src  = "{{ SecondRunes[0]['LinkRef'] }}"><span>{{ SecondRunes[0]['Desc'] }}</span></p>
+                  <p><img height = 100 width = 100  src  = "{{ SecondRunes[1]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
 
-                  <p><img height = 200 width = 200 src = "{{ BestRunes[2]['LinkRef'] }}"><span>{{ BestRunes[2]['Desc'] }}</span></p>
-  
-                  <p><img height = 200 width = 200  src = "{{ BestRunes[3]['LinkRef'] }}"><span>{{ BestRunes[3]['Desc'] }}</span></p>
+      
               </div>
             </div>
           </div>
@@ -332,14 +346,20 @@
           <div class="card">
             <div class="card-content">
               <div class="content">
-                <h3> Popular Secondary Runes</h3>
-                <p><img height = 200 width = 200  src  = "{{ SecondRunes[0]['LinkRef'] }}"><span>{{ SecondRunes[0]['Desc'] }}</span></p>
-                <p><img height = 200 width = 200  src  = "{{ SecondRunes[1]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
-
-
-                <h3> Highest Win Rate Secondary Runes</h3>
-                <p><img height = 200 width = 200  src  = "{{ BestSecondRunes[0]['LinkRef'] }}"><span>{{ SecondRunes[0]['Desc'] }}</span></p>
-                <p><img height = 200 width = 200  src  = "{{ BestSecondRunes[1]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
+                <div>
+                  <h3> Highest Win Rate Runes</h3>
+                  <p><img height = 150 width = 150 src = "{{ BestRunes[4]['LinkRef'] }}"><span>{{ BestRunes[0]['Desc'] }}</span></p>
+                  <p><img height = 150 width = 150  src  = "{{ BestSecondRunes[2]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
+          
+                  <p><img height = 150 width = 150 src = "{{ BestRunes[0]['LinkRef'] }}"><span>{{ BestRunes[0]['Desc'] }}</span></p>
+                  <p><img height = 150 width = 150 src = "{{ BestRunes[1]['LinkRef'] }}"><span>{{ BestRunes[1]['Desc'] }}</span></p>
+   
+                  <p><img height = 150 width = 150 src = "{{ BestRunes[2]['LinkRef'] }}"><span>{{ BestRunes[2]['Desc'] }}</span></p>
+                  <p><img height = 150 width = 150  src = "{{ BestRunes[3]['LinkRef'] }}"><span>{{ BestRunes[3]['Desc'] }}</span></p>
+    
+                  <p><img height = 150 width = 150  src  = "{{ BestSecondRunes[0]['LinkRef'] }}"><span>{{ SecondRunes[0]['Desc'] }}</span></p>
+                  <p><img height = 150 width = 150  src  = "{{ BestSecondRunes[1]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
+                </div>
               </div>
             </div>
           </div>

@@ -27,6 +27,12 @@ import mysql.connector
 from config import *
 import pandas
 from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.inspection import permutation_importance
+from matplotlib import pyplot as plt
 
 connection = mysql.connector.connect(host=host,
                                      database= sql_user,
@@ -84,20 +90,11 @@ print(df_games)
 X = df_games
 y = winner 
 
-X_train, X_validation, Y_train, Y_validation = train_test_split(X, y, test_size=0.25, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+rf = RandomForestRegressor(n_estimators=150)
+rf.fit(X_train, y_train)
 
-print(X_train)
-print(y)
-# Create decision tree classifer object
-clf = RandomForestClassifier(random_state=0, n_jobs=-1)
-# Train model
-model = clf.fit(X, y)
-
-importances = model.feature_importances_
-# Sort feature importances in descending order
-indices = np.argsort(importances)[::-1]
-
-
-plt.bar( range(len(model.feature_importances_)), model.feature_importances_)
-plt.xticks(range(len(model.feature_importances_)), train_features.columns)
+sort = rf.feature_importances_.argsort()
+plt.barh(columns[sort], rf.feature_importances_[sort])
+plt.xlabel("Feature Importance")
 plt.savefig('HEATMAP.PNG')
