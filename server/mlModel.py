@@ -33,68 +33,56 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.inspection import permutation_importance
 from matplotlib import pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
 
 connection = mysql.connector.connect(host=host,
                                      database= sql_user,
                                      user=sql_user,
                                      password=sql_password)
-                    
-query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,`MatchStatsTbl`.item1,`MatchStatsTbl`.item2,`MatchStatsTbl`.item3,`MatchStatsTbl`.item4,`MatchStatsTbl`.item5,`MatchStatsTbl`.item6,`MatchStatsTbl`.PrimaryKeyStone,`MatchStatsTbl`.PrimarySlot1, `MatchStatsTbl`.PrimarySlot2 , `MatchStatsTbl`.PrimarySlot3 ,  `MatchStatsTbl`.SecondarySlot1, `MatchStatsTbl`.SecondarySlot1, `MatchStatsTbl`.`Win`, `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills`FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
-cursor = connection.cursor()
 
-cursor.execute(query)
-data = cursor.fetchall()
+#query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,  `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills` ,`MatchStatsTbl`.`Win` FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
+#cursor = connection.cursor()
 
-columns = ['ChampionFk', 'MinionsKilled','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
-,'EnemyChampionFk','item1','item2','item3','item4','item5','item6','PrimaryKeyStone',
-'PrimarySlot1', 'PrimarySlot2' , 'PrimarySlot3' ,  'SecondarySlot1','SecondarySlot1', 'Win', 'GameDuration','DragonKills','BaronKills']
+#cursor.execute(query)
+#data = cursor.fetchall()
 
-df_games = pandas.DataFrame(data,columns = columns)
-df_games.sample(frac=1)
-winner = df_games['Win']
+#columns = ['ChampionFk', 'MinionsKilled','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
+#,'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win']
 
-print(df_games)
+data = pd.read_csv("data.csv")
+X = data.iloc[:,0:10]  #independent columns
+print(X)
 
-X = df_games
-y = winner 
+y = data.iloc[:,-1]    #target column i.e price range
+from sklearn.ensemble import ExtraTreesClassifier
+import matplotlib.pyplot as plt
+model = ExtraTreesClassifier()
+model.fit(X,y)
+print(model.feature_importances_) #use inbuilt class feature_importances of tree based classifiers
+#plot graph of feature importances for better visualization
+feat_importances = pd.Series(model.feature_importances_, index=X.columns)
+feat_importances.nlargest(10).plot(kind='barh')
+plt.show()
+#apply SelectKBest class to extract top 10 best features
+bestfeatures = SelectKBest(score_func=chi2, k=10)
+fit = bestfeatures.fit(X,y)
+dfscores = pd.DataFrame(fit.scores_)
+dfcolumns = pd.DataFrame(X.columns)
+#concat two dataframes for better visualization 
+featureScores = pd.concat([dfcolumns,dfscores],axis=1)
+featureScores.columns = ['Specs','Score']  #naming the dataframe columns
+print(featureScores.nlargest(10,'Score'))  #print 10 best features
 
-X_train, X_validation, Y_train, Y_validation = train_test_split(X, y, test_size=0.25, random_state=1)
+from sklearn.ensemble import ExtraTreesClassifier
+import matplotlib.pyplot as plt
 
-print(X_train)
-print(y)
-model = SVC(gamma='auto')
-model.fit(X_train, Y_train)
-predictions = model.predict(X_validation)
-# Evaluate predictions
-print(accuracy_score(Y_validation, predictions))
-print(confusion_matrix(Y_validation, predictions))
-print(classification_report(Y_validation, predictions))
-
-
-query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk, `MatchStatsTbl`.`Win`, `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills`FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
-cursor = connection.cursor()
-
-cursor.execute(query)
-data = cursor.fetchall()
-
-columns = ['ChampionFk', 'MinionsKilled','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
-,'EnemyChampionFk', 'Win', 'GameDuration','DragonKills','BaronKills']
-
-df_games = pandas.DataFrame(data,columns = columns)
-df_games.to_csv('data.csv')
-df_games.sample(frac=1)
-winner = df_games['Win']
-
-print(df_games)
-
-X = df_games
-y = winner 
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
-rf = RandomForestRegressor(n_estimators=150)
-rf.fit(X_train, y_train)
-
-sort = rf.feature_importances_.argsort()
-plt.barh(columns[sort], rf.feature_importances_[sort])
-plt.xlabel("Feature Importance")
+model = ExtraTreesClassifier()
+model.fit(X,y)
+print(model.feature_importances_) #use inbuilt class feature_importances of tree based classifiers
+#plot graph of feature importances for better visualization
+feat_importances = pd.Series(model.feature_importances_, index=X.columns)
+feat_importances.nlargest(10).plot(kind='barh')
 plt.savefig('HEATMAP.PNG')

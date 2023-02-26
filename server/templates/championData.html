@@ -56,6 +56,7 @@
         top:50px;
         left:50px;
         z-index: 1;
+        width:500px;
   
     }
     .inlineB{
@@ -126,6 +127,19 @@
       <div class="card">
           <div class="card-content">
             <div class="level-item has-text-centered">
+              <div class="level-item has-text-centered">
+                <div>
+              <h3 class="heading">Games Recorded</h3>
+              <h3 class="title"> K / D / A</h3>
+              <h3 class="title"> {{(kda[0][0])|round}} / {{(kda[0][1])|round}} / {{(kda[0][2])|round}}</h3>
+
+              <h3 class="heading">Win Rate</h3>
+              <h3 class ="title">{{winRate}} %</h3>
+
+              <h3 class="heading">Play Rate</h3>
+              <h3 class ="title">{{winRate}} %</h3>
+                </div>
+              </div>
             </div>
           </div>
       </div>
@@ -149,7 +163,7 @@
             <div class="level-item has-text-centered">
               <div>
                 <h3 class="heading">Position</h3>
-                <h3 class="title">Top</h3>
+                <h3 class="title">{{position}}</h3>
               </div>
             </div>
             <div class="level-item has-text-centered">
@@ -301,7 +315,7 @@
               <p><img src="{{commonItems[2]['Link'] }}"><span>{{ commonItems[4]['Desc'] }}</span></p>
               <p><img src="{{commonItems[3]['Link'] }}"><span>{{ commonItems[2]['Desc'] }}</span></p>
               <p><img src="{{commonItems[4]['Link'] }}"><span>{{ commonItems[3]['Desc'] }}</span></p>
-              <p><img src="{{commonItems[5]['Link'] }}"><span>{{ commonItems[4]['Desc'] }}</span></p>
+              <p><img src="{{commonItems[5]['Link'] }}"><span>{{ commonItems[5]['Desc'] }}</span></p>
               
 
 
@@ -311,7 +325,7 @@
               <p><img src="{{bestItems[2]['Link'] }}"><span>{{ bestItems[4]['Desc'] }}</span></p>
               <p><img src="{{bestItems[3]['Link'] }}"><span>{{ bestItems[2]['Desc'] }}</span></p>
               <p><img src="{{bestItems[4]['Link'] }}"><span>{{ bestItems[3]['Desc'] }}</span></p>
-              <p><img src="{{bestItems[5]['Link'] }}"><span>{{ bestItems[4]['Desc'] }}</span></p>
+              <p><img src="{{bestItems[5]['Link'] }}"><span>{{ bestItems[5]['Desc'] }}</span></p>
               </div>
             </div>
           </div>
