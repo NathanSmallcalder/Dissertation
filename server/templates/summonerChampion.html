@@ -1,0 +1,351 @@
+{% extends 'base.html'%}
+
+{%block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+
+	<style>
+    .title{
+      font-size: 50px;
+    }
+   span{
+      background: none repeat scroll 0 0 #F8F8F8;
+      border: solid #DFDFDF;
+      color: #717171;
+      font-size: 13px;
+      height: 30px;
+      letter-spacing: 1px;
+      line-height: 30px;
+      margin: 0 auto;
+      position: absolute;
+      text-align: left;
+      text-transform: uppercase;
+      top: 0px;
+      left:0px;
+      display:none;
+
+
+    }
+    span:after        
+    {   
+      position:relative;
+      background: #fff;
+      margin-left:100px;
+      display: block;
+      width: 1000px;
+      height: 220px;
+      padding: 10px;
+      border-radius: 2px 2px 2px 2px;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    }
+    p{
+        float:left;
+        position:relative;
+        cursor:pointer;
+        
+        
+    }
+
+    p:hover span{
+        display: block;
+        height: auto;
+        width: auto;  
+        position:-webkit-sticky;
+        top:50px;
+        left:50px;
+        z-index: 1;
+        width:500px;
+  
+    }
+    .inlineB{
+      display: inline-block;
+    }
+
+
+
+
+		.card {
+			height: 100%;
+			margin: auto;
+		}.columns.is-vcentered {
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			align-items: center;
+		}
+		.column.is.half-inline{
+			flex-wrap: wrap;
+			align-content: center; /* used this for multiple child */
+			align-items: center; /* if an only child */
+			display: inline
+		}
+		ul {
+		list-style-type: none;
+		}
+
+		[type=radio] { 
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+		}
+   .columns.is-multiline {
+    padding-top:15px;
+    padding-left: 5px;
+    padding-right: 5px;
+   }
+
+   .level-item.has-text-centered p {
+    font-size: 32px;
+   }
+  
+   
+	</style>
+
+<div class="columns is-multiline">
+    <div class="column is-three-fifths">
+        <div class="card">
+            <div class="card-content">
+  
+              <div class="content">
+                <h1>{{ championStats.id }} {{ championStats.title }}</h1>
+                <figure class="image is-128x128">
+                     <img class="is-rounded" src="{{ championStats.imageLink }}">
+                </figure>
+             
+                <h2>{{ championStats.tags[0] }}</h2>
+                <h2>{{ championStats.tags[1] }}</h2>
+                <div class ="has-text-right">
+
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+      <div class="card">
+          <div class="card-content">
+            <div class="level-item has-text-centered">
+              <div class="level-item has-text-centered">
+                <div>
+              <h3 class="heading">Games Recorded</h3>
+              <h3 class="title"> K / D / A</h3>
+              <h3 class="title"> {{(kda[0][0])|round}} / {{(kda[0][1])|round}} / {{(kda[0][2])|round}}</h3>
+
+              <h3 class="heading">Win Rate</h3>
+              <h3 class ="title">{{winRate}} %</h3>
+
+              <h3 class="heading">Play Rate</h3>
+              <h3 class ="title">{{winRate}} %</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="card">
+          <div class="card-content">
+            <div class="level-item has-text-centered">
+              <div>
+                <h3 class="heading">Games Recorded</h3>
+                <h3 class="title">{{totalGames}}</h3>
+              </div>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <h3 class="heading">Wins</h3>
+                <h3 class="title">{{wins}}</h3>
+              </div>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <h3 class="heading">Position</h3>
+                <h3 class="title">{{position}}</h3>
+              </div>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <h3 class="heading">Kills</h3>
+                <h3 class="title">{{champKills}}</h3>
+              </div>
+            </div>
+
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+ 
+
+<div class="columns is-multiline">
+  <div class="column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+
+        <div class ="has-text-right">
+          <canvas id="AvgMinions" width="450" height="550"></canvas>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <canvas id="TotalGoldAvg" width="450" height="550"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="column">
+      <div class="card">
+        <div class="card-content">
+          <div class="content">
+            <canvas id="DmgDealtAvg" width="450" height="550"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <canvas id="DmgGiven" width="450" height="550"></canvas> 
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("content-tab");
+  for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tab");
+  for (i = 0; i < x.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " is-active";
+}
+var yValues = ["{{AvgMinions[0]}}","{{AvgMinions[1]}}","{{AvgMinions[2]}}","{{AvgMinions[3]}}",
+              "{{AvgMinions[4]}}","{{AvgMinions[5]}}","{{AvgMinions[6]}}","{{AvgMinions[7]}}"];
+var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
+              "{{Rank[6]}}","{{Rank[7]}}"];
+var barColors = ["Grey", "green","blue","orange","brown","red"];
+
+alert(xValues);
+alert(yValues);
+
+new Chart("AvgMinions", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Minions Killed Avg (Per Rank)"
+    }
+  }
+});
+
+var yValues = ["{{TotalGoldAvg[0]}}","{{TotalGoldAvg[1]}}","{{TotalGoldAvg[2]}}","{{TotalGoldAvg[3]}}",
+              "{{TotalGoldAvg[4]}}","{{TotalGoldAvg[5]}}","{{TotalGoldAvg[6]}}","{{TotalGoldAvg[7]}}",];
+var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
+              "{{Rank[6]}}","{{Rank[7]}}"];
+var barColors = ["Grey", "green","blue","orange","brown"];
+
+
+new Chart("TotalGoldAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "TotalGoldAvg"
+    }
+ 
+  }
+});
+
+var yValues = ["{{DmgDealtAvg[0]}}","{{DmgDealtAvg[1]}}","{{DmgDealtAvg[2]}}","{{DmgDealtAvg[3]}}",
+              "{{DmgDealtAvg[4]}}","{{DmgDealtAvg[5]}}","{{DmgDealtAvg[6]}}","{{DmgDealtAvg[7]}}",];
+var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
+              "{{Rank[6]}}","{{Rank[7]}}"];
+var barColors = ["Grey", "green","blue","orange","brown"];
+
+
+new Chart("DmgGiven", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "TotalGoldAvg"
+    }
+ 
+  }
+});
+
+var yValues = ["{{DmgDealtAvg[0]}}","{{DmgDealtAvg[1]}}","{{DmgDealtAvg[2]}}","{{DmgDealtAvg[3]}}",
+              "{{DmgDealtAvg[4]}}","{{DmgDealtAvg[5]}}","{{DmgDealtAvg[6]}}","{{DmgDealtAvg[7]}}",];
+var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
+              "{{Rank[6]}}","{{Rank[7]}}"];
+var barColors = ["Grey", "green","blue","orange","brown"];
+
+new Chart("DmgDealtAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "DmgDealtAvg"
+    }
+  }
+});
+
+
+
+</script>
+
+{% endblock %}
