@@ -37,6 +37,13 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+
+
+warnings.filterwarnings("ignore")
 
 connection = mysql.connector.connect(host=host,
                                      database= sql_user,
@@ -55,8 +62,7 @@ columns = ['ChampionFk', 'MinionsKilled','lane','DmgDealt','DmgTaken','TurretDmg
 #data = pd.read_csv("data.csv")
 df_games = pandas.DataFrame(data,columns = columns)
 df_games.sample(frac=1)
-
-
+print(df_games)
 
 df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'NONE':4})
 df_games['Win'] = df_games['Win']
@@ -65,19 +71,17 @@ print(df_games)
 X = df_games.drop('Win', axis=1)
 y = df_games['Win']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 
-rf = RandomForestClassifier()
-rf.fit(X_train, y_train)
+# split data into train and test sets
+seed = 7
+test_size = 0.33
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
 
-y_pred = rf.predict(X_test)
+model = XGBClassifier()
+model.fit(X_train, y_train)
 
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
 
-#'ChampionFk', 'MinionsKilled','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
-# 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win'
-row = [["154", "54" ," 1 ","4225 ","13636 ","0","5481","203 ","1220 ","4","0"]]
-
-yhat = rf.predict(row)
-print('Prediction: %d' % yhat[0])
+y_pred = model.predict(X_test)
+predictions = [round(value) for value in y_pred]
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy: %.2f%%" % (accuracy * 100.0))

@@ -405,7 +405,6 @@ def getMatchTimeline(region,id,puuid,data):
 
 
 def SummonerInGame(LiveGame,region):
-
     LiveGame = LiveGame['participants']
     i = 0
     summonerIds = []

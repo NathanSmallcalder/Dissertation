@@ -197,7 +197,7 @@ def championData():
     kda = cursor.fetchall()
     print(kda[0][1])
 
-    position = cursor.execute("SELECT Lane, COUNT(Lane) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s GROUP BY Lane ORDER BY PrimaryKeyStone DESC ", (int(championStats['key']),))
+    position = cursor.execute("SELECT Lane, COUNT(Lane) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s", (int(championStats['key']),))
     position = cursor.fetchone()
     position = position[0]
     position = Normalise(position)
