@@ -1,0 +1,7 @@
+flask
+configparser
+flask_mysqldb
+pandas
+matplotlib
+requests
+PyMySQL

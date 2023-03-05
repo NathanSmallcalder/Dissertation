@@ -2,7 +2,7 @@ import requests
 from config import *
 import pandas as pd
 import time
-import pymysql
+
 from championsRequest import *
 
 API = api_key
@@ -402,7 +402,6 @@ def getMatchTimeline(region,id,puuid,data):
             i = i + 1
                 
     return MeanData
-
 
 def SummonerInGame(LiveGame,region):
     LiveGame = LiveGame['participants']
