@@ -21,13 +21,13 @@ connection = mysql.connector.connect(host=host,
                                      database= sql_user,
                                      user=sql_user,
                                      password=sql_password)
+global rf
 
 query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.Lane,`MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,  `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills` ,`MatchStatsTbl`.`Win` FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
 cursor = connection.cursor()
 
 cursor.execute(query)
 data = cursor.fetchall()
-
 columns = ['ChampionFk', 'MinionsKilled','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
 ,'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win']
 
@@ -38,22 +38,34 @@ df_games.sample(frac=1)
 
 df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'NONE':4})
 df_games['Win'] = df_games['Win']
-print(df_games)
-
 X = df_games.drop('Win', axis=1)
 y = df_games['Win']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+def randomForestRun():
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+    global rf
+    rf = RandomForestClassifier()
+    rf.fit(X_train.values, y_train)
 
-rf = RandomForestClassifier()
-rf.fit(X_train, y_train)
+  
 
-y_pred = rf.predict(X_test)
 
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
+def randomForestPredict(rf, ChampionFk,MinionsKilled ,lane,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
+    #y_pred = rf.predict(X_test)
 
-row = [["154", "757" ,"3","245888","2568","4","0","0 ","0 ","0","0"]]
+    #accuracy = accuracy_score(y_test, y_pred)
+    #print("Accuracy:", accuracy)
+    #'ChampionFk', 'MinionsKilled','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold' 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills',
+    row = [[ChampionFk,MinionsKilled ,lane,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills]]
 
-yhat = rf.predict(row)
-print('Prediction: %d' % yhat[0])
+    yhat = rf.predict(row)
+    print('Prediction: %d' % yhat[0])
+    return yhat[0]
+
+
+
+
+def getRandomForest():
+    randomForestRun()
+    global rf
+    return rf
