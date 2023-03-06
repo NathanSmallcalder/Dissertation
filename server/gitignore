@@ -3,3 +3,7 @@ test_sample.py
 requestsTest.py
 Livegame.py
 notes.txt
+tests/__pycache__
+tests/.pytest_cache
+tests/__pycache__/test_Champions.cpython-38-pytest-7.2.2.pyc
+tests/__pycache__/test_endpoint.cpython-38-pytest-7.2.2.pyc

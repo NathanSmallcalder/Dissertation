@@ -20,7 +20,8 @@ def getChampDetails(champion):
     print(DDRAGON)
     return DDRAGON
 
-def getChampAbilities(champion):
+#Gets Champion ability videos
+def getChampAbilities(champion): #
     key = champion['key']
     data = requests.get("https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champions/" + key + ".json")
     data = data.json()
@@ -31,10 +32,8 @@ def getChampAbilities(champion):
         spells['abilityVideoPath'] = "https://d28xe8vt774jo5.cloudfront.net/"  + spell
     return data
 
-
-
 #Gets ChampionImage URLS into masteryScore JSON file
-def getChampImages(masteryScore):
+def getChampImages(masteryScore):#
     DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
@@ -57,7 +56,7 @@ def getChampImagesSingle(ChampId):
             if int(temp['key']) == (champs[0]):
                 champs[0] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
 
-def getChampSpellImages(champion):
+def getChampSpellImages(champion): #
     n = 29
     passive = champion['passive']['abilityIconPath'] 
     champion['passive']['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/" + passive[n:].lower()
@@ -70,14 +69,13 @@ def getChampSpellImages(champion):
         spell = "https://raw.communitydragon.org/latest/game/assets/" + spell.lower()
         spells['abilityIconPath'] = spell
    
-def getRunesImages(runes):
+def getRunesImages(runes): 
     runesLinksList = []
     data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
     data = data.json()
     MainRune = None
     for rune in runes:
             for runes in data:
-           
                 for data in runes['slots']:   
                         for data in data['runes']:
                                 for r in rune:
@@ -95,8 +93,6 @@ def getRunesImages(runes):
                                             temp = dict(runesLinks)
                                             runesLinksList.append(temp)
                                             del runesLinks
-    
-
     runesLinks = {
         'Name': None,
         'Desc':None,
@@ -117,7 +113,6 @@ def getItemDescriptions(itemList):
     data = requests.get("https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/en_gb/v1/items.json")
     data = data.json()
     ItemLinksList = []
-
     for item in itemList:
         for i in item:
             ItemLinks = {
@@ -136,7 +131,6 @@ def getItemDescriptions(itemList):
                         temp = dict(ItemLinks)
                         ItemLinksList.append(temp)
                         del ItemLinks
-
     print(ItemLinksList)
     return ItemLinksList
 

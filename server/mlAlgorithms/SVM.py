@@ -1,5 +1,11 @@
 import mysql.connector
+import sys
+import pytest
+import requests
+
+sys.path.append('..')
 from config import *
+from RiotApiCalls import *
 # Basic packages
 import numpy as np
 import pandas as pd

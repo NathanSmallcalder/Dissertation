@@ -1,5 +1,11 @@
 import mysql.connector
+import sys
+import pytest
+import requests
+
+sys.path.append('..')
 from config import *
+from RiotApiCalls import *
 
 # Data Processing
 import pandas as pd
@@ -46,3 +52,8 @@ y_pred = rf.predict(X_test)
 
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
+
+row = [["154", "757" ,"3","245888","2568","4","0","0 ","0 ","0","0"]]
+
+yhat = rf.predict(row)
+print('Prediction: %d' % yhat[0])

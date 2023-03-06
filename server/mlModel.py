@@ -75,9 +75,8 @@ y_pred = rf.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
 
-#'ChampionFk', 'MinionsKilled','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
-# 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win'
-row = [["154", "54" ," 1 ","4225 ","13636 ","0","5481","203 ","1220 ","4","0"]]
+#'ChampionFk', 'MinionsKilled','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold' 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win'
+row = [["154", "757" ,"3","245888","2568","4","0","0 ","0 ","0","0"]]
 
 yhat = rf.predict(row)
 print('Prediction: %d' % yhat[0])
