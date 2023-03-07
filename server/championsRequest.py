@@ -4,7 +4,7 @@ from config import *
 import pandas as pd
 import time
 import pymysql
-
+from RiotApiCalls import *
 
 db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
 cursor = db.cursor()
@@ -133,6 +133,18 @@ def getItemDescriptions(itemList):
                         del ItemLinks
     print(ItemLinksList)
     return ItemLinksList
+
+def getSingleMasteryScore(champId,summonerName,Region):
+    Summoner = getSummonerDetails(Region, summonerName)
+    Summoner = Summoner.json()
+    Mastery = getMasteryStats(Region,Summoner['id'])
+    Mastery = Mastery.json()
+    print(Mastery)
+
+    
+        
+
+
 
 def Normalise(stri):
     stri = str(stri)

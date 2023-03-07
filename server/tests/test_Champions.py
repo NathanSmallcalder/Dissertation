@@ -43,8 +43,10 @@ def test_getRunesImages():
     req = requests.get(runes[1]['LinkRef'])
     assert int(req.status_code) ==200
 
-test_getRunesImages()
-test_ChampionDetails()
-test_getChampAbilities()
-test_getChampSpellImages()
-test_getChampImages()
+def test_MasterySingle():
+    Mastery = getSingleMasteryScore(1,"Mealsz","EUW1")
+    assert int(Mastery) > 4753
+
+    
+test_MasterySingle()
+    

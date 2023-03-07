@@ -7,8 +7,6 @@ sys.path.append('..')
 from config import *
 from RiotApiCalls import *
 
-
-
 connection = mysql.connector.connect(host=host,
                                      database= sql_user,
                                      user=sql_user,

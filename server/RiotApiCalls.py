@@ -101,7 +101,19 @@ def getRankedStats(Region,id):
 def getMasteryStats(Region,id):
     masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
     masteryScore = masteryScore.json()
+    print("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
     getChampImages(masteryScore)
+    return masteryScore
+
+def getSingleMasteryScore(champId,summonerName,Region):
+    Summoner = getSummonerDetails(Region, summonerName)
+    Mastery = getMasteryStats(Region,Summoner['id'])
+    
+    for m in Mastery:
+        if champId == int(m['championId']):
+            masteryScore = int(m['championPoints'])
+            break
+
     return masteryScore
 
 def getMatchData(region,id,SummonerInfo):
