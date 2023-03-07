@@ -48,5 +48,3 @@ def test_MasterySingle():
     assert int(Mastery) > 4753
 
     
-test_MasterySingle()
-    

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import requests
@@ -10,6 +10,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 from championsRequest import *
+import sys
+import json
+
+import mlAlgorithms
+from mlAlgorithms import randomForest
+
+
 
 warnings.filterwarnings('ignore')
 
@@ -132,6 +139,7 @@ def SummonerInGame():
 
 @app.route('/champions', methods=['GET','POST'])
 def ChampionTablePage():
+    connection = create_connection()
     query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
     cursor.execute(query)
     data = cursor.fetchall()
@@ -324,6 +332,29 @@ def SummonerChampionStats():
                             kda = kda)
 
 
+
+@app.route('/post_json',methods=['POST','GET'])
+def predict():
+    connection = create_connection()
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        data = json.loads(request.data)    
+        print(data)
+        rf = randomForest.randomForestRun()
+        rf = randomForest.randomForestPredict(rf,data['ChampionFk'],data['MinionsKilled'],data['kills'],data['deaths'],data['assists'],data['lane'],
+                                            data['DmgDealt'],data['DmgTaken'],data['TurretDmgDealt'],data['TotalGold'],data['EnemyChampionFk'],
+                                            data['GameDuration'],data['DragonKills'],data['BaronKills'])
+        Prediction = {
+            "pred": str(rf)
+        }
+
+        return jsonify(Prediction), 200
+    else:
+        return "Content type is not supported."
+
+    
+
+    
 
 @app.route('/')
 def index():

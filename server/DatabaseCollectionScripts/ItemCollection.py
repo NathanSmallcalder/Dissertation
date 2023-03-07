@@ -1,6 +1,9 @@
 import json
 import requests
+sys.path.append('..')
 from config import *
+from RiotApiCalls import *
+
 import mysql.connector
 
 conn = mysql.connector.connect(user=sql_user, password=sql_password, host=host, database='o1gbu42_StatTracker')

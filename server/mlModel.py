@@ -73,10 +73,29 @@ y_pred = rf.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
 
+
+
+
 importances = rf.feature_importances_
-forest_importances = pd.Series(importances, index=X.columns)
-fig, ax = plt.subplots()
-forest_importances(rf.feature_importances_, X.columns,'RANDOM FOREST')
-ax.set_title("Feature importances using MDI")
-ax.set_ylabel("Mean decrease in impurity")
-fig.tight_layout()
+std = np.std([rf.feature_importances_ for tree in rf.estimators_],
+             axis=0)
+indices = np.argsort(importances)[::-1]
+print("Feature ranking:")
+
+for f in range(X.shape[1]):
+    print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+
+
+
+row = [[1,24 ,1,60,1,2,5255,255,1,2000,52,2000,0,0]]
+
+yhat = rf.predict(row)
+print('Prediction: %d' % yhat[0])
+
+
+# Plot the feature importances of the forest
+plt.figure()
+plt.title("Feature importances")
+print(rf.feature_names_in_)
+plt.barh(rf.feature_names_in_, rf.feature_importances_)
+plt.savefig("Fig.png")

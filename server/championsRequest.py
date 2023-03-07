@@ -141,11 +141,6 @@ def getSingleMasteryScore(champId,summonerName,Region):
     Mastery = Mastery.json()
     print(Mastery)
 
-    
-        
-
-
-
 def Normalise(stri):
     stri = str(stri)
     stri = stri.replace('[', '')
@@ -154,6 +149,10 @@ def Normalise(stri):
     stri = stri.replace('(', '')
     stri = stri.replace(')', '')
     stri = stri.replace(",", '')
+    stri = stri.replace("\n", '')
+    stri = stri.replace("''", '')
+    stri = stri.replace("\"'", '')
+   
     return stri
    
 
