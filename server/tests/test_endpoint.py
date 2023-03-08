@@ -8,22 +8,29 @@ from config import *
 from RiotApiCalls import *
 from championsRequest import *
 
-api_key= api_key
-db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
-cursor = db.cursor()
 
-def test_IndexPage():
-    req = requests.get("http://172.17.0.2:5000")
+def test_ChampionPage():
+    req = requests.get("http://localhost:5000/champion")
+    statCode = int(req.status_code)
+    assert statCode == 200
+
+def test_SpecificChampionPage():
+    req = requests.get("http://localhost:5000/champion?champion=Annie")
+    statCode = int(req.status_code)
+    assert statCode == 200
+
+def test_SummonerPage():
+    req = requests.get("http://localhost:5000/summoner?summoner=Mealsz&region=EUW1")
+    statCode = int(req.status_code)
+    assert statCode == 200
+
+def test_ChampionSummonerPage():
+    req = requests.get("http://localhost:5000/summoner/champion?summoner=Mealsz&region=EUW1&champion=Annie")
     statCode = int(req.status_code)
     assert statCode == 200
 
 def test_IndexPage():
-    req = requests.get("http://172.17.0.2:5000")
-    statCode = int(req.status_code)
-    assert statCode == 200
-
-def test_IndexPage():
-    req = requests.get("http://172.17.0.2:5000/predictorSend?prediction=[1,24 ,72,5,1,2,5255,255,1,2000,52,2000,5,5]")
+    req = requests.get("http://localhost:5000/")
     statCode = int(req.status_code)
     assert statCode == 200
 
@@ -56,5 +63,3 @@ def test_PostPredictionData():
     pred = json.loads(pred)
     assert pred['pred'] == "0" 
 
-
-test_PostPredictionData()

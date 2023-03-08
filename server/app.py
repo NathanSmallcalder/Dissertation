@@ -140,6 +140,7 @@ def SummonerInGame():
 @app.route('/champions', methods=['GET','POST'])
 def ChampionTablePage():
     connection = create_connection()
+    cursor =  connection.cursor()
     query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
     cursor.execute(query)
     data = cursor.fetchall()
@@ -255,7 +256,7 @@ def TableInit(arr,arr2):
 @app.route('/summoner/champion' , methods=['GET','POST'])
 def SummonerChampionStats():
     connection = create_connection()
-
+    cursor =  connection.cursor()
     SummonerName = request.args.get('summoner')
     champName = request.args.get('champion')
     championStats = getChampDetails(champName)
@@ -266,9 +267,8 @@ def SummonerChampionStats():
 
     SummonerFk = cursor.execute("SELECT SummonerTbl.SummonerId from SummonerTbl where SummonerName = % s", (SummonerName, ))
     SummonerFk = cursor.fetchall()
-    
 
-    SummonerFk = SummonerFk[0][0]
+    SummonerFk = SummonerFk[0]['SummonerId']
 
     TotalGames = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `SummonerMatchTbl`.`ChampionFk` = % s and SummonerMatchTbl.SummonerFk = % s", (int(championStats['key']), int(SummonerFk)))
     TotalGames = cursor.fetchall()
@@ -279,9 +279,11 @@ def SummonerChampionStats():
     ChampKills = cursor.execute("SELECT SUM(`MatchStatsTbl`.kills) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `SummonerMatchTbl`.`ChampionFk` = % s and SummonerMatchTbl.SummonerFk = % s", (int(championStats['key']), int(SummonerFk)))
     ChampKills = cursor.fetchall()
 
-    ChampKills = str(ChampKills[0][0])
-    TotalGames = str(TotalGames[0][0])
+    ChampWins = ChampWins[0]['COUNT(`MatchStatsTbl`.Win)']
+    ChampKills = str(ChampKills[0]['SUM(`MatchStatsTbl`.kills)'])
+    TotalGames = str(TotalGames[0]['COUNT(`MatchStatsTbl`.Win)'])
     print(TotalGames)
+    print(ChampWins)
 
     #winRate = ChampWins / TotalGames * 100
 
@@ -299,11 +301,13 @@ def SummonerChampionStats():
 
     position = cursor.execute("SELECT Lane, COUNT(Lane) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s GROUP BY Lane ORDER BY PrimaryKeyStone DESC ", (int(championStats['key']), int(SummonerFk)))
     position = cursor.fetchone()
-    position = position[0]
+    position = position
+    print(position)
     position = Normalise(position)
 
     kda = cursor.execute("SELECT AVG(kills), AVG(deaths), AVG(assists) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s", (int(championStats['key']), int(SummonerFk)))
     kda = cursor.fetchall()
+    print(kda)
 
     AvgMinionsRanked = []
     AvgDmgTakenRanked = []
@@ -336,6 +340,7 @@ def SummonerChampionStats():
 @app.route('/post_json',methods=['POST','GET'])
 def predict():
     connection = create_connection()
+    cursor =  connection.cursor()
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
         data = json.loads(request.data)    
