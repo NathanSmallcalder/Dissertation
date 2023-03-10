@@ -16,17 +16,17 @@
       </tr>
     </thead>
 
-    {% for matches in data %}
-    {% set link = ["https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" ~ matches[0] ~ ".png"]|join %}
+    {% for d in data %}
+    {% set link = ["https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" ~ d['ChampionName'] ~ ".png"]|join %}
     
     
     <tr>
         <td><figure class="image is-24x24px"><img src= {{link}}> </figure></td>
-        <td>{{ matches[1]|round(0) }}</td>
-        <td>{{ matches[2]|round(0) }}</td>
-        <td>{{ matches[3]|round(0) }}</td>
-        <td> <progress class="progress is-success" value="{{matches[4] * 100|round(0)}}" max="100"></progress>{{(matches[4] * 100)|round(0)}}%</td>
-        <td>{{ matches[5]|round(0) }}</td>
+        <td>{{ d['AVG(`MatchStatsTbl`.`kills`)']  }}</td>
+        <td>{{ d['AVG(`MatchStatsTbl`.`deaths`)'] }}</td>
+        <td>{{ d['AVG(`MatchStatsTbl`.`assists``)'] }}</td>
+        <td> <progress class="progress is-success" value="{{d['AVG(`MatchStatsTbl`.`won`)']}}" max="100"></progress>{{ d['AVG(`MatchStatsTbl`.`won`)']}}%</td>
+        <td>{{ d['AVG(`MatchStatsTbl`.`assists`)'] }}</td>
     </tr>
     {% endfor %}
 </tbody>

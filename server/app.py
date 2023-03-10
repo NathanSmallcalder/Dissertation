@@ -16,14 +16,13 @@ import json
 import mlAlgorithms
 from mlAlgorithms import randomForest
 
-
-
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 key = secrets.token_urlsafe(16)
 key = secrets.token_hex(16)
 
+#Config
 app.config['SECRET_KEY'] = 'key'
 app.config['MYSQL_HOST'] = host 
 app.config['MYSQL_USER'] = sql_user
@@ -33,7 +32,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-
+#Database Connection
 def create_connection():
     return pymysql.connect(
         host=host,
@@ -127,16 +126,17 @@ def getSummoner():
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
     MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region, weblink = s)
 
+#Summoner in Game Screen
 @app.route('/summoner/in-game',methods=['GET','POST'])
 def SummonerInGame():
     connection = create_connection()
     cursor =  connection.cursor()
-
     SummonerName = request.args.get('summoner')
     Region = request.args.get('region')
     Summoners = summonerInGameCheck(Region,SummonerName)
     return render_template('summonerInGame.html', Summoners = Summoners)
 
+#Champion Stats - From Database
 @app.route('/champions', methods=['GET','POST'])
 def ChampionTablePage():
     connection = create_connection()
@@ -144,8 +144,8 @@ def ChampionTablePage():
     query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
     cursor.execute(query)
     data = cursor.fetchall()
+    print(data)
 
-  
     #columns = ['ChampionFk', 'kills', 'deaths','assists', 'Win', 'GameDuration']
     
     return render_template('champions.html',data=  data)
@@ -343,6 +343,7 @@ def predict():
     cursor =  connection.cursor()
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
+        print(request.data)
         data = json.loads(request.data)    
         print(data)
         rf = randomForest.randomForestRun()
@@ -352,14 +353,32 @@ def predict():
         Prediction = {
             "pred": str(rf)
         }
+        print(Prediction)
 
         return jsonify(Prediction), 200
     else:
         return "Content type is not supported."
 
     
-
+@app.route('/matchPredict', methods = ['GET','POST'])
+def matchPredict():
+    return render_template('matchPrediction.html')
     
+
+@app.route('/summData', methods = ['GET'])
+def summData():
+    summonerName = request.args.get('summoner')
+    Region = request.args.get('region')
+
+    SummonerInfo = getSummonerDetails(Region,summonerName)
+    SummId = SummonerInfo['id']
+    data = getMatchData(Region, SummId, SummonerInfo)
+    avg = AvgStats(data)
+    print(avg)
+
+
+    return render_template('matchPrediction.html')
+
 
 @app.route('/')
 def index():

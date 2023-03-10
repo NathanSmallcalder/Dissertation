@@ -27,7 +27,7 @@ class SummonerInGameObj:
 
 Summoners = []
 
-summonerSpells = {
+summonerSpells = {  # Summoner Spell Image Data Store
     21: 'summonerbarrier.png',
     1: 'summoner_boost.png',
     14: 'summonerignite.png',
@@ -105,16 +105,11 @@ def getMasteryStats(Region,id):
     getChampImages(masteryScore)
     return masteryScore
 
-def getSingleMasteryScore(champId,summonerName,Region):
-    Summoner = getSummonerDetails(Region, summonerName)
-    Mastery = getMasteryStats(Region,Summoner['id'])
-    
-    for m in Mastery:
-        if champId == int(m['championId']):
+def getSingleMasteryScore(champId, mastery):
+    for m in mastery:
+        if int(champId) == int(m['championId']):
             masteryScore = int(m['championPoints'])
-            break
-
-    return masteryScore
+            return masteryScore
 
 def getMatchData(region,id,SummonerInfo):
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=15&api_key=" + API)
@@ -131,20 +126,16 @@ def getMatches(region,MatchIDs,SummonerInfo):
     puuid = SummonerInfo['puuid']
     SummId = SummonerInfo['id']
     RankedDetails = getRankedStats(region,SummId)
-    print(RankedDetails)
+   
     try:
         SOLO = RankedDetails[0]
+        FLEX = RankedDetails[1]
     except:
-        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
-        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
-    matchIdsData = {
-        'MatchIDS':[],
-        'GameType':[],
-        'Rank':[]
-    }
 
     temp = []
     tempMatchIds = []
@@ -169,13 +160,16 @@ def getMatches(region,MatchIDs,SummonerInfo):
                 "Role":None,
                 "PrimaryKeyStone":None,
                 "SecondaryKeyStone":None,
-                "EnemyChamp":None
+                "EnemyChamp":None,
+                "SummonerSpell1":None,
+                "SummonerSpell2":None
         }
 
         matchIdsData = {
             'MatchIDS':[],
             'GameType':[],
-            'Rank':[]
+            'Rank':[],
+            'gameVersion':[]
         }
 
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
@@ -190,8 +184,11 @@ def getMatches(region,MatchIDs,SummonerInfo):
  
         player_data = MatchData['info']['participants'][player_index]
 
+        summSpell1 = player_data['summoner1Id']
+        summSpell2 = player_data['summoner2Id']
+
         player_data = getSummonerSpellsImages(player_data)
-  
+        
         role = player_data['lane']
         champion = player_data['championName']
         i = 0
@@ -201,6 +198,8 @@ def getMatches(region,MatchIDs,SummonerInfo):
             if (role == enemyLane and enemyChampTemp != champion):
                 enemyChampion = FullMatchData['info']['participants'][i]['championName']
                 break
+            else:
+                enemyChampion = FullMatchData['info']['participants'][2]['championName']
             i = i + 1
 
         playerMatchDataTemp.append(player_data)
@@ -215,7 +214,6 @@ def getMatches(region,MatchIDs,SummonerInfo):
             player_data['item6'],
         ]
      
-        print(player_data["perks"]['styles'][0]['selections'][0]['perk'])
         KeyStone1=[
             player_data["perks"]['styles'][0]['selections'][0]['perk'],
             player_data["perks"]['styles'][0]['selections'][1]['perk'],
@@ -228,6 +226,8 @@ def getMatches(region,MatchIDs,SummonerInfo):
             player_data["perks"]['styles'][1]['selections'][1]['perk'],
 
         ]
+
+        print(data)
         #ItemInGame = GetItemImages(Items)
         #player_data = getRoleImages(player_data)
         gameMins = MatchData['info']['gameDuration']
@@ -263,9 +263,15 @@ def getMatches(region,MatchIDs,SummonerInfo):
         data['SecondaryKeyStone'] = KeyStone2
         data['TowerDamageDealt'] = turretDmg
         data['EnemyChamp'] = enemyChampion
+        data['SummonerSpell1'] = summSpell1
+        data['SummonerSpell2'] = summSpell2
+
+
         gameType = MatchData['info']['gameMode']
+        gameVersion = MatchData['info']['gameVersion']
         matchIdsData['MatchIDS'].append(matchID)
         matchIdsData['GameType'].append(gameType)
+        matchIdsData['gameVersion'].append(gameVersion)
         matchIdsData['Rank'].append(SOLO['tier'])
         print(SOLO['tier'])
 
@@ -288,6 +294,43 @@ def getMatches(region,MatchIDs,SummonerInfo):
     del temp
     del tempMatchIds 
     return dataList
+
+
+#Gets AvgStats for Previous x Games
+def AvgStats(dataList):
+    #Data Store - Dict
+    AvgStats = {
+        'cs':0,
+        'kills':0,
+        'assists':0,
+        'deaths':0,
+        'goldEarned':0,
+        'physicalDamageDealtToChampions':0,
+        'physicalDamageTaken':0,
+        'dragonKills':0,
+        'baronKills':0,
+        'GameDuration':0,
+        'TowerDamageDealt':0
+    }
+    i = 1 #Iterator
+    while i < dataList.__len__(): # Less than x games
+        AvgStats['cs'] += dataList[i]['cs']
+        AvgStats['kills'] += dataList[i]['kills']
+        AvgStats['assists'] += dataList[i]['assists']
+        AvgStats['deaths'] += dataList[i]['deaths']
+        AvgStats['goldEarned'] += dataList[i]['goldEarned']
+        AvgStats['physicalDamageDealtToChampions'] += dataList[i]['physicalDamageDealtToChampions'] 
+        AvgStats['physicalDamageTaken'] += dataList[i]['physicalDamageTaken']
+        AvgStats['dragonKills'] += dataList[i]['dragonKills']
+        AvgStats['baronKills'] += dataList[i]['baronKills'] 
+        AvgStats['GameDuration'] += dataList[i]['GameDuration'] 
+        AvgStats['TowerDamageDealt'] += dataList[i]['TowerDamageDealt'] 
+        i = i +1
+    for keys in AvgStats: #Divide by number of games and Round
+        AvgStats[keys] = AvgStats[keys] / i
+        AvgStats[keys] = int(round(AvgStats[keys]))
+    return AvgStats # Returns Avg Dataset for ml Model predictions
+
 
 #Sets Player Match Data
 def setPlayerMatchData(match):

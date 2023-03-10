@@ -22,15 +22,14 @@ connection = mysql.connector.connect(host=host,
                                      password=sql_password)
                                 
 Region = "EUW1"
-summonerName = "Mena "
+summonerName = "BILBOMBEN"
 
 db_Info = connection.get_server_info()
-
-cursor = connection.cursor()
 
 SummonerInfo = getSummonerDetails(Region,summonerName)
 SummId = SummonerInfo['id']
 RankedDetails = getRankedStats(Region,SummId)
+mastery = getMasteryStats(Region, SummId)
 Name = SummonerInfo['name']
 
 cursor.execute("INSERT INTO `SummonerTbl`(`SummonerName`) VALUES (%s )", (SummonerInfo['name'],))
@@ -40,11 +39,7 @@ MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/b
 MatchIDs = MatchIDs.json()
 
 matchData = getMatches("euw1" ,MatchIDs,SummonerInfo)
-
-
 matchData2 = getsMatchData()
-
-
 Match = matchData2[1]['MatchIDS']
 Match = Normalise(Match)
 
@@ -54,13 +49,16 @@ mastery = getMasteryStats(Region, SummId)
 i = 0
 for MatchId in MatchIDs:
     #MatchData
+    
     Match = matchData2[i]['MatchIDS']
+    Patch = matchData2[i]['gameVersion']
     Rank = matchData2[i]['Rank']
     GameType = matchData2[i]['GameType']
 
     Match = Normalise(Match)
     GameType = Normalise(GameType)
     Rank = Normalise(Rank)
+    Patch = Normalise(Patch)
    
     cursor.execute("SELECT `RankId` FROM `RankTbl` WHERE `Rank` = (%s)", (Rank ,))
     RankId = cursor.fetchone()
@@ -86,35 +84,35 @@ for MatchId in MatchIDs:
     GameDuration = matchData[i]['GameDuration']
 
     masteryScore = 0
-    print(Champion)
+    
     for m in mastery:
         if int(Champion)== int(m['championId']):
             masteryScore = int(m['championPoints'])
             print(masteryScore)
             break
 
-
-    
-
     if MatchVerify == "None":
-        cursor.execute("INSERT INTO `MatchTbl`(`MatchId`, `QueueType`, `RankFk`,`GameDuration`) VALUES (%s , %s , %s, %s)", (Match,GameType,RankId,GameDuration))
+        cursor.execute("INSERT INTO `MatchTbl`(`MatchId`, `Patch`,  `QueueType`, `RankFk`,`GameDuration`) VALUES (%s ,%s , %s , %s, %s)", (Match,Patch,GameType,int(RankId),int(GameDuration)))
         connection.commit()
         cursor.execute("SELECT `MatchId` FROM `MatchTbl` WHERE `MatchId` = (%s)", (str(Match) ,))
+
+        
         MatchVerify = cursor.fetchone()
         MatchVerify = Normalise(MatchVerify)
-  
+        print(MatchVerify)
     else:
 
         pass
 
    
-   
-
+    masteryPoints = getSingleMasteryScore(Champion,mastery)
+    
     cs = matchData[i]['cs']
     dmgDealt = matchData[i]['physicalDamageDealtToChampions']
     dmgTaken = matchData[i]['physicalDamageTaken']
-
-  
+    spell1 = matchData[i]['SummonerSpell1']
+    spell2 = matchData[i]['SummonerSpell2']
+    print(spell1, spell2)
     TurretDmgDealt = matchData[i]['TowerDamageDealt']
     goldEarned = matchData[i]['goldEarned']
     Role= matchData[i]['Role']
@@ -148,19 +146,18 @@ for MatchId in MatchIDs:
     if(Enemy == "None"):
         Enemy = 0
 
-
+    
     cursor.execute("INSERT INTO `SummonerMatchTbl`(`SummonerFk`, `MatchFk`, `ChampionFk`) VALUES (%s , %s , %s)", (SummonerID,MatchVerify,Champion))
     cursor.execute("SELECT `SummonerMatchId` FROM `SummonerMatchTbl` WHERE `MatchFk` = (%s) AND `SummonerFk` = (%s)", (str(Match) ,SummonerID))        
     SummMatchId = cursor.fetchone()        
     SummMatchId = Normalise(SummMatchId)
     print("SummMatchID = " , SummMatchId)
-    cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `EnemyChampionFk`,`DragonKills`,`BaronKills`)VALUES(%s , %s ,%s , %s , %s, %s , %s , %s ,%s , %s , %s,%s , %s , %s ,%s , %s , %s,%s , %s , %s ,%s , %s , %s, %s, %s, %s)", (str(SummMatchId), cs ,dmgDealt,dmgTaken ,TurretDmgDealt,goldEarned,Role,win,Item1 ,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,Enemy,dragonKills,baronKills))
-        
-    MatchDataTimeline = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/" + MatchId + "/timeline?api_key=" + api_key)        
-    MatchDataTimeline = MatchDataTimeline.json()
-    cursor.execute("INSERT INTO `MatchTimeLineTbl`(`MatchFk`, `MatchTimeLine`) VALUES (%s , %s)", (Match, json.dumps(MatchDataTimeline)))
-
+    
+    cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `SummonerSpell1`, `SummonerSpell2`, `CurrentMasteryPoints`, `EnemyChampionFk`, `DragonKills`, `BaronKills`) VALUES (%s, %s , %s ,%s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s)" ,(str(SummMatchId) ,cs,dmgDealt,dmgTaken,TurretDmgDealt,goldEarned,Role,win,Item1,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,spell1,spell2,masteryPoints,Enemy,dragonKills,baronKills))
+    
     connection.commit()
+  
+    
     i = i + 1
 
 

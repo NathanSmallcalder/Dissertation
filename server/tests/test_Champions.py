@@ -10,6 +10,13 @@ api_key= api_key
 db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
 cursor = db.cursor()
 
+######## Gets an Image from a ChampionID
+def test_ChampionImgSingle():
+    champ = getChampImagesSingle(1)
+    req = requests.get(champ)
+    print(req.status_code)
+    assert int(req.status_code) == 200
+
 ######## Champion Details - ChampionPage
 def test_ChampionDetails():
     data = getChampDetails("Annie")
@@ -47,4 +54,9 @@ def test_MasterySingle():
     Mastery = getSingleMasteryScore(1,"Mealsz","EUW1")
     assert int(Mastery) > 4753
 
-    
+def test_AvgSummData():
+    SummonerInfo = getSummonerDetails("EUW1","Mealsz")
+    SummId = SummonerInfo['id']
+    data = getMatchData("EUW1", SummId, SummonerInfo)
+    avg = AvgStats(data)
+    #assert 

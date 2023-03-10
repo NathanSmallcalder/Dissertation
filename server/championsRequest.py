@@ -16,8 +16,7 @@ def getChampDetails(champion):
     DDRAGON = DDRAGON['data'][champion]
     DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + str(DDRAGON['id']) + ".png"
     DDRAGON['full'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-splashes/" + str(DDRAGON['key']) + "/" +str(DDRAGON['key']) +"000" + ".jpg"
-    print(DDRAGON['full'])
-    print(DDRAGON)
+  
     return DDRAGON
 
 #Gets Champion ability videos
@@ -46,21 +45,22 @@ def getChampImages(masteryScore):#
 
 
 #Gets ChampionImage URLS for ChampionTable
-def getChampImagesSingle(ChampId):
+def getChampImagesSingle(ChampId): # 
     DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
     for item in DDRAGON:
         temp = DDRAGON.get(item)
         for champs in ChampId:
-            if int(temp['key']) == (champs[0]):
-                champs[0] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
+            if int(temp['key']) == (int(ChampId)):
+                ChampId = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
+                return ChampId
 
 def getChampSpellImages(champion): #
     n = 29
     passive = champion['passive']['abilityIconPath'] 
     champion['passive']['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/" + passive[n:].lower()
-    print(champion['passive']['abilityIconPath'])
+    
     for spells in champion['spells']:
         spell = spells['abilityIconPath']
         spell = str(spell)
@@ -120,7 +120,8 @@ def getItemDescriptions(itemList):
                             'Desc':None,
                             'Link':None
                         }
-            print(i)
+            
+            
             for items in data: 
                 if(int(i) == int(items['id'])):
                         ItemLinks['ItemName'] = items['name']
@@ -131,7 +132,7 @@ def getItemDescriptions(itemList):
                         temp = dict(ItemLinks)
                         ItemLinksList.append(temp)
                         del ItemLinks
-    print(ItemLinksList)
+    
     return ItemLinksList
 
 def getSingleMasteryScore(champId,summonerName,Region):
@@ -139,7 +140,7 @@ def getSingleMasteryScore(champId,summonerName,Region):
     Summoner = Summoner.json()
     Mastery = getMasteryStats(Region,Summoner['id'])
     Mastery = Mastery.json()
-    print(Mastery)
+    
 
 def Normalise(stri):
     stri = str(stri)
