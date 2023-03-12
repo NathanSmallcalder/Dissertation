@@ -1,5 +1,6 @@
 import json
 import requests
+import sys
 sys.path.append('..')
 from config import *
 from RiotApiCalls import *

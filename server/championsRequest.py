@@ -11,7 +11,7 @@ cursor = db.cursor()
 
 #Gets Champion base stats
 def getChampDetails(champion):
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data'][champion]
     DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + str(DDRAGON['id']) + ".png"
@@ -134,13 +134,6 @@ def getItemDescriptions(itemList):
                         del ItemLinks
     
     return ItemLinksList
-
-def getSingleMasteryScore(champId,summonerName,Region):
-    Summoner = getSummonerDetails(Region, summonerName)
-    Summoner = Summoner.json()
-    Mastery = getMasteryStats(Region,Summoner['id'])
-    Mastery = Mastery.json()
-    
 
 def Normalise(stri):
     stri = str(stri)

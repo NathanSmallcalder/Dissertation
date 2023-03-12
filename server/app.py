@@ -362,22 +362,31 @@ def predict():
     
 @app.route('/matchPredict', methods = ['GET','POST'])
 def matchPredict():
-    return render_template('matchPrediction.html')
+    connection = create_connection()
+    cursor =  connection.cursor()
+    champ = cursor.execute("SELECT * FROM `ChampionTbl`")
+    champ = cursor.fetchall()
+    return render_template('matchPrediction.html', Champions = champ)
     
 
 @app.route('/summData', methods = ['GET'])
 def summData():
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
-
+    champ = request.args.get('champ')
+    enemyChampion = request.args.get('enemyChamp')
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
     data = getMatchData(Region, SummId, SummonerInfo)
+    mastery = getMasteryStats(Region, SummId)
+    mastery = getSingleMasteryScore(champ, mastery)
+    lave = 1
     avg = AvgStats(data)
-    print(avg)
+    avg['ChampId'] = champ
+    avg['masteryPoints'] = mastery
+    avg['enemyChamp'] = enemyChampion
 
-
-    return render_template('matchPrediction.html')
+    return jsonify(avg), 200
 
 
 @app.route('/')

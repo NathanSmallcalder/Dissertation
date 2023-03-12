@@ -2,7 +2,8 @@ import requests
 from config import *
 import pandas as pd
 import time
-
+import sys
+sys.path.append('..')
 from championsRequest import *
 
 API = api_key
@@ -87,7 +88,8 @@ def CalcWinRate(RankedMode):
 def getImageLink(SummonerInfo):
     profileIcon = str(SummonerInfo['profileIconId'])
     SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
-   
+
+#
 def getSummonerDetails(Region,summonerName):
     SummonerInfo = requests.get("https://" + Region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + API)
     SummonerInfo = SummonerInfo.json()
@@ -352,6 +354,8 @@ def getsMatchData():
     global matchData
     return matchData
 
+#Initilizes an array of games - containing all participants that were present in each game 
+#List Object Participants
 def getGameParticipants(game):
     x=0
     participantsTemp = {
@@ -368,6 +372,7 @@ def getGameParticipants(game):
 
     participants.append(participantsTemp)
 
+#Returns the Participants list object
 def getGameParticipantsList():
     return participants
 
@@ -498,6 +503,7 @@ def SummonerInGame(LiveGame,region):
         time.sleep(30)
     return Summoners
     
+#Checks if user is in game
 def summonerInGameCheck(region,summonerId):
     LiveGame = requests.get("https://"+ region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
     LiveGame = LiveGame.json()

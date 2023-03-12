@@ -16,15 +16,13 @@ def Normalise(stri):
     stri = stri.replace(",", '')
     return stri
    
-connection = mysql.connector.connect(host=host,
-                                     database= sql_user,
-                                     user=sql_user,
-                                     password=sql_password)
+connection = mysql.connector.connect(user=sql_user, password=sql_password, host=host, database='o1gbu42_StatTracker')
+cursor = conn.cursor()
                                 
 Region = "EUW1"
-summonerName = "BILBOMBEN"
+summonerName = "dasdqwr2"
+connection.autocommit = True
 
-db_Info = connection.get_server_info()
 
 SummonerInfo = getSummonerDetails(Region,summonerName)
 SummId = SummonerInfo['id']
@@ -32,7 +30,7 @@ RankedDetails = getRankedStats(Region,SummId)
 mastery = getMasteryStats(Region, SummId)
 Name = SummonerInfo['name']
 
-cursor.execute("INSERT INTO `SummonerTbl`(`SummonerName`) VALUES (%s )", (SummonerInfo['name'],))
+cursor.execute("INSERT INTO `SummonerUserTbl`(`SummonerName`) VALUES (%s )", (summonerName,))
 connection.commit()
 
 MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=20&api_key=" + API)
@@ -65,8 +63,9 @@ for MatchId in MatchIDs:
     RankId = int(Normalise(RankId))
    
     #PlayerMatchData
-    cursor.execute("SELECT `SummonerId` FROM `SummonerTbl` WHERE `SummonerName` = (%s)", (Name ,))
+    cursor.execute("SELECT `SummonerID` FROM `SummonerUserTbl` WHERE `SummonerName` = (%s)", (Name ,))
     SummonerID = cursor.fetchone()
+    print("SummID", SummonerID)
     SummonerID = int(Normalise(SummonerID))
 
     champion = matchData[i]['champion']
@@ -94,9 +93,8 @@ for MatchId in MatchIDs:
     if MatchVerify == "None":
         cursor.execute("INSERT INTO `MatchTbl`(`MatchId`, `Patch`,  `QueueType`, `RankFk`,`GameDuration`) VALUES (%s ,%s , %s , %s, %s)", (Match,Patch,GameType,int(RankId),int(GameDuration)))
         connection.commit()
-        cursor.execute("SELECT `MatchId` FROM `MatchTbl` WHERE `MatchId` = (%s)", (str(Match) ,))
-
         
+        cursor.execute("SELECT `MatchId` FROM `MatchTbl` WHERE `MatchId` = (%s)", (str(Match) ,))
         MatchVerify = cursor.fetchone()
         MatchVerify = Normalise(MatchVerify)
         print(MatchVerify)
@@ -145,16 +143,16 @@ for MatchId in MatchIDs:
     
     if(Enemy == "None"):
         Enemy = 0
-
+    print(Enemy)
     
     cursor.execute("INSERT INTO `SummonerMatchTbl`(`SummonerFk`, `MatchFk`, `ChampionFk`) VALUES (%s , %s , %s)", (SummonerID,MatchVerify,Champion))
-    cursor.execute("SELECT `SummonerMatchId` FROM `SummonerMatchTbl` WHERE `MatchFk` = (%s) AND `SummonerFk` = (%s)", (str(Match) ,SummonerID))        
+    connection.commit()
+    cursor.execute("SELECT `SummonerMatchId` FROM `SummonerMatchTbl` WHERE `MatchFk` = (%s) AND `SummonerFk` = (%s)", (str(Match) ,SummonerID))    
     SummMatchId = cursor.fetchone()        
     SummMatchId = Normalise(SummMatchId)
     print("SummMatchID = " , SummMatchId)
     
     cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `SummonerSpell1`, `SummonerSpell2`, `CurrentMasteryPoints`, `EnemyChampionFk`, `DragonKills`, `BaronKills`) VALUES (%s, %s , %s ,%s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s)" ,(str(SummMatchId) ,cs,dmgDealt,dmgTaken,TurretDmgDealt,goldEarned,Role,win,Item1,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,spell1,spell2,masteryPoints,Enemy,dragonKills,baronKills))
-    
     connection.commit()
   
     

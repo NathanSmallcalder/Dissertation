@@ -1,0 +1,167 @@
+{% extends 'base.html'%}
+
+{%block content %}
+<style>
+  .card {
+    height: 100%;
+    margin: auto;
+  }.columns.is-vcentered {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .column.is.half-inline{
+    flex-wrap: wrap;
+    align-content: center; /* used this for multiple child */
+    align-items: center; /* if an only child */
+    display: inline
+  }
+  ul {
+  list-style-type: none;
+  }
+
+  [type=radio] { 
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  }
+
+  /* IMAGE STYLES */
+  [type=radio] + img {
+  cursor: pointer;
+  }
+
+  /* CHECKED STYLES */
+  [type=radio]:checked + img {
+    opacity: 1;
+  }
+
+  [type=radio]:not(:checked) + img {
+     opacity: 0.6;
+  }
+  
+  input[type=radio] {
+    border: 0px;
+    height: 2em;
+
+  }
+
+</style>
+
+
+<div class="columns is-multiline"> 
+      <div class="column half">
+          <div class="card">
+              <div class="card-content">
+                <div class="content">
+                  <form onsubmit='summonerAvg(summoner,Region); return false;'>
+                    <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                    <div class="select is-info">
+                        <select name=Region>
+                        <option>EUN1</option>
+                        <option>EUW1</option>
+                        <option>JP1</option>
+                        <option>KR</option>
+                        <option>LA1</option>
+                        <option>LA2</option>
+                        <option>NA1</option>
+                        <option>RU</option>
+                        </select>
+                    </div>
+                    <button class="button is-info">Search</button>
+                </form>
+                  <button id="post-btn">I'm a button</button>
+                  </div>
+                </div>
+              </div>
+      </div>
+</div>
+
+<div class="columns is-multiline"> 
+  <div class="column half">
+    <div class="card has-background-info">
+      <div class="card-content">
+        <div class="content">
+      {% for champ in Champions %}
+        {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+            <label>
+              <input type="radio" name="champ" value="{{champ['ChampionId']}}">
+              <img src="{{output}}" height = 60 width = 60 alt="">
+            </label>
+    {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <div class="column half">
+      <div class="card has-background-danger">
+        <div class="card-content">
+          <div class="content">
+        {% for champ in Champions %}
+          {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+          <label>
+            <input type="radio" name="enemyChamp" value="{{champ['ChampionId']}}">
+            <img src="{{output}}" height = 60 width = 60 alt = "">
+          </label>
+      {% endfor %}
+        </div>
+      </div>
+    </div>
+    </div>
+</div>
+  <script>    
+
+  function summonerAvg(summonerName, Region) {
+      summonerName = summonerName.value;
+      Region = Region.value;
+      alert("ewew")
+      PickedChamp = parseInt(document.querySelector('input[name="champ"]:checked').value);
+      EnemeyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
+      alert(PickedChamp)
+      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu90.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp" + EnemeyChamp)
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+      }
+
+
+    const button = document.getElementById('post-btn');
+   
+    const d =  JSON.stringify(
+      {
+        'ChampionFk': data['cs'],
+        'MinionsKilled': '20',
+        'kills': '1',
+        'deaths': '1',
+        'assists': '1',
+        'lane': '1',
+        'DmgDealt': '1',
+        'DmgTaken': '1',
+        'TurretDmgDealt': '1',
+        'TotalGold': '1',
+        "EnemyChampionFk": '1',
+        'GameDuration': '2000',
+        'DragonKills': '1',
+        'BaronKills': '0',
+      }
+    )   
+
+    button.addEventListener('click', async _ => {
+      try {     
+        const response = await fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu89b.gitpod.io/post_json', {
+          method: 'post',
+          body: d,
+          headers: {
+              'Content-type': 'application/json',
+          }
+        });
+        console.log('Completed!', jresponse);
+      } catch(err) {
+        console.error(`Error: ${err}`);
+      }
+    });
+      
+  </script>
+        
+{% endblock %}
