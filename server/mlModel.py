@@ -42,20 +42,18 @@ connection = mysql.connector.connect(host=host,
                                      database= sql_user,
                                      user=sql_user,
                                      password=sql_password)
-
-query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`kills`,`MatchStatsTbl`.`deaths`,`MatchStatsTbl`.`assists`,`MatchStatsTbl`.Lane,`MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,  `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills` ,`MatchStatsTbl`.`Win` FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
 cursor = connection.cursor()
+query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`kills`,`MatchStatsTbl`.`deaths`,`MatchStatsTbl`.`assists`,`MatchStatsTbl`.Lane,  `MatchStatsTbl`.CurrentMasteryPoints, `MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,  `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills` ,`MatchStatsTbl`.`Win` FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
 
 cursor.execute(query)
 data = cursor.fetchall()
 
-columns = ['ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
+columns = ['ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','CurrentMasteryPoints','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
 ,'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win']
 
 #data = pd.read_csv("data.csv")
-df_games = pandas.DataFrame(data,columns = columns)
+df_games = pd.DataFrame(data,columns = columns)
 df_games.sample(frac=1)
-
 df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'NONE':4})
 df_games['Win'] = df_games['Win']
 print(df_games)
@@ -63,7 +61,7 @@ print(df_games)
 X = df_games.drop('Win', axis=1)
 y = df_games['Win']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+X_train, X_test, y_train, y_test = train_test_split(X.values, y, test_size=0.15)
 
 rf = RandomForestClassifier()
 rf.fit(X_train, y_train)
@@ -86,8 +84,7 @@ for f in range(X.shape[1]):
     print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
 
 
-
-row = [[1,24 ,1,60,1,2,5255,255,1,2000,52,2000,0,0]]
+row = [[1,2,1,9,1,2,200,2,1,5677,2000,52,2000,0,0]]
 
 yhat = rf.predict(row)
 print('Prediction: %d' % yhat[0])
@@ -96,6 +93,6 @@ print('Prediction: %d' % yhat[0])
 # Plot the feature importances of the forest
 plt.figure()
 plt.title("Feature importances")
-print(rf.feature_names_in_)
-plt.barh(rf.feature_names_in_, rf.feature_importances_)
+#print(rf.feature_names_in_)
+#plt.barh(rf.feature_names_in_, rf.feature_importances_)
 plt.savefig("Fig.png")

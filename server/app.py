@@ -32,16 +32,6 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-#Database Connection
-def create_connection():
-    return pymysql.connect(
-        host=host,
-        db='o1gbu42_StatTracker',
-        user=sql_user,
-        password=sql_password,
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
 #Login
 @app.route('/login', methods =['GET', 'POST'])
 def login():
@@ -144,7 +134,7 @@ def ChampionTablePage():
     query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
     cursor.execute(query)
     data = cursor.fetchall()
-    print(data)
+   
 
     #columns = ['ChampionFk', 'kills', 'deaths','assists', 'Win', 'GameDuration']
     
@@ -172,7 +162,6 @@ def championData():
 
     ChampKills = str(ChampKills[0][0])
     TotalGames = str(TotalGames[0][0])
-    print(TotalGames)
 
     #winRate = ChampWins / TotalGames * 100
 
@@ -282,8 +271,7 @@ def SummonerChampionStats():
     ChampWins = ChampWins[0]['COUNT(`MatchStatsTbl`.Win)']
     ChampKills = str(ChampKills[0]['SUM(`MatchStatsTbl`.kills)'])
     TotalGames = str(TotalGames[0]['COUNT(`MatchStatsTbl`.Win)'])
-    print(TotalGames)
-    print(ChampWins)
+
 
     #winRate = ChampWins / TotalGames * 100
 
@@ -302,12 +290,12 @@ def SummonerChampionStats():
     position = cursor.execute("SELECT Lane, COUNT(Lane) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s GROUP BY Lane ORDER BY PrimaryKeyStone DESC ", (int(championStats['key']), int(SummonerFk)))
     position = cursor.fetchone()
     position = position
-    print(position)
+   
     position = Normalise(position)
 
     kda = cursor.execute("SELECT AVG(kills), AVG(deaths), AVG(assists) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s", (int(championStats['key']), int(SummonerFk)))
     kda = cursor.fetchall()
-    print(kda)
+  
 
     AvgMinionsRanked = []
     AvgDmgTakenRanked = []
@@ -343,11 +331,11 @@ def predict():
     cursor =  connection.cursor()
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
-        print(request.data)
+     
         data = json.loads(request.data)    
-        print(data)
+       
         rf = randomForest.randomForestRun()
-        rf = randomForest.randomForestPredict(rf,data['ChampionFk'],data['MinionsKilled'],data['kills'],data['deaths'],data['assists'],data['lane'],
+        rf = randomForest.randomForestPredict(rf,data['ChampionFk'],data['MinionsKilled'],data['kills'],data['deaths'],data['assists'],data['lane'], data['masteryPoints'],
                                             data['DmgDealt'],data['DmgTaken'],data['TurretDmgDealt'],data['TotalGold'],data['EnemyChampionFk'],
                                             data['GameDuration'],data['DragonKills'],data['BaronKills'])
         Prediction = {
@@ -366,7 +354,12 @@ def matchPredict():
     cursor =  connection.cursor()
     champ = cursor.execute("SELECT * FROM `ChampionTbl`")
     champ = cursor.fetchall()
-    return render_template('matchPrediction.html', Champions = champ)
+
+    RoleImages = getRoles()
+
+    #Velkoz
+    #Dr. Mundo == DrMundo
+    return render_template('matchPrediction.html', Champions = champ, RoleSelect = RoleImages)
     
 
 @app.route('/summData', methods = ['GET'])
@@ -374,18 +367,19 @@ def summData():
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
     champ = request.args.get('champ')
-    enemyChampion = request.args.get('enemyChamp')
+    enemyChamp = request.args.get('enemyChamp')
+    lane = request.args.get('lane')
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
     data = getMatchData(Region, SummId, SummonerInfo)
     mastery = getMasteryStats(Region, SummId)
     mastery = getSingleMasteryScore(champ, mastery)
-    lave = 1
     avg = AvgStats(data)
     avg['ChampId'] = champ
     avg['masteryPoints'] = mastery
-    avg['enemyChamp'] = enemyChampion
-
+    avg['enemyChamp'] = enemyChamp
+    avg['lane'] = lane
+    print(avg)
     return jsonify(avg), 200
 
 

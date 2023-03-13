@@ -27,13 +27,13 @@ global rf
 
 def randomForestRun():
     conn = connection()
-    query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`kills`,`MatchStatsTbl`.`deaths`,`MatchStatsTbl`.`assists`,`MatchStatsTbl`.Lane,`MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,  `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills` ,`MatchStatsTbl`.`Win` FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
+    query = ("SELECT `SummonerMatchTbl`.ChampionFk, `MatchStatsTbl`.`MinionsKilled`,`MatchStatsTbl`.`kills`,`MatchStatsTbl`.`deaths`,`MatchStatsTbl`.`assists`,`MatchStatsTbl`.Lane,  `MatchStatsTbl`.CurrentMasteryPoints, `MatchStatsTbl`.`DmgDealt`,`MatchStatsTbl`.`DmgTaken`,`MatchStatsTbl`.`TurretDmgDealt`,`MatchStatsTbl`.`TotalGold`,`MatchStatsTbl`.EnemyChampionFk,  `MatchTbl`.`GameDuration`,`MatchStatsTbl`.`DragonKills`,`MatchStatsTbl`.`BaronKills` ,`MatchStatsTbl`.`Win` FROM `SummonerMatchTbl` JOIN `MatchStatsTbl`ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk` WHERE `MatchTbl`.`QueueType` = 'CLASSIC';")
     cursor = conn.cursor()
 
     cursor.execute(query)
     data = cursor.fetchall()
 
-    columns = ['ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
+    columns = ['ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','CurrentMasteryPoints','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
     ,'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win']
 
     #data = pd.read_csv("data.csv")
@@ -49,18 +49,20 @@ def randomForestRun():
     global rf
     rf = RandomForestClassifier()
     rf.fit(X_train.values, y_train)
+   
     return rf
 
-def randomForestPredict(rf, ChampionFk,MinionsKilled,kills,deaths,assists,lane,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
+def randomForestPredict(rf, ChampionFk,MinionsKilled,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
     #y_pred = rf.predict(X_test)
 
     #accuracy = accuracy_score(y_test, y_pred)
     #print("Accuracy:", accuracy)
     #'ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold' 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills',
-    row = [[ChampionFk,MinionsKilled ,kills,deaths,assists,lane,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills]]
-
+    row = [[ChampionFk,MinionsKilled ,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills]]
+    prob = rf.predict_proba(row)
     yhat = rf.predict(row)
-    print('Prediction: %d' % yhat[0])
+    print('Prediction: %d' % yhat[0],)
+    print(prob)
     return yhat[0]
 
 def getRandomForest():

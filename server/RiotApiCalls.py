@@ -13,8 +13,15 @@ participants = []
 fullMatch = []
 matchData = []
 
-db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
-cursor = db.cursor()
+def create_connection():
+    return pymysql.connect(
+        host=host,
+        db='o1gbu42_StatTracker',
+        user=sql_user,
+        password=sql_password,
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
 
 class SummonerInGameObj:
   def __init__(self, SummonerName, Rank, WinRate, AvgGold, AvgDmg, AvgDmgTaken, ProfileIcon):
@@ -45,17 +52,18 @@ summonerSpells = {  # Summoner Spell Image Data Store
 
 #Get Item Images - Pass in itemList []
 def GetItemImages(itemList):
+    connection = create_connection()
+    cursor =  connection.cursor()
     itemE =[]
     for item in itemList:
-        print(item)
+  
         cursor.execute("SELECT `ItemLink` FROM `ItemTbl` WHERE `ItemID` = % s", (item,))
         data = str(cursor.fetchall())
         data = data.replace(')', '')
         data = data.replace('(', '')
         data = data.replace(',', '')
         data = data.replace("'", '')
-        print(data)
-
+ 
         itemE.append(data)
 
     ItemList = itemE
@@ -64,14 +72,14 @@ def GetItemImages(itemList):
 #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/
 #Gets Summoner Spell Icons and Replaces them in the match data store
 def getSummonerSpellsImages(match):
-        spellId1 = match['summoner1Id']
-        spellId2 = match['summoner2Id']
 
-        spellId1 = summonerSpells[spellId1]
-        spellId2 = summonerSpells[spellId2]
-        match['summoner1Id'] = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/' + spellId1
-        match['summoner2Id'] = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/' + spellId2
-        return match
+    spellId1 = match['summoner1Id']
+    spellId2 = match['summoner2Id']
+    spellId1 = summonerSpells[spellId1]
+    spellId2 = summonerSpells[spellId2]
+    match['summoner1Id'] = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/' + spellId1
+    match['summoner2Id'] = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/' + spellId2
+    return match
 
 
 #Gets RankTierIcon     
@@ -108,19 +116,26 @@ def getMasteryStats(Region,id):
     return masteryScore
 
 def getSingleMasteryScore(champId, mastery):
+    masteryScore = None
     for m in mastery:
         if int(champId) == int(m['championId']):
             masteryScore = int(m['championPoints'])
-            return masteryScore
+
+    if not masteryScore:
+        masteryScore = 0
+    
+
+    return masteryScore
+
 
 def getMatchData(region,id,SummonerInfo):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=15&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
 
 def getMatchIds(region,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=15&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     return MatchIDs
 
@@ -158,6 +173,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
                 'dragonKills':None,
                 'baronKills':None,
                 'Items':None,
+                'ItemImages':None,
                 "TowerDamageDealt":None,
                 "Role":None,
                 "PrimaryKeyStone":None,
@@ -215,6 +231,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
             player_data['item5'],
             player_data['item6'],
         ]
+
      
         KeyStone1=[
             player_data["perks"]['styles'][0]['selections'][0]['perk'],
@@ -229,9 +246,9 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
         ]
 
-        print(data)
-        #ItemInGame = GetItemImages(Items)
-        #player_data = getRoleImages(player_data)
+        
+        ItemInGame = GetItemImages(Items)
+        player_data = getRoleImages(player_data)
         gameMins = MatchData['info']['gameDuration']
        
         k = player_data['kills']
@@ -247,6 +264,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         role = player_data['lane']
         turretDmg = player_data['turretTakedowns']
 
+        data['ItemImages'] = ItemInGame
         data['champion'] = champion
         data['kills'] = k
         data['deaths'] = d
@@ -255,7 +273,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         data['goldEarned'] = GoldPerMin
         data['physicalDamageDealtToChampions'] = physicalDamageDealtToChampions
         data['physicalDamageTaken'] = physicalDamageTaken
-        data['cs'] = cs
+        data['cs'] = cs + int(player_data['challenges']['alliedJungleMonsterKills'])
         data['dragonKills'] = dragonKills
         data['baronKills'] = baronKills
         data['GameDuration'] = gameMins
@@ -275,7 +293,6 @@ def getMatches(region,MatchIDs,SummonerInfo):
         matchIdsData['GameType'].append(gameType)
         matchIdsData['gameVersion'].append(gameVersion)
         matchIdsData['Rank'].append(SOLO['tier'])
-        print(SOLO['tier'])
 
         data2 = dict(data)
         matchIds2 = dict(matchIdsData)
@@ -300,6 +317,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
 #Gets AvgStats for Previous x Games
 def AvgStats(dataList):
+  
     #Data Store - Dict
     AvgStats = {
         'cs':0,
@@ -315,8 +333,9 @@ def AvgStats(dataList):
         'TowerDamageDealt':0
     }
     i = 1 #Iterator
-    while i < dataList.__len__(): # Less than x games
-        AvgStats['cs'] += dataList[i]['cs']
+    while i < len(dataList): # Less than x games
+        AvgStats['cs'] = AvgStats['cs'] + dataList[i]['cs']
+  
         AvgStats['kills'] += dataList[i]['kills']
         AvgStats['assists'] += dataList[i]['assists']
         AvgStats['deaths'] += dataList[i]['deaths']
@@ -328,9 +347,9 @@ def AvgStats(dataList):
         AvgStats['GameDuration'] += dataList[i]['GameDuration'] 
         AvgStats['TowerDamageDealt'] += dataList[i]['TowerDamageDealt'] 
         i = i +1
-    for keys in AvgStats: #Divide by number of games and Round
+    for keys in AvgStats: #Divide by number of games
         AvgStats[keys] = AvgStats[keys] / i
-        AvgStats[keys] = int(round(AvgStats[keys]))
+        AvgStats[keys] = (AvgStats[keys])
     return AvgStats # Returns Avg Dataset for ml Model predictions
 
 
@@ -415,7 +434,7 @@ def getMatchTimeline(region,id,puuid,data):
 
    
             i = 0
-            print(data[ie]['GameDuration'])
+         
             matchLength = data[ie]['GameDuration']
             matchLength = int(matchLength)
  
@@ -441,7 +460,7 @@ def getMatchTimeline(region,id,puuid,data):
     i = 0
     count = 0
 
-    while i < 11:
+    while i < 0:
             for line in ListS:
                 dmgTaken = line['totalDamageTaken'][i]
                 minions = line['minionsKilled'][i]
@@ -453,7 +472,6 @@ def getMatchTimeline(region,id,puuid,data):
                 meanGold =+ gold
                 count=count +1
             
-       
             count=0
             MeanData['totalDamageTakenPerMin'].append(meanDmgTaken)
             MeanData['avgGoldPerMin'].append(meanGold)
@@ -515,9 +533,32 @@ def summonerInGameCheck(region,summonerId):
 
 def getRoleImages(data):
     role = data['role'].lower()
-    if role == "support":
+  
+    if str(role) == "carry":
+        role == "bottom"
+    if str(role) == "support":
         role = "utility"
-    if role == "solo":
+    if str(role) == "solo":
         role = "middle"
+
     data['role'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-"+ role +".png"
     return data
+
+def getRoles():
+    list = [["0","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png"],
+        ["1","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png"],
+        ["2","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png"],
+        ["3","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png"],
+        ["3","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png"]]
+    RoleList = []
+
+    i = 0
+    while i < 5:
+        roleImages = {
+            "RoleId":int(list[i][0]),
+            'RoleLink':list[i][1]
+        }
+        RoleList.append(roleImages)
+        i = i +1
+    
+    return RoleList

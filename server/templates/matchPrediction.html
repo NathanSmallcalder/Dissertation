@@ -1,3 +1,4 @@
+
 {% extends 'base.html'%}
 
 {%block content %}
@@ -71,7 +72,12 @@
                     </div>
                     <button class="button is-info">Search</button>
                 </form>
-                  <button id="post-btn">I'm a button</button>
+                {% for role in RoleSelect %}
+                  <label>
+                    <input type="radio" name="role" value="{{role['RoleId']}}">
+                    <img src="{{role['RoleLink']}}" height = 60 width = 60 alt="">
+                  </label>
+                {% endfor %}
                   </div>
                 </div>
               </div>
@@ -112,55 +118,53 @@
     </div>
 </div>
   <script>    
-
+  var obj;
   function summonerAvg(summonerName, Region) {
       summonerName = summonerName.value;
       Region = Region.value;
-      alert("ewew")
+
       PickedChamp = parseInt(document.querySelector('input[name="champ"]:checked').value);
-      EnemeyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
+      EnemyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
+      role = parseInt(document.querySelector('input[name="role"]:checked').value);
       alert(PickedChamp)
-      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu90.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp" + EnemeyChamp)
+      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu90.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then(data => {
+          obj = data;
+          postItem(obj)
+        })
       }
 
+function postItem(data){
+  alert("posted")
+  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu90.gitpod.io/post_json', {
+    method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        "MinionsKilled": data['cs'],
+        "kills": data['kills'],
+        "assists": data['assists'],
+        "deaths": data['deaths'],
+        "TotalGold": data['goldEarned'],
+        "DmgDealt": data['physicalDamageDealtToChampions'],
+        "DmgTaken": data['physicalDamageTaken'],
+        "DragonKills": data['dragonKills'],
+        "BaronKills": data['baronKills'],
+        "GameDuration": data['GameDuration'],
+        "TurretDmgDealt": data['TowerDamageDealt'],
+        "ChampionFk": data['ChampId'],
+        "masteryPoints": data['masteryPoints'],
+        "EnemyChampionFk": data['enemyChamp'],
+        "lane": data['lane']
+      })
+  })
+    .then(response => response.json())
+    .then(response => console.log(JSON.stringify(response)))
+  }
 
-    const button = document.getElementById('post-btn');
-   
-    const d =  JSON.stringify(
-      {
-        'ChampionFk': data['cs'],
-        'MinionsKilled': '20',
-        'kills': '1',
-        'deaths': '1',
-        'assists': '1',
-        'lane': '1',
-        'DmgDealt': '1',
-        'DmgTaken': '1',
-        'TurretDmgDealt': '1',
-        'TotalGold': '1',
-        "EnemyChampionFk": '1',
-        'GameDuration': '2000',
-        'DragonKills': '1',
-        'BaronKills': '0',
-      }
-    )   
-
-    button.addEventListener('click', async _ => {
-      try {     
-        const response = await fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu89b.gitpod.io/post_json', {
-          method: 'post',
-          body: d,
-          headers: {
-              'Content-type': 'application/json',
-          }
-        });
-        console.log('Completed!', jresponse);
-      } catch(err) {
-        console.error(`Error: ${err}`);
-      }
-    });
       
   </script>
         

@@ -8,7 +8,7 @@ import mysql.connector
 
 conn = mysql.connector.connect(user=sql_user, password=sql_password, host=host, database='o1gbu42_StatTracker')
 cursor = conn.cursor()
-DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
+DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion.json")
 DDRAGON = DDRAGON.json()
 DDRAGON = DDRAGON['data']
 for item in DDRAGON:
