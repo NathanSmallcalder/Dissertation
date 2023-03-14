@@ -3,11 +3,8 @@ import requests
 from config import *
 import pandas as pd
 import time
-import pymysql
 from RiotApiCalls import *
 
-db = pymysql.connect(host=host,user='o1gbu42_StatTracker',passwd=sql_password,database =sql_user)
-cursor = db.cursor()
 
 #Gets Champion base stats
 def getChampDetails(champion):
@@ -16,7 +13,6 @@ def getChampDetails(champion):
     DDRAGON = DDRAGON['data'][champion]
     DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + str(DDRAGON['id']) + ".png"
     DDRAGON['full'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-splashes/" + str(DDRAGON['key']) + "/" +str(DDRAGON['key']) +"000" + ".jpg"
-  
     return DDRAGON
 
 #Gets Champion ability videos
@@ -68,85 +64,69 @@ def getChampSpellImages(champion): #
         spell = spell[n:]
         spell = "https://raw.communitydragon.org/latest/game/assets/" + spell.lower()
         spells['abilityIconPath'] = spell
-   
-def getRunesImages(runes): 
+    
+def getRunesImages(runesList): 
     runesLinksList = []
     data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
     data = data.json()
-    MainRune = None
-    for rune in runes:
-            for runes in data:
-                for data in runes['slots']:   
-                        for data in data['runes']:
-                                for r in rune:
-                                    if(int(r) == int(data['id'])):
-                                            MainRune = runes
-                                            runesLinks = {
-                                            'Name': None,
-                                            'Desc':None,
-                                            'LinkRef':None
-                                            }
-                                            runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + data['icon'].lower()
-                                            runesLinks['Name'] = data['name']
-                                            runesLinks['Desc'] = data['longDesc']
-                                            
-                                            temp = dict(runesLinks)
-                                            runesLinksList.append(temp)
-                                            del runesLinks
-    runesLinks = {
-        'Name': None,
-        'Desc':None,
-        'LinkRef':None
-    }
-    runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + MainRune['icon'].lower()
-    runesLinks['Name'] = MainRune['name']
+    try:
+        for runes in data:
+            for data in runes['slots']:   
+                for data in data['runes']:
+                    if int(runesList) == int(data['id']):
+                        MainRunes = runes
+                        runesLinks = {
+                                'Name': None,
+                                'Desc':None,
+                                'LinkRef':None
+                        }
+                        runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + data['icon'].lower()
+                        runesLinks['Name'] = data['name']
+                        runesLinks['Desc'] = data['longDesc']
+                        
+                        MainRune = {
+                            'Name': None,
+                            'Desc':None,
+                            'LinkRef':None
+                        }
+                        
+                        MainRune['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + MainRunes['icon'].lower()
+                        MainRune['Name'] = MainRunes['name']
+                     
+                        return runesLinks, MainRune
+    except:
+        pass
 
-                                            
-    temp = dict(runesLinks)
-    runesLinksList.append(temp)
-    del runesLinks
-    return runesLinksList
+    
+    
     #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1
 
-
+#Passing ItemIds to get a dictionary of ItemName, Description and Image Link
 def getItemDescriptions(itemList):
+    from databaseQuries import getItemLink
     data = requests.get("https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/en_gb/v1/items.json")
     data = data.json()
     ItemLinksList = []
     for item in itemList:
-        for i in item:
-            ItemLinks = {
+        ItemLinks = {
                             'ItemName': None,
                             'Desc':None,
                             'Link':None
                         }
-            
-            
-            for items in data: 
-                if(int(i) == int(items['id'])):
+
+        for items in data:
+            if(int(itemList[item]) == int(items['id'])):
+                if "SUM" not in item:
                         ItemLinks['ItemName'] = items['name']
                         ItemLinks['Desc'] = items['description']
-                        Link = cursor.execute("SELECT `ItemLink` FROM `ItemTbl` WHERE ItemID = % s", (i,))
-                        link = cursor.fetchone()
-                        ItemLinks['Link'] = Normalise(link)
+                        link = getItemLink(int(itemList[item]))
+                        ItemLinks['Link'] = link
                         temp = dict(ItemLinks)
                         ItemLinksList.append(temp)
                         del ItemLinks
     
     return ItemLinksList
 
-def Normalise(stri):
-    stri = str(stri)
-    stri = stri.replace('[', '')
-    stri = stri.replace(']', '')
-    stri = stri.replace("'", '')
-    stri = stri.replace('(', '')
-    stri = stri.replace(')', '')
-    stri = stri.replace(",", '')
-    stri = stri.replace("\n", '')
-    stri = stri.replace("''", '')
-    stri = stri.replace("\"'", '')
-   
-    return stri
+
    
 

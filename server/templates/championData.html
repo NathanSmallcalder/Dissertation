@@ -148,7 +148,7 @@
                 <div>
               <h3 class="heading">Games Recorded</h3>
               <h3 class="title"> K / D / A</h3>
-              <h3 class="title"> {{(kda[0][0])|round}} / {{(kda[0][1])|round}} / {{(kda[0][2])|round}}</h3>
+              <h3 class="title"> {{ kda }}</h3>
 
               <h3 class="heading">Win Rate</h3>
               <h3 class ="title">{{winRate}} %</h3>
@@ -328,22 +328,16 @@
             <div class="content">
               <div>
                 <h1> Popular Items </h1>
-                <p><img src="{{commonItems[0]['Link'] }}"><span>{{ commonItems[2]['Desc'] }}</span></p>
-                <p><img src="{{commonItems[1]['Link'] }}"><span>{{ commonItems[3]['Desc'] }}</span></p>
-                <p><img src="{{commonItems[2]['Link'] }}"><span>{{ commonItems[4]['Desc'] }}</span></p>
-                <p><img src="{{commonItems[3]['Link'] }}"><span>{{ commonItems[2]['Desc'] }}</span></p>
-                <p><img src="{{commonItems[4]['Link'] }}"><span>{{ commonItems[3]['Desc'] }}</span></p>
-                <p><img src="{{commonItems[5]['Link'] }}"><span>{{ commonItems[5]['Desc'] }}</span></p>
+                {% for Common in CommonItems %}
+                <p><img src="{{Common['Link'] }}"><span>{{ Common['Desc'] }}</span></p>
+                {% endfor %}
               </div>
               <br>
               <div>
                 <h1> Highest Win Rate </h1>
-                <p><img src="{{bestItems[0]['Link'] }}"><span>{{ bestItems[2]['Desc'] }}</span></p>
-                <p><img src="{{bestItems[1]['Link'] }}"><span>{{ bestItems[3]['Desc'] }}</span></p>
-                <p><img src="{{bestItems[2]['Link'] }}"><span>{{ bestItems[4]['Desc'] }}</span></p>
-                <p><img src="{{bestItems[3]['Link'] }}"><span>{{ bestItems[2]['Desc'] }}</span></p>
-                <p><img src="{{bestItems[4]['Link'] }}"><span>{{ bestItems[3]['Desc'] }}</span></p>
-                <p><img src="{{bestItems[5]['Link'] }}"><span>{{ bestItems[5]['Desc'] }}</span></p>
+                {% for Best in BestItems %}
+                <p><img src="{{Best['Link'] }}"><span>{{ Best['Desc'] }}</span></p>
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -359,33 +353,28 @@
                 <div class = "column">
                   <h3> Popular Primary Runes</h3>
                   <div>
-                    <p><img height = 150 width = 150  src  = "{{ SecondRunes[2]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
-                    <p><img height = 100 width = 100  src  = "{{ SecondRunes[0]['LinkRef'] }}"><span>{{ SecondRunes[0]['Desc'] }}</span></p>
-                    <p><img height = 100 width = 100  src  = "{{ SecondRunes[1]['LinkRef'] }}"><span>{{ SecondRunes[1]['Desc'] }}</span></p>
+                    {% for Secondary in SecondRunes %}
+                    <p><img height = 150 width = 150  src  = "{{ Secondary['LinkRef'] }}"><span>{{ SecondRunes['Desc'] }}</span></p>
+                    {% endfor %}
                   </div>
                   <div>
-                    <p><img  height = 100 width = 100  src = "{{ runes[4]['LinkRef'] }}"><span>{{ runes[4]['Desc'] }}</span></p>
-                    <p><img height = 100 width = 100 src = "{{ runes[0]['LinkRef'] }}"><span>{{ runes[0]['Desc'] }}</span></p>
-                    <p><img height = 100 width = 100 src = "{{ runes[1]['LinkRef'] }}"><span>{{ runes[1]['Desc'] }}</span></p>
-                    <p><img height = 100 width = 100 src = "{{ runes[2]['LinkRef'] }}"><span>{{ runes[2]['Desc'] }}</span></p>
-                    <p><img height = 100 width = 100  src = "{{ runes[3]['LinkRef'] }}"><span>{{ runes[3]['Desc'] }}</span></p>
+                    {% for Primary in runes %}
+                    <p><img  height = 100 width = 100  src = "{{ Primary['LinkRef'] }}"><span>{{ Primary['Desc'] }}</span></p>
+                    {% endfor %}
                   </div>
                 </div>
               </div>
 
                 <div class="contentE">
-
-                    <div >
-                      <p><img height = 150 width = 150  src  = "{{ BestSecondRunes[2]['LinkRef'] }}"><span>{{ BestSecondRunes[1]['Desc'] }}</span></p>
-                      <p><img height = 100 width = 100  src  = "{{ BestSecondRunes[0]['LinkRef'] }}"><span>{{ BestSecondRunes[0]['Desc'] }}</span></p>
-                      <p><img height = 100 width = 100  src  = "{{ BestSecondRunes[1]['LinkRef'] }}"><span>{{ BestSecondRunes[1]['Desc'] }}</span></p>
+                    <div>
+                      {% for BestSecondary in BestSecondRunes %}
+                      <p><img height = 150 width = 150  src  = "{{ BestSecondary['LinkRef'] }}"><span>{{ BestSecondary['Desc'] }}</span></p>
+                      {% endfor %}
                     </div>
                     <div>
-                      <p><img  height = 100 width = 100  src = "{{ BestRunes[4]['LinkRef'] }}"><span>{{ BestRunes[4]['Desc'] }}</span></p>
-                      <p><img height = 100 width = 100 src = "{{ BestRunes[0]['LinkRef'] }}"><span>{{ BestRunes[0]['Desc'] }}</span></p>
-                      <p><img height = 100 width = 100 src = "{{ BestRunes[1]['LinkRef'] }}"><span>{{ BestRunes[1]['Desc'] }}</span></p>
-                      <p><img height = 100 width = 100 src = "{{ BestRunes[2]['LinkRef'] }}"><span>{{ BestRunes[2]['Desc'] }}</span></p>
-                      <p><img height = 100 width = 100  src = "{{ BestRunes[3]['LinkRef'] }}"><span>{{ BestRunes[3]['Desc'] }}</span></p>
+                      {% for BestPrimary in BestRunes %}
+                      <p><img  height = 100 width = 100  src = "{{ BestPrimary['LinkRef'] }}"><span>{{ BestPrimary['Desc'] }}</span></p>
+                      {% endfor %}
                     </div>
                   </div>
               </div>
@@ -453,112 +442,6 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " is-active";
 }
-var yValues = ["{{AvgMinions[0]}}","{{AvgMinions[1]}}","{{AvgMinions[2]}}","{{AvgMinions[3]}}",
-              "{{AvgMinions[4]}}","{{AvgMinions[5]}}","{{AvgMinions[6]}}","{{AvgMinions[7]}}"];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown","red"];
-
-alert(xValues);
-alert(yValues);
-
-new Chart("AvgMinions", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "Minions Killed Avg (Per Rank)"
-    }
-  }
-});
-
-var yValues = ["{{TotalGoldAvg[0]}}","{{TotalGoldAvg[1]}}","{{TotalGoldAvg[2]}}","{{TotalGoldAvg[3]}}",
-              "{{TotalGoldAvg[4]}}","{{TotalGoldAvg[5]}}","{{TotalGoldAvg[6]}}","{{TotalGoldAvg[7]}}",];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown"];
-
-
-new Chart("TotalGoldAvg", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "TotalGoldAvg"
-    }
- 
-  }
-});
-
-var yValues = ["{{DmgDealtAvg[0]}}","{{DmgDealtAvg[1]}}","{{DmgDealtAvg[2]}}","{{DmgDealtAvg[3]}}",
-              "{{DmgDealtAvg[4]}}","{{DmgDealtAvg[5]}}","{{DmgDealtAvg[6]}}","{{DmgDealtAvg[7]}}",];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown"];
-
-
-new Chart("DmgGiven", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "TotalGoldAvg"
-    }
- 
-  }
-});
-
-var yValues = ["{{DmgDealtAvg[0]}}","{{DmgDealtAvg[1]}}","{{DmgDealtAvg[2]}}","{{DmgDealtAvg[3]}}",
-              "{{DmgDealtAvg[4]}}","{{DmgDealtAvg[5]}}","{{DmgDealtAvg[6]}}","{{DmgDealtAvg[7]}}",];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown"];
-
-new Chart("DmgDealtAvg", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "DmgDealtAvg"
-    }
-  }
-});
 
 </script>
 

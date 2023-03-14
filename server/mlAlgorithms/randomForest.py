@@ -41,7 +41,7 @@ def randomForestRun():
     df_games.sample(frac=1)
 
 
-    df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'NONE':4})
+    df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'SUPPORT':4,'NONE':5})
     df_games['Win'] = df_games['Win']
     X = df_games.drop('Win', axis=1)
     y = df_games['Win']
@@ -54,7 +54,6 @@ def randomForestRun():
 
 def randomForestPredict(rf, ChampionFk,MinionsKilled,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
     #y_pred = rf.predict(X_test)
-
     #accuracy = accuracy_score(y_test, y_pred)
     #print("Accuracy:", accuracy)
     #'ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold' 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills',

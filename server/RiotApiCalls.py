@@ -4,7 +4,7 @@ import pandas as pd
 import time
 import sys
 sys.path.append('..')
-from championsRequest import *
+from databaseQuries import *
 
 API = api_key
 MatchIDG = []
@@ -12,16 +12,6 @@ playerMatchData = []
 participants = []
 fullMatch = []
 matchData = []
-
-def create_connection():
-    return pymysql.connect(
-        host=host,
-        db='o1gbu42_StatTracker',
-        user=sql_user,
-        password=sql_password,
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
 
 class SummonerInGameObj:
   def __init__(self, SummonerName, Rank, WinRate, AvgGold, AvgDmg, AvgDmgTaken, ProfileIcon):
@@ -52,18 +42,13 @@ summonerSpells = {  # Summoner Spell Image Data Store
 
 #Get Item Images - Pass in itemList []
 def GetItemImages(itemList):
+    print(itemList)
     connection = create_connection()
     cursor =  connection.cursor()
     itemE =[]
     for item in itemList:
-  
-        cursor.execute("SELECT `ItemLink` FROM `ItemTbl` WHERE `ItemID` = % s", (item,))
-        data = str(cursor.fetchall())
-        data = data.replace(')', '')
-        data = data.replace('(', '')
-        data = data.replace(',', '')
-        data = data.replace("'", '')
- 
+        cursor.execute("""SELECT `ItemLink` FROM `ItemTbl` WHERE `ItemID` = '%s' """, (int(item),))
+        data = cursor.fetchone()
         itemE.append(data)
 
     ItemList = itemE
@@ -256,13 +241,15 @@ def getMatches(region,MatchIDs,SummonerInfo):
         a = player_data['assists']
         win = player_data['win']
         GoldPerMin = player_data['goldEarned']
-        physicalDamageDealtToChampions = player_data['physicalDamageDealtToChampions']
-        physicalDamageTaken = player_data['physicalDamageTaken']
+        physicalDamageDealtToChampions = player_data['totalDamageDealtToChampions']
+        physicalDamageTaken = player_data['totalDamageTaken']
         cs = player_data['totalMinionsKilled']
         dragonKills = player_data['dragonKills']
         baronKills = player_data['baronKills']
         role = player_data['lane']
         turretDmg = player_data['turretTakedowns']
+        jungleCampsKilled = player_data['challenges']['enemyJungleMonsterKills'] + player_data['challenges']['alliedJungleMonsterKills']
+        
 
         data['ItemImages'] = ItemInGame
         data['champion'] = champion
@@ -273,7 +260,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         data['goldEarned'] = GoldPerMin
         data['physicalDamageDealtToChampions'] = physicalDamageDealtToChampions
         data['physicalDamageTaken'] = physicalDamageTaken
-        data['cs'] = cs + int(player_data['challenges']['alliedJungleMonsterKills'])
+        data['cs'] = cs + jungleCampsKilled
         data['dragonKills'] = dragonKills
         data['baronKills'] = baronKills
         data['GameDuration'] = gameMins
@@ -340,6 +327,7 @@ def AvgStats(dataList):
         AvgStats['assists'] += dataList[i]['assists']
         AvgStats['deaths'] += dataList[i]['deaths']
         AvgStats['goldEarned'] += dataList[i]['goldEarned']
+        print(AvgStats['physicalDamageDealtToChampions'])
         AvgStats['physicalDamageDealtToChampions'] += dataList[i]['physicalDamageDealtToChampions'] 
         AvgStats['physicalDamageTaken'] += dataList[i]['physicalDamageTaken']
         AvgStats['dragonKills'] += dataList[i]['dragonKills']
@@ -549,7 +537,7 @@ def getRoles():
         ["1","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png"],
         ["2","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png"],
         ["3","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png"],
-        ["3","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png"]]
+        ["4","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png"]]
     RoleList = []
 
     i = 0
