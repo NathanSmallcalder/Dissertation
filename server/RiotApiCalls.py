@@ -114,13 +114,13 @@ def getSingleMasteryScore(champId, mastery):
 
 
 def getMatchData(region,id,SummonerInfo):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
 
 def getMatchIds(region,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
     return MatchIDs
 
@@ -165,7 +165,8 @@ def getMatches(region,MatchIDs,SummonerInfo):
                 "SecondaryKeyStone":None,
                 "EnemyChamp":None,
                 "SummonerSpell1":None,
-                "SummonerSpell2":None
+                "SummonerSpell2":None,
+                "teamRiftHeraldKills":None
         }
 
         matchIdsData = {
@@ -249,8 +250,9 @@ def getMatches(region,MatchIDs,SummonerInfo):
         role = player_data['lane']
         turretDmg = player_data['turretTakedowns']
         jungleCampsKilled = player_data['challenges']['enemyJungleMonsterKills'] + player_data['challenges']['alliedJungleMonsterKills']
-        
+        riftHeraldKills = player_data['challenges']['teamRiftHeraldKills']
 
+        data['teamRiftHeraldKills'] = riftHeraldKills
         data['ItemImages'] = ItemInGame
         data['champion'] = champion
         data['kills'] = k
@@ -304,7 +306,6 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
 #Gets AvgStats for Previous x Games
 def AvgStats(dataList):
-  
     #Data Store - Dict
     AvgStats = {
         'cs':0,
@@ -340,6 +341,83 @@ def AvgStats(dataList):
         AvgStats[keys] = (AvgStats[keys])
     return AvgStats # Returns Avg Dataset for ml Model predictions
 
+def avgStatsTeam(dataList):
+    AvgStats = {
+        'kills':0,
+        'baronKills':0,
+        'riftHeraldKills':0,
+        'dragonKills':0,
+        'turretKills':0
+    }
+    i = 0
+    while i < len(dataList): # Less than x games
+        AvgStats['kills'] += dataList[i]['kills']
+        AvgStats['baronKills'] += dataList[i]['baronKills']
+        AvgStats['riftHeraldKills'] += dataList[i]['teamRiftHeraldKills']
+        AvgStats['dragonKills'] += dataList[i]['dragonKills']
+        AvgStats['turretKills'] += dataList[i]['TowerDamageDealt']
+        i = i + 1
+
+    for keys in AvgStats: #Divide by number of games
+        AvgStats[keys] = AvgStats[keys] / i
+        AvgStats[keys] = (AvgStats[keys])
+        
+    return AvgStats # Returns Avg Dataset for ml Model predictions
+
+#calculate avgTeam Statistics over x games
+def calculateAvgTeamStats(Team,Region):
+    list = []
+    for item in Team:
+        summName = item
+        SummonerInfo = getSummonerDetails("EUW1",summName)
+        SummId = SummonerInfo['id']
+        data = getMatchData(Region, SummId, SummonerInfo)
+        avg = avgStatsTeam(data) 
+        list.append(avg)
+
+    TeamData = {
+        'kills':0,
+        'baronKills':0,
+        'riftHeraldKills':0,
+        'dragonKills':0,
+        'turretKills':0
+    }
+    for item in list:
+        TeamData['kills'] += item['kills']
+        TeamData['baronKills'] += item['baronKills']
+        TeamData['riftHeraldKills'] += item['riftHeraldKills']
+        TeamData['dragonKills'] += item['dragonKills']
+        TeamData['turretKills'] += item['turretKills']
+
+    print(TeamData)
+    return TeamData
+
+def makeDataSet(team1,team2,data):
+    dataset = {
+        "B1": 1,
+        "B2": 1,
+        "B3":2,
+        "B4": 1,
+        "B5": 1,
+        "R1": 1,
+        "R2": 1,
+        "R3": 1,
+        "R4":1,
+        "R5": 1,
+        "BlueBaronKills": team1['baronKills'],
+        "BlueRiftHeraldKills": team1['riftHeraldKills'],
+        "BlueDragonKills": team1['dragonKills'],
+        "BlueTowerKills": team1['turretKills'],
+        "BlueKills": team1['kills'],
+
+        "RedBaronKills": team1['baronKills'],
+        "RedRiftHeraldKills": team1['riftHeraldKills'],
+        "RedDragonKills": team1['dragonKills'],
+        "RedTowerKills": team1['turretKills'],
+        "RedKills": team1['kills'],
+    }
+
+    return dataset
 
 #Sets Player Match Data
 def setPlayerMatchData(match):

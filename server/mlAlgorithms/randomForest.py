@@ -49,6 +49,10 @@ def randomForestRun():
     global rf
     rf = RandomForestClassifier()
     rf.fit(X_train.values, y_train)
+    y_pred = rf.predict(X_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy:", accuracy)
    
     return rf
 

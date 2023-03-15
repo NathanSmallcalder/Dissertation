@@ -20,7 +20,7 @@ connection = mysql.connector.connect(user=sql_user, password=sql_password, host=
 cursor = connection.cursor(buffered=True)
      
 Region = "EUW1"
-summonerName = "tranquilletkt  "
+summonerName = "mpyeah     "
 connection.autocommit = True
 db_Info = connection.get_server_info()
 
@@ -30,7 +30,7 @@ RankedDetails = getRankedStats(Region,SummId)
 mastery = getMasteryStats(Region, SummId)
 Name = SummonerInfo['name']
 
-cursor.execute("INSERT INTO `SummonerUserTbl`(`SummonerName`) VALUES (%s )", (SummonerInfo['name'],))
+#cursor.execute("INSERT INTO `SummonerUserTbl`(`SummonerName`) VALUES (%s )", (SummonerInfo['name'],))
 connection.commit()
 
 MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=20&api_key=" + API)

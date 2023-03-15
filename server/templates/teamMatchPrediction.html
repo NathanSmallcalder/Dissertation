@@ -1,0 +1,56 @@
+{% extends 'base.html'%}
+
+{%block content %}
+
+
+
+
+
+
+
+
+<script>
+
+
+function postItem(){
+  alert("posted")
+  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu90.gitpod.io/teamData', {
+    method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        "B1Summ": "Mealsz",
+        "B2Summ": "Itwoznotmee",
+        "B3Summ": "Ehhhh",
+        "B4Summ": "Lil Nachty",
+        "B5Summ": "Heimerdongg",
+        "R1Summ": "Mealsz",
+        "R2Summ": "Mealsz",
+        "R3Summ": "Mealsz",
+        "R4Summ": "Mealsz",
+        "R5Summ": "Mealsz",
+        "B1": 1,
+        "B2": 1,
+        "B3":2,
+        "B4": 1,
+        "B5": 1,
+        "R1": 1,
+        "R2": 1,
+        "R3": 1,
+        "R4":1,
+        "R5": 1,
+        'Region':"EUW1"
+
+      
+      })
+  })
+    .then(response => response.json())
+    .then(response => console.log(JSON.stringify(response)))
+  }
+  postItem()
+
+</script>
+
+{% endblock %}

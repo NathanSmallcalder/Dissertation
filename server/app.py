@@ -15,7 +15,9 @@ import json
 import databaseQuries
 import mlAlgorithms
 from mlAlgorithms import randomForest
+from mlAlgorithms import multiPrediction
 from databaseQuries import *
+
 
 warnings.filterwarnings('ignore')
 
@@ -279,6 +281,36 @@ def summData():
     avg['lane'] = lane
     print(avg)
     return jsonify(avg), 200
+
+@app.route('/teamPredict',methods = ['GET'])
+def teamPredictor():
+    return render_template('teamMatchPrediction.html')
+
+@app.route('/teamData', methods = ['GET','POST'])
+def teamData():
+    connection = create_connection()
+    cursor =  connection.cursor()
+
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        data = json.loads(request.data)    
+        print(data)
+        Region = data['Region']
+        
+        BlueTeam = [str(data['B1Summ']),str(data['B2Summ']),str(data['B3Summ']),
+                        str(data['B4Summ']),str(data['B5Summ'])]
+        RedTeam = [str(data['R1Summ']),str(data['R2Summ']),str(data['R3Summ']),
+                        str(data['R4Summ']),str(data['R5Summ'])]
+    
+        blueTeam = calculateAvgTeamStats(BlueTeam,Region)
+        redTeam = calculateAvgTeamStats(RedTeam, Region)
+        dataSet = makeDataSet(blueTeam,redTeam,data)
+        
+        rf = multiPrediction.randomForestMultiRun()
+        prediction = multiPrediction.randomForestPredictMulti(rf,dataSet)
+        print(prediction)
+
+    return jsonify(prediction),200
 
 @app.route('/')
 def index():
