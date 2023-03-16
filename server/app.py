@@ -252,8 +252,6 @@ def matchPredict():
     champ = cursor.execute("SELECT * FROM `ChampionTbl`")
     champ = cursor.fetchall()
     print(champ)
-   
-   
 
     RoleImages = getRoles()
 
@@ -284,7 +282,9 @@ def summData():
 
 @app.route('/teamPredict',methods = ['GET'])
 def teamPredictor():
-    return render_template('teamMatchPrediction.html')
+    RoleImages = getRoles()
+    print(RoleImages)
+    return render_template('teamMatchPrediction.html', RoleImages = RoleImages)
 
 @app.route('/teamData', methods = ['GET','POST'])
 def teamData():
@@ -305,7 +305,7 @@ def teamData():
         blueTeam = calculateAvgTeamStats(BlueTeam,Region)
         redTeam = calculateAvgTeamStats(RedTeam, Region)
         dataSet = makeDataSet(blueTeam,redTeam,data)
-        
+        print(dataSet)
         rf = multiPrediction.randomForestMultiRun()
         prediction = multiPrediction.randomForestPredictMulti(rf,dataSet)
         print(prediction)

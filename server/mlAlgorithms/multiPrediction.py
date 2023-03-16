@@ -32,7 +32,7 @@ def randomForestMultiRun():
 
     cursor.execute(query)
     data = cursor.fetchall()
-    print(data)
+    
     columns = ['TeamId', 'MatchFk','B1','B2','B3','B4','B5',
     'R1','R2','R3','R4','R5',
     'BlueBaronKills', 'BlueRiftHeraldKills','BlueDragonKills',
@@ -54,9 +54,7 @@ def randomForestMultiRun():
     df_games = df_games.drop('RedWin',axis=1)
     df_games = df_games.drop('BlueWin',axis=1)
     X = df_games
-    print(X)
-    print(y)
-    
+
     X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.15)
     rf = RandomForestClassifier()
     rf.fit(X_train, y_train)
@@ -80,8 +78,9 @@ def randomForestPredictMulti(rf, item):
             item['RedBaronKills'],item['RedRiftHeraldKills'],item['RedDragonKills'],
             item['RedTowerKills'],item['RedKills'],
             ]]
+
     print(row)
     prob = rf.predict_proba(row)
     yhat = rf.predict(row)
-    print('Prediction:',yhat[0])
-    print(prob)
+    print('Prediction:', "Red Team:" ,yhat[0][0] ," Blue Team:", yhat[0][1])
+    return yhat

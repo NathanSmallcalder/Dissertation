@@ -7,10 +7,102 @@ from config import *
 from RiotApiCalls import *
 
 sys.path.append('../mlAlgorithms')
-
+from multiPrediction import *
 from randomForest import *
 
 rf = getRandomForest()
+rfTeam = randomForestMultiRun()
+
+def test_rf_ObviousLossTeam():
+    dataset = {
+        "B1": 44,
+        "B2": 876,
+        "B3": 136,
+        "B4": 221,
+        "B5": 74,
+        "R1": 122,
+        "R2": 20,
+        "R3": 99,
+        "R4": 202,
+        "R5": 412,
+        "BlueBaronKills": 1,
+        "BlueRiftHeraldKills":2 ,
+        "BlueDragonKills": 2.33,
+        "BlueTowerKills": 9,
+        "BlueKills": 37,
+
+        "RedBaronKills": 0.3333,
+        "RedRiftHeraldKills": 0,
+        "RedDragonKills": 0,
+        "RedTowerKills": 0,
+        "RedKills":0,
+    }
+
+    prediction = randomForestPredictMulti(rfTeam,dataset)
+    assert prediction[0][0] == 0
+    assert prediction[0][1] == 1
+
+test_rf_ObviousLossTeam()
+
+def test_rf_ObviousLossTeam():
+    dataset = {
+        "B1": 44,
+        "B2": 876,
+        "B3": 136,
+        "B4": 221,
+        "B5": 74,
+        "R1": 122,
+        "R2": 20,
+        "R3": 99,
+        "R4": 202,
+        "R5": 412,
+        "BlueBaronKills": 1,
+        "BlueRiftHeraldKills":2,
+        "BlueDragonKills": 2.33,
+        "BlueTowerKills": 9,
+        "BlueKills": 37,
+
+        "RedBaronKills": 0.3333,
+        "RedRiftHeraldKills": 0.2,
+        "RedDragonKills": 0,
+        "RedTowerKills": 2,
+        "RedKills": 15,
+    }
+
+    prediction = randomForestPredictMulti(rfTeam,dataset)
+    assert prediction[0][0] == 0
+    assert prediction[0][1] == 1
+
+
+def test_rf_LessObviousLossTeam():
+    dataset = {
+        "B1": 44,
+        "B2": 876,
+        "B3": 136,
+        "B4": 221,
+        "B5": 74,
+        "R1": 122,
+        "R2": 20,
+        "R3": 99,
+        "R4": 202,
+        "R5": 412,
+        "BlueBaronKills": 1,
+        "BlueRiftHeraldKills":2 ,
+        "BlueDragonKills": 2.33,
+        "BlueTowerKills": 9,
+        "BlueKills": 37,
+
+        "RedBaronKills": 1,
+        "RedRiftHeraldKills": 1.2,
+        "RedDragonKills": 2,
+        "RedTowerKills": 4,
+        "RedKills": 23,
+    }
+
+    prediction = randomForestPredictMulti(rfTeam,dataset)
+    assert prediction[0][0] == 0
+    assert prediction[0][1] == 1
+
 
 def test_rf_ObviousLoss():
     prediction = randomForestPredict(rf,1,0,0,50,2,1,200, 200,5000,0,2000,5,1220,0,0)

@@ -394,27 +394,27 @@ def calculateAvgTeamStats(Team,Region):
 
 def makeDataSet(team1,team2,data):
     dataset = {
-        "B1": 1,
-        "B2": 1,
-        "B3":2,
-        "B4": 1,
-        "B5": 1,
-        "R1": 1,
-        "R2": 1,
-        "R3": 1,
-        "R4":1,
-        "R5": 1,
+        "B1": data['B1'],
+        "B2":  data['B2'],
+        "B3": data['B3'],
+        "B4":  data['B4'],
+        "B5":  data['B5'],
+        "R1":  data['R1'],
+        "R2":  data['R2'],
+        "R3":  data['R3'],
+        "R4": data['R4'],
+        "R5":  data['R5'],
         "BlueBaronKills": team1['baronKills'],
         "BlueRiftHeraldKills": team1['riftHeraldKills'],
         "BlueDragonKills": team1['dragonKills'],
         "BlueTowerKills": team1['turretKills'],
         "BlueKills": team1['kills'],
 
-        "RedBaronKills": team1['baronKills'],
-        "RedRiftHeraldKills": team1['riftHeraldKills'],
-        "RedDragonKills": team1['dragonKills'],
-        "RedTowerKills": team1['turretKills'],
-        "RedKills": team1['kills'],
+        "RedBaronKills": team2['baronKills'],
+        "RedRiftHeraldKills": team2['riftHeraldKills'],
+        "RedDragonKills": team2['dragonKills'],
+        "RedTowerKills": team2['turretKills'],
+        "RedKills": team2['kills'],
     }
 
     return dataset

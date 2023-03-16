@@ -2,9 +2,113 @@
 
 {%block content %}
 
-
-
-
+<div class="columns is-multiline"> 
+  <div class="column is-one-fifth">
+    <div class="card">
+      <div class="card-content">
+          <div class="content">
+                <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                <img src = "{{ RoleImages[0]['RoleLink']  }}"> 
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="column is-one-fifth">
+      <div class="card">
+        <div class="card-content">
+            <div class="content">
+                  <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                  <img src = "{{ RoleImages[1]['RoleLink']  }}"> 
+              </div>
+            </div>
+          </div>
+        </div>
+      <div class="column is-one-fifth">
+        <div class="card">
+          <div class="card-content">
+              <div class="content">
+                    <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                    <img src = "{{ RoleImages[2]['RoleLink']  }}"> 
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="column is-one-fifth">
+          <div class="card">
+            <div class="card-content">
+                <div class="content">
+                      <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                      <img src = "{{ RoleImages[3]['RoleLink']  }}"> 
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-one-fifth">
+              <div class="card">
+                <div class="card-content">
+                    <div class="content">
+                          <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                          <img src = "{{ RoleImages[4]['RoleLink']  }}"> 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          
+          
+    </div>
+    <div class="columns is-multiline"> 
+      <div class="column is-one-fifth">
+        <div class="card">
+          <div class="card-content">
+              <div class="content">
+                    <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                    <img src = "{{ RoleImages[0]['RoleLink']  }}"> 
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="column is-one-fifth">
+          <div class="card">
+            <div class="card-content">
+                <div class="content">
+                      <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                      <img src = "{{ RoleImages[1]['RoleLink']  }}"> 
+                  </div>
+                </div>
+              </div>
+            </div>
+          <div class="column is-one-fifth">
+            <div class="card">
+              <div class="card-content">
+                  <div class="content">
+                        <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                        <img src = "{{ RoleImages[2]['RoleLink']  }}"> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="column is-one-fifth">
+              <div class="card">
+                <div class="card-content">
+                    <div class="content">
+                          <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                          <img src = "{{ RoleImages[3]['RoleLink']  }}"> 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-one-fifth">
+                  <div class="card">
+                    <div class="card-content">
+                        <div class="content">
+                              <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                              <img src = "{{ RoleImages[4]['RoleLink']  }}"> 
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              </div>
 
 
 
@@ -21,26 +125,26 @@ function postItem(){
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
-        "B1Summ": "Mealsz",
-        "B2Summ": "Itwoznotmee",
+        "B1Summ": "Ehhhh",
+        "B2Summ": "Lil Nachty",
         "B3Summ": "Ehhhh",
-        "B4Summ": "Lil Nachty",
-        "B5Summ": "Heimerdongg",
-        "R1Summ": "Mealsz",
-        "R2Summ": "Mealsz",
-        "R3Summ": "Mealsz",
-        "R4Summ": "Mealsz",
-        "R5Summ": "Mealsz",
-        "B1": 1,
-        "B2": 1,
-        "B3":2,
-        "B4": 1,
-        "B5": 1,
-        "R1": 1,
-        "R2": 1,
-        "R3": 1,
-        "R4":1,
-        "R5": 1,
+        "B4Summ": "Mealsz",
+        "B5Summ": "itwoznotmee",
+        "R1Summ": "Astrolagus ",
+        "R2Summ": "Joepbell",
+        "R3Summ": "Bigfootman",
+        "R4Summ": "Somtingwongwitu",
+        "R5Summ": "LegitSnip3ZzXx ",
+        "B1": 44,
+        "B2": 876,
+        "B3": 136,
+        "B4": 221,
+        "B5": 74,
+        "R1": 122,
+        "R2": 20,
+        "R3": 99,
+        "R4": 202,
+        "R5": 412,
         'Region':"EUW1"
 
       
@@ -49,7 +153,7 @@ function postItem(){
     .then(response => response.json())
     .then(response => console.log(JSON.stringify(response)))
   }
-  postItem()
+  
 
 </script>
 
