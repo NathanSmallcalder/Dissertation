@@ -16,7 +16,7 @@ import databaseQuries
 from mlAlgorithms import *
 sys.path.append('mlAlgorithms')
 from SoloPredictor import randomForestSolo
-from mlAlgorithms import TeamPredictor
+from TeamPredictor import randomForest
 from databaseQuries import *
 
 
@@ -102,9 +102,9 @@ def championData():
     ChampKills = champKills(int(championStats['key']))
     #winRate = ChampWins / TotalGames * 100
     AvgMinions = avgMinions(int(championStats['key']))
-
     DmgTakenAvg = avgDmgTaken(int(championStats['key']))
     DmgDealtAvg = avgDmgDealt(int(championStats['key']))
+    AvgGold = avgGold(int(championStats['key']))
 
     BestItems = bestItems(int(championStats['key']))
     CommonItems = commonItems(int(championStats['key']))
@@ -133,7 +133,8 @@ def championData():
                             CommonItems = CommonItems,
                             runes = CommonRunes, SecondRunes = SecondaryCommonRunes, 
                             BestRunes = BestRunes, BestSecondRunes = SecondaryBestRunes, 
-                            BestItems = BestItems, kda = kda)
+                            BestItems = BestItems, kda = kda,DmgDealtAvg = DmgDealtAvg
+                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold)
 
 @app.route('/summoner/champion' , methods=['GET','POST'])
 def SummonerChampionStats():
@@ -146,27 +147,35 @@ def SummonerChampionStats():
     SummID =  getSummonerIdFromDatabase(SummonerName)
     TotalGames = totalGamesSummoner(int(championStats['key']), SummID)
     ChampWins = champWinsSummoner(int(championStats['key']),SummID)
-    AvgMinions = avgMinionsSummoner(int(championStats['key']),SummID)
-    AvgDmgTaken = avgDmgTakenSummoner(int(championStats['key']), SummID)
-    AvgDmgDealt = avgDmgDealtSummoner(int(championStats['key']), SummID)
-    TotalGold = avgGoldSummoner(int(championStats['key']),SummID)
+    AvgMinionsSumm = avgMinionsSummoner(int(championStats['key']),SummID)
+    AvgDmgTakenSumm  = avgDmgTakenSummoner(int(championStats['key']), SummID)
+    AvgDmgDealtSumm  = avgDmgDealtSummoner(int(championStats['key']), SummID)
+    TotalGoldSumm = avgGoldSummoner(int(championStats['key']),SummID)
+    print(TotalGoldSumm)
+
     position = laneFromDatabaseSummoner(int(championStats['key']), SummID)
     kda = kdaFromDatabaseSummoner(int(championStats['key']),SummID)
+    championKills = champKills(SummID)
 
+    AvgMinions = avgMinions(int(championStats['key']))
+    DmgTakenAvg = avgDmgTaken(int(championStats['key']))
+    DmgDealtAvg = avgDmgDealt(int(championStats['key']))
+    AvgGold = avgGold(int(championStats['key']))
+
+    print(kda)
     return render_template('summonerChampion.html',championStats = championStats, 
                             ChampionAbilities = ChampionAbilities,wins = ChampWins,totalGames = TotalGames,
-                            champKills = ChampKills,
-                            AvgMinions = AvgMinionsRanked,
+                            championKills = championKills,
                             position = position,#winRate = winRate,
-                            Rank = Rank,
-                            TotalGoldAvg = TotalGoldAvgRanked,
-                            DmgDealtAvg = AvgDmgDealtRanked,
-                            DmgTakenAvg = AvgDmgTakenRanked,
+                            AvgMinionsSumm = AvgMinionsSumm,
+                            TotalGoldSumm = TotalGoldSumm,
+                            AvgDmgDealtSumm = AvgDmgDealtSumm,
+                            AvgDmgTakenSumm = AvgDmgTakenSumm,
                             kda = kda)
 
 
 
-@app.route('/post_json',methods=['POST','GET'])
+@app.route('/predictSolo',methods=['POST','GET'])
 def predict():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
@@ -226,7 +235,7 @@ def teamData():
     if (content_type == 'application/json'):
         data = json.loads(request.data)    
         Region = data['Region']
-        
+        print(data)
         BlueTeam = [str(data['B1Summ']),str(data['B2Summ']),str(data['B3Summ']),
                         str(data['B4Summ']),str(data['B5Summ'])]
         RedTeam = [str(data['R1Summ']),str(data['R2Summ']),str(data['R3Summ']),
@@ -236,11 +245,10 @@ def teamData():
         redTeam = calculateAvgTeamStats(RedTeam, Region)
         dataSet = makeDataSet(blueTeam,redTeam,data)
         print(dataSet)
-        rf = multiPrediction.randomForestMultiRun()
-        prediction = multiPrediction.randomForestPredictMulti(rf,dataSet)
+        rf = randomForest.randomForestMultiRun()
+        prediction = randomForest.randomForestPredictMulti(rf,dataSet)
         print(prediction)
-
-    return jsonify(prediction),200
+    return prediction,200
 
 @app.route('/')
 def index():

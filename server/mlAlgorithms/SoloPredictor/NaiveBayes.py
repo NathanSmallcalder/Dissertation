@@ -44,7 +44,7 @@ def NaiveBayesRun():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
 
     model = GaussianNB()
-    model.fit(X,y)
+    model.fit(X_train,y_train)
     y_pred = model.predict(X_test)
     svc_disp = getPlotScore(model, X_test, y_test)
     print(classification_report(y_test, y_pred))
@@ -59,3 +59,5 @@ def NaiveBayesRun():
 def getPlotScore(model, X_test, y_test):
     svc_disp = RocCurveDisplay.from_estimator(model, X_test, y_test)
     return svc_disp
+
+NaiveBayesRun()

@@ -422,7 +422,7 @@
     <div class="card">
       <div class="card-content">
         <div class="content">
-          <canvas id="DmgGiven" width="450" height="550"></canvas> 
+          <canvas id="DmgTakenAvg" width="450" height="550"></canvas> 
       </div>
     </div>
   </div>
@@ -443,6 +443,132 @@ function openTab(evt, tabName) {
   evt.currentTarget.className += " is-active";
 }
 
+
+var yValues = ["{{DmgDealtAvg[0]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[1]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}"
+            ,"{{DmgDealtAvg[2]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[3]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}",
+              "{{DmgDealtAvg[4]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[5]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}"
+              ,"{{DmgDealtAvg[6]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[7]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}"];
+              
+var xValues = ["{{DmgDealtAvg[0]['Rank']}}","{{DmgDealtAvg[1]['Rank']}}"
+            ,"{{DmgDealtAvg[2]['Rank']}}","{{DmgDealtAvg[3]['Rank']}}",
+              "{{DmgDealtAvg[4]['Rank']}}","{{DmgDealtAvg[5]['Rank']}}"
+              ,"{{DmgDealtAvg[6]['Rank']}}","{{DmgDealtAvg[7]['Rank']}}"];
+var barColors = ["Grey", "green","blue","orange","brown","red"];
+
+
+new Chart("DmgDealtAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "DmgDealtAvg (Per Rank)"
+    }
+  }
+});
+
+
+var yValues = ["{{DmgTakenAvg[0]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{DmgTakenAvg[1]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"
+            ,"{{DmgTakenAvg[2]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{DmgTakenAvg[3]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}",
+              "{{DmgTakenAvg[4]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{DmgTakenAvg[5]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"
+              ,"{{DmgTakenAvg[6]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{DmgTakenAvg[7]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"];
+              
+var xValues = ["{{DmgTakenAvg[0]['Rank']}}","{{DmgTakenAvg[1]['Rank']}}"
+            ,"{{DmgTakenAvg[2]['Rank']}}","{{DmgTakenAvg[3]['Rank']}}",
+              "{{DmgTakenAvg[4]['Rank']}}","{{DmgTakenAvg[5]['Rank']}}"
+              ,"{{DmgTakenAvg[6]['Rank']}}","{{DmgTakenAvg[7]['Rank']}}"];
+var barColors = ["Grey", "green","blue","orange","brown","red"];
+
+
+new Chart("DmgTakenAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "DmgTakenAvg (Per Rank)"
+    }
+  }
+});
+
+
+var yValues = ["{{AvgMinions[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[1]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"
+            ,"{{AvgMinions[2]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[3]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+              "{{AvgMinions[4]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[5]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"
+              ,"{{AvgMinions[6]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[7]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"];
+              
+var xValues = ["{{AvgMinions[0]['Rank']}}","{{AvgMinions[1]['Rank']}}"
+            ,"{{AvgMinions[2]['Rank']}}","{{AvgMinions[3]['Rank']}}",
+              "{{AvgMinions[4]['Rank']}}","{{AvgMinions[5]['Rank']}}"
+              ,"{{AvgMinions[6]['Rank']}}","{{AvgMinions[7]['Rank']}}"];
+var barColors = ["Grey", "green","blue","orange","brown","red"];
+
+
+new Chart("AvgMinions", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "AvgMinions (Per Rank)"
+    }
+  }
+});
+
+var yValues = ["{{AvgGold[0]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[1]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"
+            ,"{{AvgGold[2]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[3]['AVG(`MatchStatsTbl`.`TotalGold`)']}}",
+              "{{AvgGold[4]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[5]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"
+              ,"{{AvgGold[6]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[7]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"];
+              
+var xValues = ["{{AvgGold[0]['Rank']}}","{{AvgGold[1]['Rank']}}"
+            ,"{{AvgGold[2]['Rank']}}","{{AvgGold[3]['Rank']}}",
+              "{{AvgGold[4]['Rank']}}","{{AvgGold[5]['Rank']}}"
+              ,"{{AvgGold[6]['Rank']}}","{{AvgGold[7]['Rank']}}"];
+var barColors = ["Grey", "green","blue","orange","brown","red"];
+
+
+new Chart("TotalGoldAvg", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "TotalGoldAvg (Per Rank)"
+    }
+  }
+});
 </script>
 
 {% endblock %}

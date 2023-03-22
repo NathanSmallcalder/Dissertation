@@ -80,8 +80,9 @@ def avgMinions(champId):
 def avgMinionsSummoner(champId,SummonerFk):
     connection = create_connection()
     cursor =  connection.cursor()
-    MinionsAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`MinionsKilled`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' AND `SummonerMatchTbl`.`ChampionFk` = % s  and SummonerMatchTbl.SummonerFk = % s GROUP by `MatchTbl`.`RankFk", (champId, int(SummonerFk)))
+    MinionsAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`MinionsKilled`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' AND `SummonerMatchTbl`.`ChampionFk` = % s  and SummonerMatchTbl.SummonerFk = % s GROUP by `MatchTbl`.`RankFk`", (champId, int(SummonerFk)))
     MinionsAvg = cursor.fetchall()
+   
     return MinionsAvg
 
 #Gets average Damage Taken of champion from a given championId by rank
@@ -127,7 +128,7 @@ def avgGold(champId):
     cursor =  connection.cursor()
     TotalGoldAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`TotalGold`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' AND `SummonerMatchTbl`.`ChampionFk` = % s GROUP by `MatchTbl`.`RankFk`",(champId))
     TotalGoldAvg = cursor.fetchall()
-    return TotalGoldAvg
+  
 
 #Gets average gold of champion from a given championId and SummonerIDd
 #e.g {'Rank':'unranked' , 'AVG(`MatchStatsTbl`.`TotalGold`)': 500}
@@ -137,6 +138,7 @@ def avgGoldSummoner(champId,SummonerFk):
     TotalGoldAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`TotalGold`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' AND `SummonerMatchTbl`.`ChampionFk` = % s and SummonerMatchTbl.SummonerFk = % s  GROUP by `MatchTbl`.`RankFk`", (champId, int(SummonerFk)))
     TotalGoldAvg = cursor.fetchall()
     return TotalGoldAvg
+
 
 #Gets Best (Most Wins) Items
 #Passes value to getItemDescriptions
@@ -241,7 +243,7 @@ def kdaFromDatabaseSummoner(champId,SummonerFk):
     cursor =  connection.cursor()
     kda = cursor.execute("SELECT AVG(kills), AVG(deaths), AVG(assists) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s", (champId, int(SummonerFk)))
     kda = cursor.fetchall()
-    kda = str(int(kda['AVG(kills)'])) + "/" + str(int(kda['AVG(deaths)'])) + "/" + str(int(kda['AVG(assists)']))
+    kda = str(int(kda[0]['AVG(kills)'])) + "/" + str(int(kda[0]['AVG(deaths)'])) + "/" + str(int(kda[0]['AVG(assists)']))
     return kda
 
 #Gets the most frequently played lane of a given champion by champId
@@ -260,8 +262,8 @@ def laneFromDatabaseSummoner(champId,SummonerFk):
     cursor =  connection.cursor()
     position = cursor.execute("SELECT Lane, COUNT(Lane) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s GROUP BY Lane ORDER BY PrimaryKeyStone DESC ", (champId, int(SummonerFk)))
     position = cursor.fetchone()
-    position = position
-    position = position[0]
+    position = position['Lane']
+    print(position)
     return position
 
 #Gets the SummonerId from a given SummonerName
@@ -290,6 +292,7 @@ def getAllChampions():
     champ = cursor.fetchall()
     return champ
 
+#Gets the Top players by wins from database
 def getBestPlayers():
     connection = create_connection()
     cursor =  connection.cursor()
@@ -297,6 +300,7 @@ def getBestPlayers():
     players = cursor.fetchall()
     return players
 
+#Gets Champion table
 def getChampionAverages():
     connection = create_connection()
     cursor =  connection.cursor()
@@ -305,4 +309,11 @@ def getChampionAverages():
     data = cursor.fetchall()
     return data
 
+def getChampionBestPlayers():
+    connection = create_connection()
+    cursor =  connection.cursor()
+    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return data
 

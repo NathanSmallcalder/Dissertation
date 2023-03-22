@@ -571,7 +571,7 @@ def SummonerInGame(LiveGame,region):
         Image = getImageLink(SummonerDetails)
         img = str(SummonerDetails['profileIconId'])
         ##GetMatch
-        Last5Games = getMatches(region, MatchIDs, puuid)
+        Last5Games = getMatchData5Matches(region, MatchIDs, puuid)
         MeanData = getMatchTimeline(region, summonerId, puuid, Last5Games)
 
         champion = []

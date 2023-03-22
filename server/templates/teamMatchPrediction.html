@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 
 {%block content %}
-
+<form method="dialog" onsubmit='return summonerAvg(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5); return false;'>
 <div class="columns is-multiline"> 
   <div class="column is-one-fifth">
     <div class="card has-background-info">
@@ -198,7 +198,7 @@
                       </div>
                     </div>
               </div>
-              <form action = '#' onsubmit='return summonerAvg(); return false;'>
+            
                 <div class="box has-text-centered">
                   <button class="button is-info">Run Match</button>
                 </div>
@@ -206,16 +206,35 @@
             
 
 <script>
-function summonerAvg() {
-      alert("calleed")
+function summonerAvg(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5) {
+      blueSumm1Champ = blueSumm1Champ.value;
+      BlueSumm1 = BlueSumm1.value;
+      blueSumm2Champ = blueSumm2Champ.value;
+      BlueSumm2 = BlueSumm2.value;
+      blueSumm3Champ = blueSumm3Champ.value;
+      BlueSumm3 = BlueSumm3.value;
+      blueSumm4Champ = blueSumm4Champ.value;
+      BlueSumm4 = BlueSumm4.value;
+      blueSumm5Champ = blueSumm5Champ.value;
+      BlueSumm5 = BlueSumm5.value;
+     
+      redSumm1Champ = redSumm1Champ.value;
+      RedSumm1 = RedSumm1.value;
+      redSumm2Champ = redSumm2Champ.value;
+      RedSumm2 = RedSumm2.value;
+      redSumm3Champ = redSumm3Champ.value;
+      RedSumm3 = RedSumm3.value;
+      redSumm4Champ = redSumm4Champ.value;
+      RedSumm4 = RedSumm4.value;
+      redSumm5Champ = redSumm5Champ.value;
+      RedSumm5 = RedSumm5.value;
+      alert("called")
+      postItem(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5)
 
-      PickedChamp = document.querySelector("#BlueSumm1");
 
-      alert(PickedChamp)
-      
 }
 
-function postItem(){
+function postItem(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5){
   alert("posted")
   fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu90.gitpod.io/teamData', {
     method: 'POST',
@@ -224,26 +243,26 @@ function postItem(){
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
-        "B1Summ": "Ehhhh",
-        "B2Summ": "Lil Nachty",
-        "B3Summ": "Ehhhh",
-        "B4Summ": "Mealsz",
-        "B5Summ": "itwoznotmee",
-        "R1Summ": "Astrolagus ",
-        "R2Summ": "Joepbell",
-        "R3Summ": "Bigfootman",
-        "R4Summ": "Somtingwongwitu",
-        "R5Summ": "LegitSnip3ZzXx ",
-        "B1": 44,
-        "B2": 876,
-        "B3": 136,
-        "B4": 221,
-        "B5": 74,
-        "R1": 122,
-        "R2": 20,
-        "R3": 99,
-        "R4": 202,
-        "R5": 412,
+        "B1Summ": BlueSumm1,
+        "B2Summ": BlueSumm2,
+        "B3Summ": BlueSumm3,
+        "B4Summ": BlueSumm4,
+        "B5Summ": BlueSumm5,
+        "R1Summ": RedSumm1,
+        "R2Summ": RedSumm2,
+        "R3Summ": RedSumm3,
+        "R4Summ": RedSumm4,
+        "R5Summ": RedSumm5,
+        "B1": blueSumm1Champ,
+        "B2": blueSumm2Champ,
+        "B3": blueSumm3Champ,
+        "B4": blueSumm4Champ,
+        "B5": blueSumm5Champ,
+        "R1": redSumm1Champ,
+        "R2": redSumm2Champ,
+        "R3": redSumm3Champ,
+        "R4": redSumm4Champ,
+        "R5": redSumm5Champ,
         'Region':"EUW1"
 
       

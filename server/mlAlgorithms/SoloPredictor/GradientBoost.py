@@ -45,8 +45,8 @@ def gradientBoostRun():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
 
 
-    model = GradientBoostingClassifier(learning_rate=0.20)
-    model.fit(X,y)
+    model = GradientBoostingClassifier(learning_rate=0.25)
+    model.fit(X_train,y_train)
     y_pred = model.predict(X_test)
 
     print(classification_report(y_test, y_pred))
@@ -56,10 +56,21 @@ def gradientBoostRun():
     print("Log Loss", score)
     mse = mean_squared_error(y_test, y_pred)
     print("MSE: ", mse)
-    return svc_disp
+    return model
 
 def getPlotScore(model, X_test, y_test):
     svc_disp = RocCurveDisplay.from_estimator(model, X_test, y_test)
     print("eee")
     print(svc_disp)
     return svc_disp
+
+def gradientBoostPredict(gb,ChampionFk,MinionsKilled,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
+    #'ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold' 'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills',
+    row = [[ChampionFk,MinionsKilled ,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills]]
+    prob = gb.predict_proba(row)
+    yhat = gb.predict(row)
+    print('Prediction: %d' % yhat[0],)
+    print(prob)
+    return yhat[0]
+
+gradientBoostRun()

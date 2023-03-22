@@ -67,7 +67,7 @@ def runSVM():
 
     # Make the predictions
     y_predict = svc.predict(X_test_std)
-    getPlotScore(model,X_test,y_test)
+    
     # Measure the performance
     print(classification_report(y_test, y_predict))
 
@@ -76,8 +76,10 @@ def runSVM():
     print("Log Loss", score)
     mse = mean_squared_error(y_test, y_predict)
     print("MSE: ", mse)
-    return svc_disp
+   
 
 def getPlotScore(model, X_test, y_test):
     svc_disp = RocCurveDisplay.from_estimator(model, X_test, y_test)
     return svc_disp
+
+runSVM()

@@ -20,7 +20,7 @@ connection = mysql.connector.connect(user=sql_user, password=sql_password, host=
 cursor = connection.cursor(buffered=True)
      
 Region = "EUW1"
-summonerName = "Kalthrak "
+summonerName = "Linkz   "
 connection.autocommit = True
 db_Info = connection.get_server_info()
 

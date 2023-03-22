@@ -164,7 +164,7 @@
             <div class="level-item has-text-centered">
               <div>
                 <h3 class="heading">Kills</h3>
-                <h3 class="title">{{champKills}}</h3>
+                <h3 class="title">{{championKills}}</h3>
               </div>
             </div>
 
@@ -232,114 +232,6 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " is-active";
 }
-var yValues = ["{{AvgMinions[0]}}","{{AvgMinions[1]}}","{{AvgMinions[2]}}","{{AvgMinions[3]}}",
-              "{{AvgMinions[4]}}","{{AvgMinions[5]}}","{{AvgMinions[6]}}","{{AvgMinions[7]}}"];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown","red"];
-
-alert(xValues);
-alert(yValues);
-
-new Chart("AvgMinions", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "Minions Killed Avg (Per Rank)"
-    }
-  }
-});
-
-var yValues = ["{{TotalGoldAvg[0]}}","{{TotalGoldAvg[1]}}","{{TotalGoldAvg[2]}}","{{TotalGoldAvg[3]}}",
-              "{{TotalGoldAvg[4]}}","{{TotalGoldAvg[5]}}","{{TotalGoldAvg[6]}}","{{TotalGoldAvg[7]}}",];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown"];
-
-
-new Chart("TotalGoldAvg", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "TotalGoldAvg"
-    }
- 
-  }
-});
-
-var yValues = ["{{DmgDealtAvg[0]}}","{{DmgDealtAvg[1]}}","{{DmgDealtAvg[2]}}","{{DmgDealtAvg[3]}}",
-              "{{DmgDealtAvg[4]}}","{{DmgDealtAvg[5]}}","{{DmgDealtAvg[6]}}","{{DmgDealtAvg[7]}}",];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown"];
-
-
-new Chart("DmgGiven", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "TotalGoldAvg"
-    }
- 
-  }
-});
-
-var yValues = ["{{DmgDealtAvg[0]}}","{{DmgDealtAvg[1]}}","{{DmgDealtAvg[2]}}","{{DmgDealtAvg[3]}}",
-              "{{DmgDealtAvg[4]}}","{{DmgDealtAvg[5]}}","{{DmgDealtAvg[6]}}","{{DmgDealtAvg[7]}}",];
-var xValues = ["{{Rank[0]}}","{{Rank[1]}}","{{Rank[2]}}","{{Rank[3]}}","{{Rank[4]}}","{{Rank[5]}}",
-              "{{Rank[6]}}","{{Rank[7]}}"];
-var barColors = ["Grey", "green","blue","orange","brown"];
-
-new Chart("DmgDealtAvg", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "DmgDealtAvg"
-    }
-  }
-});
-
-
 
 </script>
 

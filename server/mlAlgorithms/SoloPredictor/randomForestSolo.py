@@ -60,17 +60,14 @@ def randomForestRun():
     y_pred = rf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
+    clf_probs = rf.predict_proba(X_test)
     print("Accuracy:", accuracy)
     print(classification_report(y_test, y_pred))
-
-    clf_probs = rf.predict_proba(X_test)
     score = log_loss(y_test, clf_probs)
-    svc_disp = getPlotScore(rf,X_test,y_test)
+    print("Log Loss", score)
     mse = mean_squared_error(y_test, y_pred)
-    #rmse = mse**.5
-    #print(mse)
-    #print(rmse)
-    return svc_disp
+    print("MSE: ", mse)
+    return rf
 
 def randomForestPredict(rf, ChampionFk,MinionsKilled,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
     #y_pred = rf.predict(X_test)

@@ -69,7 +69,7 @@ def runxGboost():
     print("Accuracy: %.2f%%" % (accuracy * 100.0))
     print(classification_report(y_test, y_pred))
     getPlotScore(model,X_test,y_test)
-    clf_probs = model.predict_proba(X_test)
+    svc_disp = clf_probs = model.predict_proba(X_test)
     score = log_loss(y_test, clf_probs)
     print("Log Loss", score)
     mse = mean_squared_error(y_test, y_pred)
@@ -80,3 +80,5 @@ def getPlotScore(model, X_test, y_test):
     svc_disp = RocCurveDisplay.from_estimator(model, X_test, y_test)
     print(svc_disp)
     return svc_disp
+
+runxGboost()
