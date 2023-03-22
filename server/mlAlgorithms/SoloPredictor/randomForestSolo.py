@@ -2,7 +2,7 @@ import mysql.connector
 import sys
 import requests
 
-sys.path.append('..')
+sys.path.append('../..')
 from config import *
 from RiotApiCalls import *
 
@@ -12,9 +12,14 @@ import numpy as np
 
 # Modelling
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay, classification_report
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from scipy.stats import randint
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error, log_loss
+from sklearn.metrics import RocCurveDisplay
+import matplotlib.pyplot as plt
 
 def connection():
     connection = mysql.connector.connect(host=host,
@@ -33,7 +38,8 @@ def randomForestRun():
     cursor.execute(query)
     data = cursor.fetchall()
 
-    columns = ['ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','CurrentMasteryPoints','DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
+    columns = ['ChampionFk', 'MinionsKilled','kills','deaths','assists','lane','CurrentMasteryPoints',
+    'DmgDealt','DmgTaken','TurretDmgDealt','TotalGold'
     ,'EnemyChampionFk', 'GameDuration','DragonKills','BaronKills','Win']
 
     #data = pd.read_csv("data.csv")
@@ -45,16 +51,26 @@ def randomForestRun():
     df_games['Win'] = df_games['Win']
     X = df_games.drop('Win', axis=1)
     y = df_games['Win']
+    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
     global rf
     rf = RandomForestClassifier()
-    rf.fit(X_train.values, y_train)
+    rf.fit(X_train, y_train)
     y_pred = rf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
     print("Accuracy:", accuracy)
-   
-    return rf
+    print(classification_report(y_test, y_pred))
+
+    clf_probs = rf.predict_proba(X_test)
+    score = log_loss(y_test, clf_probs)
+    svc_disp = getPlotScore(rf,X_test,y_test)
+    mse = mean_squared_error(y_test, y_pred)
+    #rmse = mse**.5
+    #print(mse)
+    #print(rmse)
+    return svc_disp
 
 def randomForestPredict(rf, ChampionFk,MinionsKilled,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):
     #y_pred = rf.predict(X_test)
@@ -72,3 +88,9 @@ def getRandomForest():
     randomForestRun()
     global rf
     return rf
+
+def getPlotScore(rf, X_test, y_test):
+    svc_disp = RocCurveDisplay.from_estimator(rf, X_test, y_test)
+    return svc_disp
+
+rf = randomForestRun()

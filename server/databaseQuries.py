@@ -4,8 +4,6 @@ from championsRequest import *
 from config import *
 from RiotApiCalls import *
 
-
-
 import mysql.connector
 import json
 import pymysql
@@ -283,3 +281,28 @@ def getItemLink(id):
     Link = cursor.fetchone()
     Link = Link['ItemLink']
     return Link
+
+#Gets All Champions
+def getAllChampions():
+    connection = create_connection()
+    cursor =  connection.cursor()
+    champ = cursor.execute("SELECT * FROM `ChampionTbl`")
+    champ = cursor.fetchall()
+    return champ
+
+def getBestPlayers():
+    connection = create_connection()
+    cursor =  connection.cursor()
+    players = cursor.execute("SELECT DISTINCT SummonerName, COUNT(MatchStatsTbl.Win), AVG(MatchStatsTbl.kills),AVG(MatchStatsTbl.assists), AVG(MatchStatsTbl.deaths), AVG(MatchStatsTbl.BaronKills), AVG(MatchStatsTbl.DragonKills) FROM `SummonerUserTbl` JOIN SummonerMatchTbl on SummonerID = SummonerMatchTbl.SummonerFk JOIN MatchStatsTbl on SummonerMatchTbl.SummonerMatchId = MatchStatsTbl.SummonerMatchFk WHERE MatchStatsTbl.Win = 1 GROUP BY SummonerName ORDER by COUNT(MatchStatsTbl.Win) DESC LIMIT 15")
+    players = cursor.fetchall()
+    return players
+
+def getChampionAverages():
+    connection = create_connection()
+    cursor =  connection.cursor()
+    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return data
+
+

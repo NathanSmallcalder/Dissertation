@@ -13,17 +13,16 @@ from championsRequest import *
 import sys
 import json
 import databaseQuries
-import mlAlgorithms
-from mlAlgorithms import randomForest
-from mlAlgorithms import multiPrediction
+from mlAlgorithms import *
+sys.path.append('mlAlgorithms')
+from SoloPredictor import randomForestSolo
+from mlAlgorithms import TeamPredictor
 from databaseQuries import *
 
 
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
-key = secrets.token_urlsafe(16)
-key = secrets.token_hex(16)
 
 #Config
 app.config['SECRET_KEY'] = 'key'
@@ -35,58 +34,9 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-#Login
-@app.route('/login', methods =['GET', 'POST'])
-def login():
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-        cursor.execute('SELECT * FROM Account WHERE AccountName = % s AND Password = % s', (username, password, ))
-        
-        account = cursor.fetchone()
-        if account:
-            session['loggedin'] = True
-            session['AccountName'] = account['AccountName']
-            msg = 'Logged in successfully !'
-            return render_template('index.html', msg = msg)
-        else:
-            msg = 'Incorrect username / password !'
-        
-    return render_template('Login.html', msg = msg)
-
-#Register
-@app.route('/register', methods =['GET', 'POST'])
-def register():
-    connection = create_connection()
-    cursor =  connection.cursor()
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password'  in request.form:
-        username = request.form['username']
-        password = request.form['password']
-        cursor.execute('SELECT * FROM Account WHERE AccountName = % s', (username,))
-
-        account = cursor.fetchone()
-        if account:
-            msg = 'Account already exists !'
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers !'
-        elif not username or not password:
-            msg = 'Please fill out the form !'
-        else:
-            cursor.execute("INSERT INTO `Account`(`AccountName`, `Password`) VALUES (%s , %s)", (username, password,))
-            mysql.connection.commit()
-            msg = 'You have successfully registered !'
-    return render_template('signup.html', msg = msg)
-
 #Summoner Routing
 @app.route('/summoner',methods=['GET','POST'])
 def getSummoner():
-    connection = create_connection()
-    cursor =  connection.cursor()
-
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
     SummonerInfo = getSummonerDetails(Region,summonerName)
@@ -111,7 +61,7 @@ def getSummoner():
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
     fullMatch = getPlayerMatchData()
-    print(data[0]['ItemImages'][0])
+    print(data)
     stri = "https://5000-nathansmall-dissertatio-8z3sdftfozh.ws-eu84.gitpod.io/summoner?summoner=Mealsz&region=EUW1"
     s = stri.split('/s', 1)[0]
 
@@ -122,8 +72,6 @@ def getSummoner():
 #Summoner in Game Screen
 @app.route('/summoner/in-game',methods=['GET','POST'])
 def SummonerInGame():
-    connection = create_connection()
-    cursor =  connection.cursor()
     SummonerName = request.args.get('summoner')
     Region = request.args.get('region')
     Summoners = summonerInGameCheck(Region,SummonerName)
@@ -132,16 +80,13 @@ def SummonerInGame():
 #Champion Stats - From Database
 @app.route('/champions', methods=['GET','POST'])
 def ChampionTablePage():
-    connection = create_connection()
-    cursor =  connection.cursor()
-    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
-    cursor.execute(query)
-    data = cursor.fetchall()
-   
+    data = getChampionAverages()
+    players = getBestPlayers()
+    print(data)
 
     #columns = ['ChampionFk', 'kills', 'deaths','assists', 'Win', 'GameDuration']
     
-    return render_template('champions.html',data=  data)
+    return render_template('champions.html',data=  data,players = players)
 
 
 #InDepth Champion Stats
@@ -172,7 +117,6 @@ def championData():
     position = laneFromDatabase(int(championStats['key']))
     kda = kdaFromDatabase(int(championStats['key']))
    
-
     print(CommonRunes)
     
     Rank = []
@@ -224,15 +168,13 @@ def SummonerChampionStats():
 
 @app.route('/post_json',methods=['POST','GET'])
 def predict():
-    connection = create_connection()
-    cursor =  connection.cursor()
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
      
         data = json.loads(request.data)    
-       
-        rf = randomForest.randomForestRun()
-        rf = randomForest.randomForestPredict(rf,data['ChampionFk'],data['MinionsKilled'],data['kills'],data['deaths'],data['assists'],data['lane'], data['masteryPoints'],
+
+        rf = randomForestSolo.randomForestRun()
+        rf = randomForestSolo.randomForestPredict(rf,data['ChampionFk'],data['MinionsKilled'],data['kills'],data['deaths'],data['assists'],data['lane'], data['masteryPoints'],
                                             data['DmgDealt'],data['DmgTaken'],data['TurretDmgDealt'],data['TotalGold'],data['EnemyChampionFk'],
                                             data['GameDuration'],data['DragonKills'],data['BaronKills'])
         Prediction = {
@@ -247,16 +189,8 @@ def predict():
     
 @app.route('/matchPredict', methods = ['GET','POST'])
 def matchPredict():
-    connection = create_connection()
-    cursor =  connection.cursor()
-    champ = cursor.execute("SELECT * FROM `ChampionTbl`")
-    champ = cursor.fetchall()
-    print(champ)
-
+    champ = getAllChampions()
     RoleImages = getRoles()
-
-    #Velkoz
-    #Dr. Mundo == DrMundo
     return render_template('matchPrediction.html', Champions = champ, RoleSelect = RoleImages)
     
 
@@ -269,7 +203,7 @@ def summData():
     lane = request.args.get('lane')
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
-    data = getMatchData(Region, SummId, SummonerInfo)
+    data = getMatchData5Matches(Region, SummId, SummonerInfo)
     mastery = getMasteryStats(Region, SummId)
     mastery = getSingleMasteryScore(champ, mastery)
     avg = AvgStats(data)
@@ -283,18 +217,14 @@ def summData():
 @app.route('/teamPredict',methods = ['GET'])
 def teamPredictor():
     RoleImages = getRoles()
-    print(RoleImages)
-    return render_template('teamMatchPrediction.html', RoleImages = RoleImages)
+    champ = getAllChampions()
+    return render_template('teamMatchPrediction.html', RoleImages = RoleImages, Champions = champ)
 
 @app.route('/teamData', methods = ['GET','POST'])
 def teamData():
-    connection = create_connection()
-    cursor =  connection.cursor()
-
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
         data = json.loads(request.data)    
-        print(data)
         Region = data['Region']
         
         BlueTeam = [str(data['B1Summ']),str(data['B2Summ']),str(data['B3Summ']),

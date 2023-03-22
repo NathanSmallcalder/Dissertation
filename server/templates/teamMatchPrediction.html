@@ -4,51 +4,97 @@
 
 <div class="columns is-multiline"> 
   <div class="column is-one-fifth">
-    <div class="card">
+    <div class="card has-background-info">
       <div class="card-content">
           <div class="content">
-                <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                <input name="BlueSumm1" placeholder="Summoner Name" class="input is-info">
                 <img src = "{{ RoleImages[0]['RoleLink']  }}"> 
+
+                <div class="select is-info">
+                  <select name= "blueSumm1Champ" id = "blueSumm1Champ" >
+                    {% for champ in Champions %}
+                    {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                      <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
             </div>
           </div>
         </div>
       </div>
     <div class="column is-one-fifth">
-      <div class="card">
+      <div class="card has-background-info">
         <div class="card-content">
             <div class="content">
-                  <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                  <input name="BlueSumm2" placeholder="Summoner Name" class="input is-info">
                   <img src = "{{ RoleImages[1]['RoleLink']  }}"> 
+
+                  <div class="select is-info">
+                    <select name= "blueSumm2Champ" >
+                      {% for champ in Champions %}
+                      {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                        <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
               </div>
             </div>
           </div>
         </div>
       <div class="column is-one-fifth">
-        <div class="card">
+        <div class="card has-background-info">
           <div class="card-content">
               <div class="content">
-                    <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                    <input name="BlueSumm3" placeholder="Summoner Name" class="input is-info">
                     <img src = "{{ RoleImages[2]['RoleLink']  }}"> 
+
+                    <div class="select is-info">
+                      <select name= "blueSumm3Champ" >
+                        {% for champ in Champions %}
+                        {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                          <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
         <div class="column is-one-fifth">
-          <div class="card">
+          <div class="card has-background-info">
             <div class="card-content">
                 <div class="content">
-                      <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                      <input name="BlueSumm4" placeholder="Summoner Name" class="input is-info">
                       <img src = "{{ RoleImages[3]['RoleLink']  }}"> 
+
+                      <div class="select is-info">
+                        <select name= "blueSumm4Champ" >
+                          {% for champ in Champions %}
+                          {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                            <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="column is-one-fifth">
-              <div class="card">
+              <div class="card has-background-info">
                 <div class="card-content">
                     <div class="content">
-                          <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                          <input name="BlueSumm5" placeholder="Summoner Name" class="input is-info">
                           <img src = "{{ RoleImages[4]['RoleLink']  }}"> 
+
+                          <div class="select is-info">
+                            <select name= "blueSumm5Champ" >
+                              {% for champ in Champions %}
+                              {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                                <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
                       </div>
                     </div>
                   </div>
@@ -59,62 +105,115 @@
     </div>
     <div class="columns is-multiline"> 
       <div class="column is-one-fifth">
-        <div class="card">
+        <div class="card has-background-danger">
           <div class="card-content">
               <div class="content">
-                    <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                    <input name="RedSumm1" placeholder="Summoner Name" class="input is-info">
                     <img src = "{{ RoleImages[0]['RoleLink']  }}"> 
+
+                    <div class="select is-info">
+                      <select name= "redSumm1Champ" >
+                        {% for champ in Champions %}
+                        {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                          <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
         <div class="column is-one-fifth">
-          <div class="card">
+          <div class="card has-background-danger">
             <div class="card-content">
                 <div class="content">
-                      <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                      <input name="RedSumm2" placeholder="Summoner Name" class="input is-info">
                       <img src = "{{ RoleImages[1]['RoleLink']  }}"> 
+                      <div class="select is-info">
+                        <select name= "redSumm2Champ" >
+                          {% for champ in Champions %}
+                          {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                            <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      
                   </div>
                 </div>
               </div>
             </div>
           <div class="column is-one-fifth">
-            <div class="card">
+            <div class="card has-background-danger">
               <div class="card-content">
                   <div class="content">
-                        <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                        <input name="RedSumm3" placeholder="Summoner Name" class="input is-info">
                         <img src = "{{ RoleImages[2]['RoleLink']  }}"> 
+                        <div class="select is-info">
+                          <select name= "redSumm3Champ" >
+                            {% for champ in Champions %}
+                            {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                              <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
                     </div>
                   </div>
                 </div>
               </div>
             <div class="column is-one-fifth">
-              <div class="card">
+              <div class="card has-background-danger">
                 <div class="card-content">
                     <div class="content">
-                          <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                          <input name="RedSumm4" placeholder="Summoner Name" class="input is-info">
                           <img src = "{{ RoleImages[3]['RoleLink']  }}"> 
+                          <div class="select is-info">
+                            <select name= "redSumm4Champ" >
+                              {% for champ in Champions %}
+                              {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                                <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="column is-one-fifth">
-                  <div class="card">
+                  <div class="card has-background-danger">
                     <div class="card-content">
                         <div class="content">
-                              <input name="summoner" placeholder="Summoner Name" class="input is-info">
+                              <input name="RedSumm5" placeholder="Summoner Name" class="input is-info">
                               <img src = "{{ RoleImages[4]['RoleLink']  }}"> 
+
+                              <div class="select is-info">
+                                <select name= "redSumm5Champ" >
+                                  {% for champ in Champions %}
+                                  {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                                    <option value = "{{ champ['ChampionId'] }}" >{{ champ['ChampionName'] }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
                           </div>
                         </div>
                       </div>
                     </div>
               </div>
-
-
-
+              <form action = '#' onsubmit='return summonerAvg(); return false;'>
+                <div class="box has-text-centered">
+                  <button class="button is-info">Run Match</button>
+                </div>
+              </form>
+            
 
 <script>
+function summonerAvg() {
+      alert("calleed")
 
+      PickedChamp = document.querySelector("#BlueSumm1");
+
+      alert(PickedChamp)
+      
+}
 
 function postItem(){
   alert("posted")
@@ -154,7 +253,7 @@ function postItem(){
     .then(response => console.log(JSON.stringify(response)))
   }
   
-
+//postItem()
 </script>
 
 {% endblock %}

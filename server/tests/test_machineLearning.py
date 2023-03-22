@@ -6,11 +6,11 @@ sys.path.append('../')
 from config import *
 from RiotApiCalls import *
 
-sys.path.append('../mlAlgorithms')
-from multiPrediction import *
-from randomForest import *
+from mlAlgorithms import SoloPredictor
+from mlAlgorithms import TeamPredictor
 
-rf = getRandomForest()
+
+rf = randomForestSolo.getRandomForest()
 rfTeam = randomForestMultiRun()
 
 def test_rf_ObviousLossTeam():

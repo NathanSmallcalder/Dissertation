@@ -89,13 +89,13 @@
     <div class="card has-background-info">
       <div class="card-content">
         <div class="content">
-      {% for champ in Champions %}
-        {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
-            <label>
-              <input type="radio" name="champ" value="{{champ['ChampionId']}}">
-              <img src="{{output}}" height = 60 width = 60 alt="">
-            </label>
-    {% endfor %}
+          {% for champ in Champions %}
+            {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+                <label>
+                  <input type="radio" name="champ" value="{{champ['ChampionId']}}">
+                  <img src="{{output}}" height = 60 width = 60 alt="">
+                </label>
+        {% endfor %}
         </div>
       </div>
     </div>

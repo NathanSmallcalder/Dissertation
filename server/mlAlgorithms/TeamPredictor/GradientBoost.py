@@ -1,20 +1,19 @@
+from sklearn.ensemble import GradientBoostingClassifier
 import mysql.connector
 import sys
+import pytest
 import requests
 
-sys.path.append('..')
+sys.path.append('../..')
 from config import *
-
-# Data Processing
-import pandas as pd
-import numpy as np
-
-# Modelling
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
-from scipy.stats import randint
-
+from RiotApiCalls import *
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay, classification_report
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error, log_loss
+from sklearn.multioutput import MultiOutputClassifier, MultiOutputRegressor
 
 def connection():
     connection = mysql.connector.connect(host=host,
@@ -23,9 +22,7 @@ def connection():
                                         password=sql_password)
     return connection
 
-global rf
-
-def randomForestMultiRun():
+def GradientBoostRun():
     conn = connection()
     query = ("SELECT * FROM `TeamMatchTbl`")
     cursor = conn.cursor()
@@ -55,32 +52,18 @@ def randomForestMultiRun():
     df_games = df_games.drop('BlueWin',axis=1)
     X = df_games
 
-    X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.15)
-    rf = RandomForestClassifier()
+    X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.25)
+    rf = MultiOutputClassifier(GradientBoostingClassifier())
     rf.fit(X_train, y_train)
 
-        
     y_pred = rf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
     print("Accuracy:", accuracy)
+    print(classification_report(y_test, y_pred))
+    
+    mse = mean_squared_error(y_test, y_pred)
+    print(mse)
     return rf
-    # B1,B2,B3,B4,B5,R1,R2,R3,R4,R5,B-Baron,B-Rift,B-Dragon,BTowerKills,BlueKills,RedBaron,R-Rift,R-Dragon,RTowerKills,RedKills
-          #<==============><===========>
 
-
-def randomForestPredictMulti(rf, item):
-    print(item)
-    row = [[item['B1'],item['B2'],item['B3'],item['B4'],item['B5'],
-            item['R1'],item['R2'],item['R3'],item['R4'],item['R5'],
-            item['BlueBaronKills'],item['BlueRiftHeraldKills'],item['BlueDragonKills'],
-            item['BlueTowerKills'],item['BlueKills'],
-            item['RedBaronKills'],item['RedRiftHeraldKills'],item['RedDragonKills'],
-            item['RedTowerKills'],item['RedKills'],
-            ]]
-
-    print(row)
-    prob = rf.predict_proba(row)
-    yhat = rf.predict(row)
-    print('Prediction:', "Red Team:" ,yhat[0][0] ," Blue Team:", yhat[0][1])
-    return yhat
+GradientBoostRun()

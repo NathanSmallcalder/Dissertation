@@ -48,6 +48,13 @@
 
 		}
 
+		.card-L {
+			background-color:red;
+		}
+		.card-W {
+			background-color:green;
+		}
+
 	</style>
 
 
@@ -190,7 +197,7 @@
 					{% for match in fullMatch %}
 
 						<div class = "column">
-							<div class = "card">
+							<div class = "{{'card-W' if match['win'] == True else 'card-L'}}">
 								<div class="card-content">
 									<div class ="column is-narrow">
 										<div class="content">
@@ -218,7 +225,7 @@
 
 													<div>
 														<div>
-														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img> {{participants[loop.index0]['name'][5]}}</ul>
+														<a href = "{{weblink + "summoner="  + [loop.index0]['name'][5]" + }}><ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][5]}}.png"></img> {{participants[loop.index0]['name'][5]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][6]}}.png"></img> {{participants[loop.index0]['name'][6]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][7]}}.png"></img> {{participants[loop.index0]['name'][7]}}</ul>
 														<ul><img width="20" height="20" src = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/{{participants[loop.index0]['champion'][8]}}.png"></img> {{participants[loop.index0]['name'][8]}}</ul>

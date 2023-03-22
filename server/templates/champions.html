@@ -3,34 +3,74 @@
 {%block content %}
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 
-<table class="sortable">
-    <thead>
-      <tr>
-        <th><abbr title="Champion">Champion</abbr></th>
-        <th><abbr title="Kills">K</abbr></th>
-        <th><abbr title="Deaths">D</abbr></th>
-        <th><abbr title="Assists">A</abbr></th>
-        <th><abbr title="Won">W</abbr></th>
-        <th><abbr title="Won">GameDuration</abbr></th>
-        
-      </tr>
-    </thead>
 
-    {% for d in data %}
-    {% set link = ["https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" ~ d['ChampionName'] ~ ".png"]|join %}
-    
-    
-    <tr>
-        <td><figure class="image is-24x24px"><img src= {{link}}> </figure></td>
-        <td>{{ d['AVG(`MatchStatsTbl`.`kills`)']  }}</td>
-        <td>{{ d['AVG(`MatchStatsTbl`.`deaths`)'] }}</td>
-        <td>{{ d['AVG(`MatchStatsTbl`.`assists``)'] }}</td>
-        <td> <progress class="progress is-success" value="{{d['AVG(`MatchStatsTbl`.`won`)']}}" max="100"></progress>{{ d['AVG(`MatchStatsTbl`.`won`)']}}%</td>
-        <td>{{ d['AVG(`MatchStatsTbl`.`assists`)'] }}</td>
-    </tr>
-    {% endfor %}
-</tbody>
-</table>
+<div class="columns is-multiline">
+  <div class="column">
+      <div class="card">
+        <div class="card-content">
+          <table class="table">
+              <thead>
+                  <tr>
+                    <th><abbr title="Champion">Champion</abbr></th>
+                    <th><abbr title="Kills">K</abbr></th>
+                    <th><abbr title="Deaths">D</abbr></th>
+                    <th><abbr title="Assists">A</abbr></th>
+                    <th><abbr title="Won">W</abbr></th>    
+                  </tr>
+              </thead>
+                {% for d in data %}
+                {% set link = ["https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" ~ d['ChampionName'] ~ ".png"]|join %}
+                <tr>
+                    <td><figure class="image is-12x12px"><img src= {{link}}> </figure></td>
+                    <td>{{ d['AVG(`MatchStatsTbl`.`kills`)']  }}</td>
+                    <td>{{ d['AVG(`MatchStatsTbl`.`deaths`)'] }}</td>
+                    <td>{{ d['AVG(`MatchStatsTbl`.`assists`)'] }}</td>
+                    <td> <progress class="progress is-success" value="{{d['AVG(`MatchStatsTbl`.`Win`)'] * 100 }}" max="100"></progress></td>
+                </tr>
+                {% endfor %}
+               </tbody>
+              </table>
+        </div>
+    </div>
+  </div>
+    <div class="column is-three-fifths">
+        <div class="card">
+            <div class="card-content">
+              <table class="table">
+                <thead>
+                    <tr>
+                      <th><abbr title="Champion">SummonerName</abbr></th>
+                      <th><abbr title="Won">W</abbr></th>
+                      <th><abbr title="Kills">K</abbr></th>
+                      <th><abbr title="Deaths">D</abbr></th>
+                      <th><abbr title="Asssits">A</abbr></th>    
+                      <th><abbr title="Baron">BaronKills</abbr></th>
+                      <th><abbr title="DragonKills">DragonKills</abbr></th>    
+                    </tr>
+                </thead>
+                  {% for p in players %}
+                  <tr>
+                      <td>{{ p['SummonerName']  }}</td>
+                      <td>{{ p['COUNT(MatchStatsTbl.Win)'] }}</td>
+                      <td>{{ p['AVG(MatchStatsTbl.kills)'] }}</td>
+                      <td>{{ p['AVG(MatchStatsTbl.assists)'] }}</td>
+                      <td>{{ p['AVG(MatchStatsTbl.deaths)'] }}</td>
+                      <td>{{ p['AVG(MatchStatsTbl.BaronKills)'] }}</td>
+                      <td>{{ p['AVG(MatchStatsTbl.DragonKills)'] }}</td>
+                  </tr>
+                  {% endfor %}
+                 </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="column is-three-fifths">
+      <div class="card">
+          <div class="card-content">
 
+
+          </div>
+      </div>
+  </div>
 
 {% endblock %}

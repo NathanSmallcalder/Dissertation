@@ -108,12 +108,17 @@ def getSingleMasteryScore(champId, mastery):
 
     if not masteryScore:
         masteryScore = 0
-    
 
     return masteryScore
 
 
 def getMatchData(region,id,SummonerInfo):
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=15&api_key=" + API)
+    MatchIDs = MatchIDs.json()
+    data = getMatches("europe", MatchIDs, SummonerInfo)
+    return data
+
+def getMatchData5Matches(region,id,SummonerInfo):
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
@@ -371,7 +376,7 @@ def calculateAvgTeamStats(Team,Region):
         summName = item
         SummonerInfo = getSummonerDetails("EUW1",summName)
         SummId = SummonerInfo['id']
-        data = getMatchData(Region, SummId, SummonerInfo)
+        data = getMatchData5Matches(Region, SummId, SummonerInfo)
         avg = avgStatsTeam(data) 
         list.append(avg)
 
