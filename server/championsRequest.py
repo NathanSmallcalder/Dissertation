@@ -45,15 +45,16 @@ def getChampImagesSingle(ChampId): #
     DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
+  
     for item in DDRAGON:
         temp = DDRAGON.get(item)
-        for champs in ChampId:
-            if int(temp['key']) == (int(ChampId)):
-                ChampId = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
-                return ChampId
+        if int(temp['key']) == (int(ChampId)):
+            ChampId = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
+            return ChampId
 
 def getChampSpellImages(champion): #
     n = 29
+    print(champion)
     passive = champion['passive']['abilityIconPath'] 
     champion['passive']['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/" + passive[n:].lower()
     
@@ -67,37 +68,71 @@ def getChampSpellImages(champion): #
     
 def getRunesImages(runesList): 
     runesLinksList = []
+    print(runesList)
     data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
     data = data.json()
     try:
         for runes in data:
             for data in runes['slots']:   
                 for data in data['runes']:
-                    if int(runesList) == int(data['id']):
-                        MainRunes = runes
-                        runesLinks = {
+                        if int(runesList) == int(data['id']):
+                            MainRunes = runes
+                            runesLinks = {
+                                    'Name': None,
+                                    'Desc':None,
+                                    'LinkRef':None
+                            }
+                            runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + data['icon'].lower()
+                            runesLinks['Name'] = data['name']
+                            runesLinks['Desc'] = data['longDesc']
+                            
+                            MainRune = {
                                 'Name': None,
                                 'Desc':None,
                                 'LinkRef':None
-                        }
-                        runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + data['icon'].lower()
-                        runesLinks['Name'] = data['name']
-                        runesLinks['Desc'] = data['longDesc']
+                            }
+                            
+                            MainRune['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + MainRunes['icon'].lower()
+                            MainRune['Name'] = MainRunes['name']
                         
-                        MainRune = {
-                            'Name': None,
-                            'Desc':None,
-                            'LinkRef':None
-                        }
-                        
-                        MainRune['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + MainRunes['icon'].lower()
-                        MainRune['Name'] = MainRunes['name']
-                     
-                        return runesLinks, MainRune
+                            return runesLinks, MainRune
     except:
         pass
 
-    
+
+def getRunesImagesList(runesList): 
+    runesLinksList = []
+    print(runesList)
+    data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
+    data = data.json()
+    try:
+        for runes in data:
+            for data in runes['slots']:   
+                for data in data['runes']:
+                    for rune in runeList:
+                        if int(rune) == int(data['id']):
+                            MainRunes = runes
+                            runesLinks = {
+                                    'Name': None,
+                                    'Desc':None,
+                                    'LinkRef':None
+                            }
+                            runesLinks['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + data['icon'].lower()
+                            runesLinks['Name'] = data['name']
+                            runesLinks['Desc'] = data['longDesc']
+                            
+                            MainRune = {
+                                'Name': None,
+                                'Desc':None,
+                                'LinkRef':None
+                            }
+                            
+                            MainRune['LinkRef'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/" + MainRunes['icon'].lower()
+                            MainRune['Name'] = MainRunes['name']
+                        
+                            return runesLinks, MainRune
+    except:
+        pass
     
     #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1
 

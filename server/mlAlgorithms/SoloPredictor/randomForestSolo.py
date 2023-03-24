@@ -1,7 +1,7 @@
 import mysql.connector
 import sys
 import requests
-
+import seaborn as sns
 sys.path.append('../..')
 from config import *
 from RiotApiCalls import *
@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 
 # Modelling
+from sklearn.feature_selection import mutual_info_classif
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay, classification_report
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
@@ -20,6 +21,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_squared_error, log_loss
 from sklearn.metrics import RocCurveDisplay
 import matplotlib.pyplot as plt
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+from sklearn.feature_selection import VarianceThreshold
+from skfeature.function.similarity_based import fisher_score
 
 def connection():
     connection = mysql.connector.connect(host=host,
@@ -45,13 +50,14 @@ def randomForestRun():
     #data = pd.read_csv("data.csv")
     df_games = pd.DataFrame(data,columns = columns)
     df_games.sample(frac=1)
+    
 
 
     df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'SUPPORT':4,'NONE':5})
     df_games['Win'] = df_games['Win']
     X = df_games.drop('Win', axis=1)
     y = df_games['Win']
-    
+    print(df_games.head())
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 
     global rf
@@ -67,6 +73,20 @@ def randomForestRun():
     print("Log Loss", score)
     mse = mean_squared_error(y_test, y_pred)
     print("MSE: ", mse)
+
+    corr_matrix =  X.corr()
+    print(corr_matrix)
+
+    plt.figure(figsize=(16,14))
+    plt.title('Correlation Heatmap of riot Dataset')
+    a = sns.heatmap(corr_matrix, square=True, annot=True, fmt='.2f', linecolor='black')
+    a.set_xticklabels(a.get_xticklabels(), rotation=30)
+    a.set_yticklabels(a.get_yticklabels(), rotation=30)           
+    plt.savefig("figure.png")
+    #v_threashhold = VarianceThreshold(threshold=0)
+    #v_threashhold.fit(X)
+    #print(v_threashhold.get_support())
+
     return rf
 
 def randomForestPredict(rf, ChampionFk,MinionsKilled,kills,deaths,assists,lane,CurrentMasteryPoints,DmgDealt,DmgTaken,TurretKills,TotalGold,EnemyChampionFk,GameDuration,DragonKills,BaronKills):

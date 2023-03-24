@@ -39,27 +39,62 @@ def test_PostPredictionData():
         'Content-type': 'application/json',
     }
     json_data = { 
-        "MinionsKilled": 1,
-        "kills": 4,
-        "assists": 32,
-        "deaths": 0,
-        "TotalGold":100,
-        "DmgDealt": 43200,
-        "DmgTaken": 3200,
-        "DragonKills":5,
-        "BaronKills": 2,
-        "GameDuration": 3200,
-        "TurretDmgDealt":4,
-        "ChampionFk": 5,
-        "masteryPoints": 2,
-        "EnemyChampionFk":4,
-        "lane":1
+        "MinionsKilled": 258,
+        "kills": 25,
+        "assists": 56,
+        "deaths": 1,
+        "TotalGold": 32355,
+        "DmgDealt": 422425,
+        "DmgTaken": 24567,
+        "DragonKills": 4,
+        "BaronKills": 3,
+        "GameDuration": 200,
+        "TurretDmgDealt": 4,
+        "ChampionFk": 1,
+        "masteryPoints": 42257,
+        "EnemyChampionFk":2 ,
+        "lane": 1
       }
 
-    response = requests.post('http://localhost:5000/post_json', headers=headers, json=json_data)
+    response = requests.post('http://localhost:5000/predictSolo', headers=headers, json=json_data)
     assert int(response.status_code) == 200
     pred = response.content
     pred = pred.decode('utf-8')
     pred = json.loads(pred)
     assert pred['pred'] == "1" 
 
+def test_teamPrediction():
+    
+    headers = {
+        'Content-type': 'application/json',
+    }
+
+    json_data = {
+        "B1Summ": "Mealsz",
+        "B2Summ": "Ehhhh",
+        "B3Summ": "Itwoznotmee",
+        "B4Summ": "Lil Nachty",
+        "B5Summ": "Forza Napøli ",
+        "R1Summ": "Primabel Ayuso",
+        "R2Summ": "NateNatilla",
+        "R3Summ": "sweet af",
+        "R4Summ": "Fedy9 ",
+        "R5Summ": "ChampagneCharlie ",
+        "B1": 44,
+        "B2": 876,
+        "B3": 136,
+        "B4": 221,
+        "B5": 74,
+        "R1": 122,
+        "R2": 20,
+        "R3": 99,
+        "R4": 202,
+        "R5": 412,
+        'Region':"EUW1"
+    }
+    response = requests.post('http://localhost:5000/teamData', headers=headers, json=json_data)
+    assert int(response.status_code) == 200
+    pred = response.content
+    pred = pred.decode('utf-8')
+    pred = json.loads(pred)
+    assert prediction['BlueTeam'] == 0 or 1

@@ -17,8 +17,8 @@ from scipy.stats import randint
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_squared_error, log_loss
-
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def connection():
     connection = mysql.connector.connect(host=host,
@@ -58,6 +58,7 @@ def randomForestMultiRun():
     df_games = df_games.drop('RedWin',axis=1)
     df_games = df_games.drop('BlueWin',axis=1)
     X = df_games
+    print(X.head())
 
     X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.15)
     rf = RandomForestClassifier()
@@ -73,7 +74,15 @@ def randomForestMultiRun():
     print(clf_probs[0][0])
     #score = log_loss(y_test, clf_probs)
     predictRed = []
+    corr_matrix =  X.corr()
+    print(corr_matrix)
 
+    plt.figure(figsize=(16,14))
+    plt.title('Correlation Heatmap of riot Dataset')
+    a = sns.heatmap(corr_matrix, square=True, annot=True, fmt='.2f', linecolor='black')
+    a.set_xticklabels(a.get_xticklabels(), rotation=30)
+    a.set_yticklabels(a.get_yticklabels(), rotation=30)           
+    plt.savefig("figure.png")
 
     mse = mean_squared_error(y_test, y_pred)
     print(mse)

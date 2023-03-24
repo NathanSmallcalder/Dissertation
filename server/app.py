@@ -61,7 +61,6 @@ def getSummoner():
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
     fullMatch = getPlayerMatchData()
-    print(data)
     stri = "https://5000-nathansmall-dissertatio-8z3sdftfozh.ws-eu84.gitpod.io/summoner?summoner=Mealsz&region=EUW1"
     s = stri.split('/s', 1)[0]
 
@@ -117,10 +116,9 @@ def championData():
     position = laneFromDatabase(int(championStats['key']))
     kda = kdaFromDatabase(int(championStats['key']))
    
-    print(CommonRunes)
+
     
     Rank = []
-    print(BestItems[0])
     for data in AvgMinions:
         Rank.append(data['Rank'])
  
@@ -151,8 +149,7 @@ def SummonerChampionStats():
     AvgDmgTakenSumm  = avgDmgTakenSummoner(int(championStats['key']), SummID)
     AvgDmgDealtSumm  = avgDmgDealtSummoner(int(championStats['key']), SummID)
     TotalGoldSumm = avgGoldSummoner(int(championStats['key']),SummID)
-    print(TotalGoldSumm)
-
+ 
     position = laneFromDatabaseSummoner(int(championStats['key']), SummID)
     kda = kdaFromDatabaseSummoner(int(championStats['key']),SummID)
     championKills = champKills(SummID)
@@ -162,7 +159,7 @@ def SummonerChampionStats():
     DmgDealtAvg = avgDmgDealt(int(championStats['key']))
     AvgGold = avgGold(int(championStats['key']))
 
-    print(kda)
+
     return render_template('summonerChampion.html',championStats = championStats, 
                             ChampionAbilities = ChampionAbilities,wins = ChampWins,totalGames = TotalGames,
                             championKills = championKills,
@@ -189,8 +186,7 @@ def predict():
         Prediction = {
             "pred": str(rf)
         }
-        print(Prediction)
-
+    
         return jsonify(Prediction), 200
     else:
         return "Content type is not supported."
@@ -220,7 +216,7 @@ def summData():
     avg['masteryPoints'] = mastery
     avg['enemyChamp'] = enemyChamp
     avg['lane'] = lane
-    print(avg)
+
     return jsonify(avg), 200
 
 @app.route('/teamPredict',methods = ['GET'])
@@ -244,11 +240,11 @@ def teamData():
         blueTeam = calculateAvgTeamStats(BlueTeam,Region)
         redTeam = calculateAvgTeamStats(RedTeam, Region)
         dataSet = makeDataSet(blueTeam,redTeam,data)
-        print(dataSet)
+      
         rf = randomForest.randomForestMultiRun()
         prediction = randomForest.randomForestPredictMulti(rf,dataSet)
         print(prediction)
-    return prediction,200
+    return jsonify(prediction) ,200
 
 @app.route('/')
 def index():

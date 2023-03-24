@@ -103,8 +103,10 @@ def getMasteryStats(Region,id):
 def getSingleMasteryScore(champId, mastery):
     masteryScore = None
     for m in mastery:
-        if int(champId) == int(m['championId']):
-            masteryScore = int(m['championPoints'])
+        print(m)
+        champMastery = m['championId']
+        if int(champId) == int(champMastery):
+            masteryScore = int(champMastery)
 
     if not masteryScore:
         masteryScore = 0
