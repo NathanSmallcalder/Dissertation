@@ -117,20 +117,15 @@
     </div>
     </div>
 </div>
-
-
-<script>    
+  <script>    
   var obj;
   function summonerAvg(summonerName, Region) {
       summonerName = summonerName.value;
       Region = Region.value;
-      alert(summonerName)
-      alert(Region)
+
       PickedChamp = parseInt(document.querySelector('input[name="champ"]:checked').value);
       EnemyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
       role = parseInt(document.querySelector('input[name="role"]:checked').value);
-      alert(EnemyChamp)
-      alert(Region)
       alert(PickedChamp)
       fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
@@ -142,36 +137,35 @@
 
 function postItem(data){
   alert("posted")
-  fetch('http://localhost:5000/predictSolo', {
+  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/predictSolo', {
     method: 'POST',
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
-        "MinionsKilled": 258,
-        "kills": 25,
-        "assists": 56,
-        "deaths": 1,
-        "TotalGold": 32355,
-        "DmgDealt": 422425,
-        "DmgTaken": 24567,
-        "DragonKills": 4,
-        "BaronKills": 3,
-        "GameDuration": 200,
-        "TurretDmgDealt": 4,
-        "ChampionFk": 1,
-        "masteryPoints": 42257,
-        "EnemyChampionFk":2 ,
-        "lane": 1
+        "MinionsKilled": data['cs'],
+        "kills": data['kills'],
+        "assists": data['assists'],
+        "deaths": data['deaths'],
+        "TotalGold": data['goldEarned'],
+        "DmgDealt": data['physicalDamageDealtToChampions'],
+        "DmgTaken": data['physicalDamageTaken'],
+        "DragonKills": data['dragonKills'],
+        "BaronKills": data['baronKills'],
+        "GameDuration": data['GameDuration'],
+        "TurretDmgDealt": data['TowerDamageDealt'],
+        "ChampionFk": data['ChampId'],
+        "masteryPoints": data['masteryPoints'],
+        "EnemyChampionFk": data['enemyChamp'],
+        "lane": data['lane']
       })
   })
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(response => console.log(JSON.stringify(response)))
   }
 
-  const mainUL = document.createElement('ul')
-  mainUL.innerHTML = data
+      
   </script>
         
 {% endblock %}
