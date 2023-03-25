@@ -132,7 +132,7 @@
       alert(EnemyChamp)
       alert(Region)
       alert(PickedChamp)
-      fetch("http://localhost:5000/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
+      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
         .then(data => {
           obj = data;

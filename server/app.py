@@ -20,6 +20,9 @@ from TeamPredictor import randomForest
 from databaseQuries import *
 
 
+stri = "https://5000-nathansmall-dissertatio-8z3sdftfozh.ws-eu84.gitpod.io/summoner?summoner=Mealsz&region=EUW1"
+s = stri.split('/s', 1)[0]
+    
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
@@ -34,13 +37,16 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-#Summoner Routing
+#Summoner Routing for Summoner Stats Page
 @app.route('/summoner',methods=['GET','POST'])
 def getSummoner():
+    #Gets Region, SummonerName
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
+    #Gets basic Summoner Information
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
+    #Ranked Stats
     RankedDetails = getRankedStats(Region,SummId)
     try:
         SOLO = RankedDetails[1]
@@ -55,47 +61,71 @@ def getSummoner():
         SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
+    #Profile Image
     getImageLink(SummonerInfo)
+    #Mastery Score
     masteryScore = getMasteryStats(Region,SummId)
+
+    #Gets Matches
     data = getMatchData(Region, SummId, SummonerInfo)
     participants = getGameParticipantsList()
     MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
     fullMatch = getPlayerMatchData()
-    stri = "https://5000-nathansmall-dissertatio-8z3sdftfozh.ws-eu84.gitpod.io/summoner?summoner=Mealsz&region=EUW1"
-    s = stri.split('/s', 1)[0]
 
+    #Gets Statistics from Database (Graphs)
+    summIdDatabase = getSummonerIdFromDatabase(summonerName)
+    avgMinionsStatsSummoner = avgMinionsSummonerAll(summIdDatabase)
+    avgMinions = avgMinionsAll()
+    avgDamageTaken = avgDmgTakenAll()
+    avgDamageTakenStatsSummoner = avgDmgTakenSummonerAll(summIdDatabase)
+    avgDamageDealt = avgDmgDealtAll()
+    avgDamageDealtStatsSummoner = avgDmgDealtSummonerAll(summIdDatabase)
+    avgGoldEarnt = avgGoldAll()
+    avgGoldEarntSummoner = avgGoldSummonerAll(summIdDatabase)
+
+
+    #Returns HTML and Variables
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
-    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region, weblink = s)
+    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region,
+    avgMinionsStatsSummoner = avgMinionsStatsSummoner, AvgMinions = avgMinions,
+    avgDamageTaken = avgDamageTaken, avgDamageTakenStatsSummoner = avgDamageTakenStatsSummoner,
+    DmgDealtAvg = avgDamageDealt, avgDamageDealtStatsSummoner = avgDamageDealtStatsSummoner,
+    AvgGold = avgGoldEarnt, avgGoldEarntSummoner = avgGoldEarntSummoner)
 
 #Summoner in Game Screen
 @app.route('/summoner/in-game',methods=['GET','POST'])
 def SummonerInGame():
+    #Gets Summoner and Region
     SummonerName = request.args.get('summoner')
     Region = request.args.get('region')
+    #Checks if summoner in game
     Summoners = summonerInGameCheck(Region,SummonerName)
     return render_template('summonerInGame.html', Summoners = Summoners)
 
 #Champion Stats - From Database
 @app.route('/champions', methods=['GET','POST'])
 def ChampionTablePage():
+    #Gets Champion Win,KDA,Dragon/Baron AVG for table
     data = getChampionAverages()
+    #Gets Players Win,KDA,Dragon/Baron AVG for table
     players = getBestPlayers()
-    print(data)
-
-    #columns = ['ChampionFk', 'kills', 'deaths','assists', 'Win', 'GameDuration']
-    
+    print(players)
     return render_template('champions.html',data=  data,players = players)
 
 
 #InDepth Champion Stats
 @app.route('/champion' , methods=['GET','POST'])
 def championData():
+    #Gets champion name
     champName = request.args.get('champion')
+
+    #Gets Champion Abilities and Videos
     championStats = getChampDetails(champName)
     ChampionAbilities = getChampAbilities(championStats)
     getChampSpellImages(ChampionAbilities)
 
+    #Champion stats
     TotalGames = totalGames(int(championStats['key']))
     ChampWins = champWins(int(championStats['key']))
     ChampKills = champKills(int(championStats['key']))
@@ -104,35 +134,27 @@ def championData():
     DmgTakenAvg = avgDmgTaken(int(championStats['key']))
     DmgDealtAvg = avgDmgDealt(int(championStats['key']))
     AvgGold = avgGold(int(championStats['key']))
-
     BestItems = bestItems(int(championStats['key']))
     CommonItems = commonItems(int(championStats['key']))
-
     CommonRunes = commonRunes(int(championStats['key']))
     BestRunes = bestRunes(int(championStats['key']))
-
     SecondaryCommonRunes = commonSecondaryRunes((int(championStats['key'])))
     SecondaryBestRunes = bestSecondaryRunes((int(championStats['key'])))
     position = laneFromDatabase(int(championStats['key']))
     kda = kdaFromDatabase(int(championStats['key']))
    
+    bestPlayers = getChampionBestPlayers(int(championStats['key']))
 
-    
-    Rank = []
-    for data in AvgMinions:
-        Rank.append(data['Rank'])
- 
     return render_template('championData.html',championStats = championStats, 
                             ChampionAbilities = ChampionAbilities,wins = ChampWins,
                             totalGames = TotalGames,
                             champKills = ChampKills,
-                            Rank = Rank, 
                             position = position,#winRate = winRate,
                             CommonItems = CommonItems,
                             runes = CommonRunes, SecondRunes = SecondaryCommonRunes, 
                             BestRunes = BestRunes, BestSecondRunes = SecondaryBestRunes, 
                             BestItems = BestItems, kda = kda,DmgDealtAvg = DmgDealtAvg
-                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold)
+                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold,bestPlayer = bestPlayers)
 
 @app.route('/summoner/champion' , methods=['GET','POST'])
 def SummonerChampionStats():

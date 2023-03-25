@@ -98,3 +98,14 @@ def test_teamPrediction():
     pred = pred.decode('utf-8')
     pred = json.loads(pred)
     assert prediction['BlueTeam'] == 0 or 1
+
+
+
+def test_summData():
+    req = requests.get("http://localhost:5000/summData?summoner=Mealsz&region=EUW1&champ=1&enemyChamp=3&lane=5")
+    statCode = int(req.status_code)
+    print(statCode)
+    assert statCode == 200
+
+
+test_summData()

@@ -299,8 +299,6 @@
 									<canvas id="AvgDamageDealtChart" width="350" height="450"></canvas>
 									<canvas id="AvgCreepScoreChart" width="350" height="450"></canvas>
 									<canvas id="AvgGoldPerMinChart" width="350" height="450"></canvas>
-
-									<canvas id="AvgMinionKillsRanked" width="350" height="450"></canvas>
 								</div>
 							</div>
 						</div>
@@ -331,6 +329,11 @@
 							<td>{{ matches.win }}</td>
 						</tr>
 						{% endfor %}
+
+						<canvas id="AvgMinionKillsRanked" width="350" height="450"></canvas>
+						<canvas id="AvgDTRanked" width="350" height="450"></canvas>
+						<canvas id="AvgGoldRanked" width="350" height="450"></canvas>
+						<canvas id="AvgDDRanked" width="350" height="450"></canvas>
 				</tbody>
 			</table>
 		</div>
@@ -350,46 +353,45 @@
 		window.location.href = url
 	}
 
-	let intVal = parseInt(document.querySelector('input[name="test"]:checked').value);
-	
-	
+	alert("{{avgDamageTakenStatsSummoner['AVG(`MatchStatsTbl`.`DmgTaken`)']}}")
 
-
-
-
-
-	if (parseInt(intVal) == 0)
-	{
-		avgGoldPerMinRank = [500, 500, 544, 734, 904, 1230, 1515, 1978, 2127, 2261, 2416];
-		creepScoreRank = [0, 0, 1, 4, 6, 8, 8, 10, 11, 11, 12];
-		totalDamageDonePerMinRank = [0, 0, 78, 115, 562, 926, 1213, 1784, 1983, 1983, 2801];
-		totalDamageTakenPerMinRank =  [0, 0, 0, 278, 1275, 2005, 2373, 3245, 3499, 3594, 3984];
-	}
-	if (parseInt(intVal) == 1)
-	{
-		avgGoldPerMinRank =  [500, 560, 623, 1015, 1264, 1398, 1613, 1867, 2203, 2379, 2769];
-		creepScoreRank = [0, 0, 0, 0, 3, 3, 3, 3, 4, 5, 5];
-		totalDamageDonePerMinRank = [0, 171, 310, 888, 1159, 1460, 2100, 2543, 2762, 2762, 3317];
-		totalDamageTakenPerMinRank =  [0, 116, 296, 913, 1281, 1439, 1581, 1761, 2451, 2451, 3143];
-	}
-	if (parseInt(intVal) == 2)
-	{
-		avgGoldPerMinRank = [500, 500, 600, 887, 1115, 1477, 1804, 1959, 2313, 2573, 3015];
-		creepScoreRank = [0, 0, 5, 12, 19, 31, 40, 42, 54, 59, 68];
-		totalDamageDonePerMinRank = [0, 0, 68, 747, 893, 893, 1631, 1748, 1748, 2267, 2267];
-		totalDamageTakenPerMinRank =  [0, 0, 222, 1335, 1765, 2152, 2675, 3496, 4280, 5013, 5150];
-	}
-	
-	var yValues = ["{{avgMinionsStatsSummoner[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}, {{AvgMinions[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
-				"{{AvgMinions[1]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[2]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
-				"{{AvgMinions[3]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
-              "{{AvgMinions[4]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"];
+	var yValues = ["{{avgDamageTakenStatsSummoner['AVG(`MatchStatsTbl`.`DmgTaken`)']}}", "{{avgDamageTaken[0]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"
+			,"{{avgDamageTaken[1]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"
+            ,"{{avgDamageTaken[2]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{avgDamageTaken[3]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}",
+              "{{avgDamageTaken[4]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}", "{{avgDamageTaken[5]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}",
+			  "{{avgDamageTaken[6]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{avgDamageTaken[7]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}",
+			  "{{avgDamageTaken[8]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"];
               
-	var xValues = ["You","{{AvgMinions[0]['Rank']}}","{{AvgMinions[1]['Rank']}}"
-				,"{{AvgMinions[2]['Rank']}}","{{AvgMinions[3]['Rank']}}",
-				"{{AvgMinions[4]['Rank']}}"];
-	var barColors = ["Grey", "green","blue","orange","brown","red"];
+	var xValues = ["You","Unranked","Iron","Bronze","Silver" ,"Gold","Platinum","Diamond","Master","GrandMaster","Challenger"];
+	var barColors = ["Green", "Grey","Grey","Brown","Grey","red","Blue","Purple","Yellow","Purple","Purple"];
 		
+
+	new Chart("AvgDTRanked", {
+	type: "bar",
+	data: {
+		labels: xValues,
+		datasets: [{
+		backgroundColor: barColors,
+		data: yValues
+		}]
+	},
+	options: {
+		responsive: false,
+		legend: {display: false},
+		title: {
+		display: true,
+		text: "Avg Damage Taken (Per Rank)"
+		}
+	}
+	});
+
+
+	var yValues = ["{{avgMinionsStatsSummoner[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}", "{{AvgMinions[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+				"{{AvgMinions[1]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[2]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+				"{{AvgMinions[3]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[4]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+				"{{AvgMinions[5]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[6]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+				"{{AvgMinions[7]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[8]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"];
+              
 
 	new Chart("AvgMinionKillsRanked", {
 	type: "bar",
@@ -409,6 +411,68 @@
 		}
 	}
 	});
+
+
+	var yValues = ["{{avgGoldEarntSummoner[0]['AVG(`MatchStatsTbl`.`TotalGold`)']}}", "{{AvgGold[0]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[1]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"
+            ,"{{AvgGold[2]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[3]['AVG(`MatchStatsTbl`.`TotalGold`)']}}",
+              "{{AvgGold[4]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"  ,"{{AvgGold[5]['AVG(`MatchStatsTbl`.`TotalGold`)']}}",
+			  "{{AvgGold[6]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[7]['AVG(`MatchStatsTbl`.`TotalGold`)']}}",
+			  "{{AvgGold[8]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"];
+              
+
+	new Chart("AvgGoldRanked", {
+	type: "bar",
+	data: {
+		labels: xValues,
+		datasets: [{
+		backgroundColor: barColors,
+		data: yValues
+		}]
+	},
+	options: {
+		responsive: false,
+		legend: {display: false},
+		title: {
+		display: true,
+		text: "Avg Gold Earned (Per Rank)"
+		}
+	}
+	});
+
+	var yValues = ["{{avgDamageDealtStatsSummoner[0]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}", "{{DmgDealtAvg[0]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}",
+			"{{DmgDealtAvg[1]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[2]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}",
+			"{{DmgDealtAvg[3]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[4]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}",
+			"{{DmgDealtAvg[5]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[6]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}",
+			"{{DmgDealtAvg[7]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[8]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}"];
+              
+
+	new Chart("AvgDDRanked", {
+	type: "bar",
+	data: {
+		labels: xValues,
+		datasets: [{
+		backgroundColor: barColors,
+		data: yValues
+		}]
+	},
+	options: {
+		responsive: false,
+		legend: {display: false},
+		title: {
+		display: true,
+		text: "Avg Damage Dealt (Per Rank)"
+		}
+	}
+	});
+
+
+
+
+
+
+
+
+
 
 	//Damage Taken Per Min Graph
 	const DamageTaken = document.getElementById('AvgDamageTakenChart').getContext('2d');

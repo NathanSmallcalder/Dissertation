@@ -115,7 +115,7 @@ def getSingleMasteryScore(champId, mastery):
 
 
 def getMatchData(region,id,SummonerInfo):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=15&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
