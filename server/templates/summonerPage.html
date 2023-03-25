@@ -299,6 +299,8 @@
 									<canvas id="AvgDamageDealtChart" width="350" height="450"></canvas>
 									<canvas id="AvgCreepScoreChart" width="350" height="450"></canvas>
 									<canvas id="AvgGoldPerMinChart" width="350" height="450"></canvas>
+
+									<canvas id="AvgMinionKillsRanked" width="350" height="450"></canvas>
 								</div>
 							</div>
 						</div>
@@ -351,6 +353,11 @@
 	let intVal = parseInt(document.querySelector('input[name="test"]:checked').value);
 	
 	
+
+
+
+
+
 	if (parseInt(intVal) == 0)
 	{
 		avgGoldPerMinRank = [500, 500, 544, 734, 904, 1230, 1515, 1978, 2127, 2261, 2416];
@@ -372,7 +379,36 @@
 		totalDamageDonePerMinRank = [0, 0, 68, 747, 893, 893, 1631, 1748, 1748, 2267, 2267];
 		totalDamageTakenPerMinRank =  [0, 0, 222, 1335, 1765, 2152, 2675, 3496, 4280, 5013, 5150];
 	}
+	
+	var yValues = ["{{avgMinionsStatsSummoner[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}, {{AvgMinions[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+				"{{AvgMinions[1]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[2]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+				"{{AvgMinions[3]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
+              "{{AvgMinions[4]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"];
+              
+	var xValues = ["You","{{AvgMinions[0]['Rank']}}","{{AvgMinions[1]['Rank']}}"
+				,"{{AvgMinions[2]['Rank']}}","{{AvgMinions[3]['Rank']}}",
+				"{{AvgMinions[4]['Rank']}}"];
+	var barColors = ["Grey", "green","blue","orange","brown","red"];
+		
 
+	new Chart("AvgMinionKillsRanked", {
+	type: "bar",
+	data: {
+		labels: xValues,
+		datasets: [{
+		backgroundColor: barColors,
+		data: yValues
+		}]
+	},
+	options: {
+		responsive: false,
+		legend: {display: false},
+		title: {
+		display: true,
+		text: "AvgMinions (Per Rank)"
+		}
+	}
+	});
 
 	//Damage Taken Per Min Graph
 	const DamageTaken = document.getElementById('AvgDamageTakenChart').getContext('2d');

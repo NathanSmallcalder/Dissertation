@@ -123,4 +123,12 @@ def test_getChampionBestPlayers():
     best = getChampionBestPlayers(1)
     print(best)
 
-test_getChampionBestPlayers()
+
+def test_avgMinionsAll():
+    AvgMinionsRanked = avgMinionsAll()
+    avgMinionsStatsSummoner = avgMinionsSummonerAll(4)
+    print(AvgMinionsRanked)
+    print(avgMinionsStatsSummoner)
+
+
+test_avgMinionsAll()

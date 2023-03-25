@@ -12,6 +12,7 @@
               <thead>
                   <tr>
                     <th><abbr title="Champion">Champion</abbr></th>
+                    <th><abbr title = "Name">Name</abbr></th>
                     <th><abbr title="Kills">K</abbr></th>
                     <th><abbr title="Deaths">D</abbr></th>
                     <th><abbr title="Assists">A</abbr></th>
@@ -20,13 +21,18 @@
               </thead>
                 {% for d in data %}
                 {% set link = ["https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" ~ d['ChampionName'] ~ ".png"]|join %}
+                {% set linkPage = ["https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/champion?champion=" ~ d['ChampionName']]|join %}
+
+            
                 <tr>
                     <td><figure class="image is-12x12px"><img src= {{link}}> </figure></td>
+                    <td><a href = "{{linkPage}}"> {{ d['ChampionName'] }}</a></td>
                     <td>{{ d['AVG(`MatchStatsTbl`.`kills`)']  }}</td>
                     <td>{{ d['AVG(`MatchStatsTbl`.`deaths`)'] }}</td>
                     <td>{{ d['AVG(`MatchStatsTbl`.`assists`)'] }}</td>
                     <td> <progress class="progress is-success" value="{{d['AVG(`MatchStatsTbl`.`Win`)'] * 100 }}" max="100"></progress></td>
                 </tr>
+              </a>
                 {% endfor %}
                </tbody>
               </table>

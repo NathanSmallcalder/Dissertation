@@ -126,7 +126,6 @@ def test_rf_RedTeamWinTeam():
         "RedTowerKills": 7,
         "RedKills": 48,
     }
-
     prediction = randomForest.randomForestPredictMulti(rfTeam,dataset)
     assert prediction['RedTeam'] == 1
     assert prediction['BlueTeam'] == 0

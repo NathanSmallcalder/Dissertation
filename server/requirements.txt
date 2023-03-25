@@ -8,3 +8,6 @@ PyMySQL
 mysql.connector
 sklearn
 scikit-learn
+seaborn
+skfeature-chappers
+requests_ntlm

@@ -111,29 +111,3 @@ def randomForestPredictMulti(rf, item):
     }
     return prediction
 
-
-rf = randomForestMultiRun()
-dataset = {
-        "B1": 44,
-        "B2": 876,
-        "B3": 136,
-        "B4": 221,
-        "B5": 74,
-        "R1": 122,
-        "R2": 20,
-        "R3": 99,
-        "R4": 202,
-        "R5": 412,
-        "BlueBaronKills": 1,
-        "BlueRiftHeraldKills":2 ,
-        "BlueDragonKills": 2.33,
-        "BlueTowerKills": 9,
-        "BlueKills": 37,
-
-        "RedBaronKills": 0.3333,
-        "RedRiftHeraldKills": 0,
-        "RedDragonKills": 0,
-        "RedTowerKills": 0,
-        "RedKills":0,
-}
-randomForestPredictMulti(rf, dataset)

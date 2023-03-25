@@ -104,7 +104,7 @@ def championData():
     DmgTakenAvg = avgDmgTaken(int(championStats['key']))
     DmgDealtAvg = avgDmgDealt(int(championStats['key']))
     AvgGold = avgGold(int(championStats['key']))
-    print(AvgGold)
+
     BestItems = bestItems(int(championStats['key']))
     CommonItems = commonItems(int(championStats['key']))
 
@@ -116,8 +116,8 @@ def championData():
     position = laneFromDatabase(int(championStats['key']))
     kda = kdaFromDatabase(int(championStats['key']))
    
-    bestPlayers = getChampionBestPlayers(int(championStats['key']))
-   
+
+    
     Rank = []
     for data in AvgMinions:
         Rank.append(data['Rank'])
@@ -132,7 +132,7 @@ def championData():
                             runes = CommonRunes, SecondRunes = SecondaryCommonRunes, 
                             BestRunes = BestRunes, BestSecondRunes = SecondaryBestRunes, 
                             BestItems = BestItems, kda = kda,DmgDealtAvg = DmgDealtAvg
-                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold, bestPlayers = bestPlayers)
+                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold)
 
 @app.route('/summoner/champion' , methods=['GET','POST'])
 def SummonerChampionStats():
@@ -186,7 +186,7 @@ def predict():
         Prediction = {
             "pred": str(rf)
         }
-    
+        print(Prediction)
         return jsonify(Prediction), 200
     else:
         return "Content type is not supported."
@@ -201,6 +201,7 @@ def matchPredict():
 
 @app.route('/summData', methods = ['GET'])
 def summData():
+    print("called")
     summonerName = request.args.get('summoner')
     Region = request.args.get('region')
     champ = request.args.get('champ')
@@ -208,6 +209,7 @@ def summData():
     lane = request.args.get('lane')
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
+    print(SummId)
     data = getMatchData5Matches(Region, SummId, SummonerInfo)
     mastery = getMasteryStats(Region, SummId)
     mastery = getSingleMasteryScore(champ, mastery)
@@ -216,6 +218,7 @@ def summData():
     avg['masteryPoints'] = mastery
     avg['enemyChamp'] = enemyChamp
     avg['lane'] = lane
+    print(avg)
 
     return jsonify(avg), 200
 

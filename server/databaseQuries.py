@@ -66,6 +66,25 @@ def champKills(champId):
     ChampKills = ChampKills['SUM(`MatchStatsTbl`.kills)']
     return ChampKills
 
+
+#Gets average Avg Minions Per Rank
+#e.g {'Rank':'unranked' , 'AVG(`MatchStatsTbl`.`MinionsKilled`)': 500}
+def avgMinionsAll(): 
+    connection = create_connection()
+    cursor =  connection.cursor()
+    MinionsAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`MinionsKilled`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' GROUP by `MatchTbl`.`RankFk`")
+    MinionsAvg = cursor.fetchall()
+    return MinionsAvg
+
+
+###Gets the AvgMinions of a give Summoner by ID
+def avgMinionsSummonerAll(SummonerFk): 
+    connection = create_connection()
+    cursor =  connection.cursor()
+    MinionsAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`MinionsKilled`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' and SummonerMatchTbl.SummonerFk = % s GROUP by `MatchTbl`.`RankFk`", (int(SummonerFk)))
+    MinionsAvg = cursor.fetchall()
+    return MinionsAvg
+
 #Gets average Avg Minions of champion from a given championId by rank
 #e.g {'Rank':'unranked' , 'AVG(`MatchStatsTbl`.`MinionsKilled`)': 500}
 def avgMinions(champId): 
@@ -277,6 +296,7 @@ def getSummonerIdFromDatabase(SummonerName):
     print(SummonerFk)
     return SummonerFk
 
+#Gets ItemLink
 def getItemLink(id): 
     connection = create_connection()
     cursor =  connection.cursor()
@@ -310,6 +330,7 @@ def getChampionAverages():
     data = cursor.fetchall()
     return data
 
+#Gets the best player from a given Champion
 def getChampionBestPlayers(ChampId):
     connection = create_connection()
     cursor =  connection.cursor()
