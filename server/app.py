@@ -104,7 +104,7 @@ def championData():
     DmgTakenAvg = avgDmgTaken(int(championStats['key']))
     DmgDealtAvg = avgDmgDealt(int(championStats['key']))
     AvgGold = avgGold(int(championStats['key']))
-
+    print(AvgGold)
     BestItems = bestItems(int(championStats['key']))
     CommonItems = commonItems(int(championStats['key']))
 
@@ -116,8 +116,8 @@ def championData():
     position = laneFromDatabase(int(championStats['key']))
     kda = kdaFromDatabase(int(championStats['key']))
    
-
-    
+    bestPlayers = getChampionBestPlayers(int(championStats['key']))
+   
     Rank = []
     for data in AvgMinions:
         Rank.append(data['Rank'])
@@ -132,7 +132,7 @@ def championData():
                             runes = CommonRunes, SecondRunes = SecondaryCommonRunes, 
                             BestRunes = BestRunes, BestSecondRunes = SecondaryBestRunes, 
                             BestItems = BestItems, kda = kda,DmgDealtAvg = DmgDealtAvg
-                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold)
+                            , AvgMinions = AvgMinions, DmgTakenAvg = DmgTakenAvg, AvgGold = AvgGold, bestPlayers = bestPlayers)
 
 @app.route('/summoner/champion' , methods=['GET','POST'])
 def SummonerChampionStats():

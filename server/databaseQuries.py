@@ -128,6 +128,7 @@ def avgGold(champId):
     cursor =  connection.cursor()
     TotalGoldAvg = cursor.execute("SELECT `RankTbl`.`Rank` , AVG(`MatchStatsTbl`.`TotalGold`) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` JOIN `RankTbl` on `RankTbl`.`RankId` = `MatchTbl`.`RankFk` WHERE `MatchTbl`.QueueType = 'CLASSIC' AND `SummonerMatchTbl`.`ChampionFk` = % s GROUP by `MatchTbl`.`RankFk`",(champId))
     TotalGoldAvg = cursor.fetchall()
+    return TotalGoldAvg
   
 
 #Gets average gold of champion from a given championId and SummonerIDd
@@ -304,16 +305,15 @@ def getBestPlayers():
 def getChampionAverages():
     connection = create_connection()
     cursor =  connection.cursor()
-    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
+    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`')
     cursor.execute(query)
     data = cursor.fetchall()
     return data
 
-def getChampionBestPlayers():
+def getChampionBestPlayers(ChampId):
     connection = create_connection()
     cursor =  connection.cursor()
-    query = ('SELECT `ChampionTbl`.`ChampionName`, AVG(`MatchStatsTbl`.`kills`),AVG(`MatchStatsTbl`.`deaths`),AVG(`MatchStatsTbl`.`assists`), AVG(`MatchStatsTbl`.`Win`), AVG(`MatchTbl`.`GameDuration`) FROM `SummonerMatchTbl`   JOIN `MatchStatsTbl` ON `MatchStatsTbl`.SummonerMatchFk = `SummonerMatchTbl`.SummonerMatchId   JOIN `MatchTbl` ON `MatchTbl`.`MatchId` = `SummonerMatchTbl`.`MatchFk`  JOIN `ChampionTbl` ON  `SummonerMatchTbl`.`ChampionFk` = `ChampionTbl`.`ChampionId`   WHERE `MatchTbl`.`QueueType` = "CLASSIC"  GROUP BY `ChampionTbl`.`ChampionId`;')
-    cursor.execute(query)
+    query = ("SELECT DISTINCT SummonerName, COUNT(MatchStatsTbl.Win), AVG(MatchStatsTbl.kills),AVG(MatchStatsTbl.assists), AVG(MatchStatsTbl.deaths), AVG(MatchStatsTbl.BaronKills), AVG(MatchStatsTbl.DragonKills) FROM `SummonerUserTbl` JOIN SummonerMatchTbl on SummonerID = SummonerMatchTbl.SummonerFk JOIN MatchStatsTbl on SummonerMatchTbl.SummonerMatchId = MatchStatsTbl.SummonerMatchFk WHERE MatchStatsTbl.Win = 1 and SummonerMatchTbl.ChampionFk = %s GROUP BY SummonerName ORDER by COUNT(MatchStatsTbl.Win) DESC LIMIT 15 ")
+    cursor.execute(query, (ChampId,))
     data = cursor.fetchall()
     return data
-

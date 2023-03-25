@@ -120,7 +120,7 @@ def test_getChampionAverages():
     getChampionAverages
 
 def test_getChampionBestPlayers():
-    getChampionBestPlayers()
+    best = getChampionBestPlayers(1)
+    print(best)
 
-
-test_champWinsSummoner()
+test_getChampionBestPlayers()
