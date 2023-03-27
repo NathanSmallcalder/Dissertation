@@ -52,6 +52,8 @@ def getChampImagesSingle(ChampId): #
             ChampId = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
             return ChampId
 
+### Gets Champion Spell Images for /champion?champion="" directory
+### passes champion back by reference
 def getChampSpellImages(champion): #
     n = 29
     print(champion)
@@ -66,6 +68,7 @@ def getChampSpellImages(champion): #
         spell = "https://raw.communitydragon.org/latest/game/assets/" + spell.lower()
         spells['abilityIconPath'] = spell
     
+### Gets Rune images and Description
 def getRunesImages(runesList): 
     runesLinksList = []
     print(runesList)
@@ -99,7 +102,7 @@ def getRunesImages(runesList):
     except:
         pass
 
-
+### Gets Rune images and Description
 def getRunesImagesList(runesList): 
     runesLinksList = []
     print(runesList)

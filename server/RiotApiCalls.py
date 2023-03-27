@@ -82,17 +82,19 @@ def getImageLink(SummonerInfo):
     profileIcon = str(SummonerInfo['profileIconId'])
     SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
 
-#
+#Gets Basic Summoner Details
 def getSummonerDetails(Region,summonerName):
     SummonerInfo = requests.get("https://" + Region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + API)
     SummonerInfo = SummonerInfo.json()
     return SummonerInfo
 
+#Gets Summoner Ranked Stats
 def getRankedStats(Region,id):
     RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
     Ranked = RankedMatches.json()
     return Ranked
 
+#Gets Mastery Stats
 def getMasteryStats(Region,id):
     masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
     masteryScore = masteryScore.json()
@@ -100,6 +102,8 @@ def getMasteryStats(Region,id):
     getChampImages(masteryScore)
     return masteryScore
 
+### Gets a single mastery score value
+### pass in the desired champion id and mastery score array from getMasteryStats
 def getSingleMasteryScore(champId, mastery):
     masteryScore = None
     for m in mastery:
@@ -113,24 +117,29 @@ def getSingleMasteryScore(champId, mastery):
 
     return masteryScore
 
-
+### Gets MatchIds
+### calls getMatches
+### Returns data from getMatches
 def getMatchData(region,id,SummonerInfo):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
 
+### Gets 5 MatchIds
 def getMatchData5Matches(region,id,SummonerInfo):
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo)
     return data
 
+### Gets x MatchIds
 def getMatchIds(region,puuid):
-    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=5&api_key=" + API)
+    MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ puuid +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     return MatchIDs
 
+# Gets Summoner match data
 def getMatches(region,MatchIDs,SummonerInfo):
     puuid = SummonerInfo['puuid']
     SummId = SummonerInfo['id']
@@ -151,7 +160,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
     playerMatchDataTemp = []
 
     for matchID in MatchIDs:
-        data = {
+        data = { # Temp Data Store
                 'GameDuration':None, 
                 'champion': None,
                 'kills':None ,
@@ -176,7 +185,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
                 "teamRiftHeraldKills":None
         }
 
-        matchIdsData = {
+        matchIdsData = { # Temp Data store - Match Values
             'MatchIDS':[],
             'GameType':[],
             'Rank':[],
@@ -290,6 +299,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
         matchIdsData['gameVersion'].append(gameVersion)
         matchIdsData['Rank'].append(SOLO['tier'])
 
+    #### stores temp data arrays into a list
         data2 = dict(data)
         matchIds2 = dict(matchIdsData)
         del data
@@ -305,7 +315,7 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
     dataList = list(temp)
     matchIDS = list(tempMatchIds)
-
+    #### 
     del temp
     del tempMatchIds 
     return dataList
@@ -343,6 +353,7 @@ def AvgStats(dataList):
         AvgStats['GameDuration'] += dataList[i]['GameDuration'] 
         AvgStats['TowerDamageDealt'] += dataList[i]['TowerDamageDealt'] 
         i = i +1
+        
     for keys in AvgStats: #Divide by number of games
         AvgStats[keys] = AvgStats[keys] / i
         AvgStats[keys] = (AvgStats[keys])
@@ -398,7 +409,10 @@ def calculateAvgTeamStats(Team,Region):
 
     print(TeamData)
     return TeamData
-
+    
+### Creates the dataset of to be returned to the /teamData endpoint
+### Dictionary object
+### Before being ran through the machine learning algorithm
 def makeDataSet(team1,team2,data):
     dataset = {
         "B1": data['B1'],
@@ -468,7 +482,7 @@ def getGameParticipants(game):
 def getGameParticipantsList():
     return participants
 
-
+### Gets the timeline of the Match
 def getMatchTimeline(region,id,puuid,data):
     MatchIDs = getMatchIds(region,puuid)
     MeanData = {
@@ -554,6 +568,7 @@ def getMatchTimeline(region,id,puuid,data):
                 
     return MeanData
 
+### Gets all statistics for every summoner in a given users game
 def SummonerInGame(LiveGame,region):
     LiveGame = LiveGame['participants']
     i = 0
@@ -591,7 +606,7 @@ def SummonerInGame(LiveGame,region):
         totalDamageTakenPerMin = MeanData['totalDamageTakenPerMin'].pop()
         summ = SummonerInGameObj(name,Rank, WinRate, avgGoldPerMin,totalDamageTakenPerMin,totalDamageTakenPerMin,img)
         Summoners.append(summ)
-        time.sleep(30)
+        time.sleep(30) # Sleep to ensure requests do not overflow the API limit (200 every 2 mins)
     return Summoners
     
 #Checks if user is in game
@@ -604,6 +619,10 @@ def summonerInGameCheck(region,summonerId):
         Summoners = SummonerInGame(LiveGame,region)
         return Summoners
 
+### Gets Images for Roles
+### Carry == Bottom
+### Support == Utility
+### Solo == Middle
 def getRoleImages(data):
     role = data['role'].lower()
   
@@ -617,6 +636,8 @@ def getRoleImages(data):
     data['role'] = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-"+ role +".png"
     return data
 
+### Gets All Roles 
+### Displayed for UI ---> soloPredict endpoint
 def getRoles():
     list = [["0","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png"],
         ["1","https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png"],
@@ -626,6 +647,7 @@ def getRoles():
     RoleList = []
 
     i = 0
+    # Each role has an ID and Link to role Image
     while i < 5:
         roleImages = {
             "RoleId":int(list[i][0]),

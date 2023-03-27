@@ -85,6 +85,7 @@ def test_rf_LessObviousLossTeam():
         "R3": 99,
         "R4": 202,
         "R5": 412,
+        
         "BlueBaronKills": 1,
         "BlueRiftHeraldKills":2 ,
         "BlueDragonKills": 2.33,
