@@ -49,7 +49,7 @@ def randomForestRun():
     #data = pd.read_csv("data.csv")
     df_games = pd.DataFrame(data,columns = columns)
     df_games.sample(frac=1)
-    
+    print(df_games.head())
 
 
     df_games['lane'] = df_games['lane'].map({'TOP':0,'JUNGLE':1,'MIDDLE':2,'BOTTOM':3,'SUPPORT':4,'NONE':5})

@@ -42,7 +42,6 @@ summonerSpells = {  # Summoner Spell Image Data Store
 
 #Get Item Images - Pass in itemList []
 def GetItemImages(itemList):
-    print(itemList)
     connection = create_connection()
     cursor =  connection.cursor()
     itemE =[]
@@ -91,6 +90,7 @@ def getSummonerDetails(Region,summonerName):
 #Gets Summoner Ranked Stats
 def getRankedStats(Region,id):
     RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
+    print("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
     Ranked = RankedMatches.json()
     return Ranked
 
@@ -107,7 +107,6 @@ def getMasteryStats(Region,id):
 def getSingleMasteryScore(champId, mastery):
     masteryScore = None
     for m in mastery:
-        print(m)
         champMastery = m['championId']
         if int(champId) == int(champMastery):
             masteryScore = int(champMastery)
@@ -120,17 +119,18 @@ def getSingleMasteryScore(champId, mastery):
 ### Gets MatchIds
 ### calls getMatches
 ### Returns data from getMatches
-def getMatchData(region,id,SummonerInfo):
+def getMatchData(region,id,SummonerInfo,RankedDetails):
+    mastery = getMasteryStats(region, SummonerInfo['id'])
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
-    data = getMatches("europe", MatchIDs, SummonerInfo)
+    data = getMatches("europe", MatchIDs, SummonerInfo,RankedDetails,mastery)
     return data
 
 ### Gets 5 MatchIds
-def getMatchData5Matches(region,id,SummonerInfo):
+def getMatchData5Matches(region,id,SummonerInfo,RankedDetails):
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
-    data = getMatches("europe", MatchIDs, SummonerInfo)
+    data = getMatches("europe", MatchIDs, SummonerInfo,RankedDetails)
     return data
 
 ### Gets x MatchIds
@@ -140,21 +140,20 @@ def getMatchIds(region,puuid):
     return MatchIDs
 
 # Gets Summoner match data
-def getMatches(region,MatchIDs,SummonerInfo):
+def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
+    print(SummonerInfo)
     puuid = SummonerInfo['puuid']
     SummId = SummonerInfo['id']
-    RankedDetails = getRankedStats(region,SummId)
-   
-    try:
-        SOLO = RankedDetails[0]
-        FLEX = RankedDetails[1]
-    except:
-        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"","leaguePoints":0,"wins":0,"losses":0,
-        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
-        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"","summonerName":"","leaguePoints":0,"wins":0,"losses":0,
-        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
-
-
+    summonerName = SummonerInfo['name']
+    
+    
+    #if user doesnt exist insert into database
+    SummonerFk = getSummonerIdFromDatabase(summonerName)
+    if SummonerFk != None:
+        pass
+    else:
+        SummonerFk = insertUser(summonerName)
+    
     temp = []
     tempMatchIds = []
     playerMatchDataTemp = []
@@ -194,16 +193,17 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
         print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
+   
         MatchData = MatchData.json()
         FullMatchData = MatchData
         #http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json
         getGameParticipants(MatchData)
+        patch = MatchData['info']['gameVersion']
+        GameType = MatchData['info']['gameMode']
         participants = MatchData['metadata']['participants']
         player_index = participants.index(puuid)
-        
- 
         player_data = MatchData['info']['participants'][player_index]
-
+        gameMins = MatchData['info']['gameDuration']
         summSpell1 = player_data['summoner1Id']
         summSpell2 = player_data['summoner2Id']
 
@@ -211,6 +211,11 @@ def getMatches(region,MatchIDs,SummonerInfo):
         
         role = player_data['lane']
         champion = player_data['championName']
+
+        RankId = getRankId(RankedDetails[0]['tier'])
+  
+
+        #Find opposing laner
         i = 0
         while i <= 9:
             enemyLane = FullMatchData['info']['participants'][i]['lane']
@@ -248,10 +253,9 @@ def getMatches(region,MatchIDs,SummonerInfo):
 
         ]
 
-        
         ItemInGame = GetItemImages(Items)
         player_data = getRoleImages(player_data)
-        gameMins = MatchData['info']['gameDuration']
+        
        
         k = player_data['kills']
         d = player_data['deaths']
@@ -291,14 +295,33 @@ def getMatches(region,MatchIDs,SummonerInfo):
         data['SummonerSpell1'] = summSpell1
         data['SummonerSpell2'] = summSpell2
 
-
         gameType = MatchData['info']['gameMode']
         gameVersion = MatchData['info']['gameVersion']
         matchIdsData['MatchIDS'].append(matchID)
         matchIdsData['GameType'].append(gameType)
         matchIdsData['gameVersion'].append(gameVersion)
-        matchIdsData['Rank'].append(SOLO['tier'])
+        matchIdsData['Rank'].append(RankedDetails[0]['tier'])
 
+        champId = getChampId(champion)
+        enemyChampion = getChampId(enemyChampion)
+        MatchVerify = matchCheck(matchID)
+ 
+
+        masteryScore = getSingleMasteryScore(champId,mastery)
+        if MatchVerify == None:
+            insertMatch(matchID,patch,GameType,RankId,gameMins)
+        else:
+            pass
+
+        SummMatchId = checkSummMatch(SummonerFk,matchID)
+        if SummMatchId == None:
+            SummMatch = insertSummMatch(SummonerFk,matchID,champId)
+            insertMatchStats(SummMatch,cs,physicalDamageDealtToChampions,physicalDamageTaken,turretDmg,
+            GoldPerMin,role,win,Items[0],Items[1],Items[2],Items[3],Items[4],Items[5],k,d,a,KeyStone1[0],KeyStone1[1],KeyStone1[2],KeyStone1[3],
+            KeyStone2[0],KeyStone2[1],summSpell1,summSpell2,masteryScore,enemyChampion,dragonKills,baronKills)
+        else:
+            pass
+       
     #### stores temp data arrays into a list
         data2 = dict(data)
         matchIds2 = dict(matchIdsData)
@@ -319,7 +342,6 @@ def getMatches(region,MatchIDs,SummonerInfo):
     del temp
     del tempMatchIds 
     return dataList
-
 
 #Gets AvgStats for Previous x Games
 def AvgStats(dataList):
@@ -406,7 +428,7 @@ def calculateAvgTeamStats(Team,Region):
         TeamData['riftHeraldKills'] += item['riftHeraldKills']
         TeamData['dragonKills'] += item['dragonKills']
         TeamData['turretKills'] += item['turretKills']
-
+    
     print(TeamData)
     return TeamData
     
@@ -576,12 +598,11 @@ def SummonerInGame(LiveGame,region):
     while i < 10:
         summonerIds.append(LiveGame[i]['summonerId'])
         i = i + 1
-
     for summonerId in summonerIds:
-        puuid = requests.get("https://"+ region + ".api.riotgames.com/lol/summoner/v4/summoners/" +summonerId + "?api_key=" + api_key)
-        puuid = puuid.json()
-        name = puuid['name']
-        puuid = puuid['puuid']
+        stats = requests.get("https://"+ region + ".api.riotgames.com/lol/summoner/v4/summoners/" + summonerId + "?api_key=" + api_key)
+        stats = puuid.json()
+        name = stats['name']
+        puuid = stats['puuid']
         Rank = "Unranked"
         MatchIDs = getMatchIds(region,puuid)
         SummonerDetails = getSummonerDetails(region, name)

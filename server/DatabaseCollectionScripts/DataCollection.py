@@ -20,7 +20,7 @@ connection = mysql.connector.connect(user=sql_user, password=sql_password, host=
 cursor = connection.cursor(buffered=True)
      
 Region = "EUW1"
-summonerName = "Linkz   "
+summonerName = "Gumadruxy  "
 connection.autocommit = True
 db_Info = connection.get_server_info()
 
@@ -47,6 +47,7 @@ for MatchId in MatchIDs:
     #MatchData
     MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ MatchId +"?api_key=" + api_key)
     MatchData = MatchData.json()
+
     print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ MatchId +"?api_key=" + api_key)
 
     ii = 0
@@ -81,8 +82,10 @@ for MatchId in MatchIDs:
 
     cursor.execute("SELECT `MatchFk` FROM `TeamMatchTbl` WHERE `MatchFk` = (%s)", (str(MatchId) ,))
     matchCheck = cursor.fetchone()
+
     print(matchCheck)
- 
+    if matchCheck == None:
+        insertMatch()
 
     Match = matchData2[i]['MatchIDS']
     Patch = matchData2[i]['gameVersion']
@@ -97,6 +100,7 @@ for MatchId in MatchIDs:
    
     cursor.execute("SELECT `RankId` FROM `RankTbl` WHERE `Rank` = (%s)", (Rank ,))
     RankId = cursor.fetchone()
+
     RankId = int(Normalise(RankId))
     print(Rank)
    
@@ -186,9 +190,7 @@ for MatchId in MatchIDs:
         MatchVerify = cursor.fetchone()
         MatchVerify = Normalise(MatchVerify)
         print("Mattch Inserted", MatchVerify)
-        cursor.execute("INSERT INTO `TeamMatchTbl`(`MatchFk`, `B1Champ`, `B2Champ`, `B3Champ`, `B4Champ`, `B5Champ`, `R1Champ`, `R2Champ`, `R3Champ`, `R4Champ`, `R5Champ`, `BlueBaronKills`, `BlueRiftHeraldKills`, `BlueDragonKills`, `BlueTowerKills`, `BlueKills`, `RedBaronKills`, `RedRiftHeraldKills`, `RedDragonKills`, `RedTowerKills`, `RedKills`, `RedWin`, `BlueWin`)VALUES (%s , %s , %s, %s,%s , %s , %s, %s,%s , %s , %s, %s,%s , %s , %s, %s,%s , %s , %s,  %s, %s, %s, %s)",(MatchId,champList[0],champList[1],champList[2],champList[3],champList[4],champList[5],champList[6],champList[7],champList[8],champList[9],BaronKillsBlue,BlueRiftKills,DragonKillsBlue,towerKillsBlue,ChampionKillsBlue,BaronKillsRed,RedRiftKills,DragonKillsRed,towerKillsRed,ChampionKillsRed,RedWin,BlueWin,))
-        connection.commit()
-
+   
     else:
         print("Pass")
         pass

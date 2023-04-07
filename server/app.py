@@ -55,9 +55,9 @@ def getSummoner():
         RankedImages(FLEX)
         RankedImages(SOLO)
     except:
-        FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
-        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
-        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","summonerName":"Frycks","leaguePoints":0,"wins":0,"losses":0,
+        FLEX = RankedDetails[0]
+        
+        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
 
     #Profile Image
@@ -66,27 +66,38 @@ def getSummoner():
     masteryScore = getMasteryStats(Region,SummId)
 
     #Gets Matches
-    data = getMatchData(Region, SummId, SummonerInfo)
+    data = getMatchData(Region, SummId, SummonerInfo,RankedDetails)
+    print(data)
     participants = getGameParticipantsList()
-    MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
+    #MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
     fullMatch = getPlayerMatchData()
 
     #Gets Statistics from Database (Graphs)
     summIdDatabase = getSummonerIdFromDatabase(summonerName)
-    avgMinionsStatsSummoner = avgMinionsSummonerAll(summIdDatabase)
-    avgMinions = avgMinionsAll()
-    avgDamageTaken = avgDmgTakenAll()
-    avgDamageTakenStatsSummoner = avgDmgTakenSummonerAll(summIdDatabase)
-    avgDamageDealt = avgDmgDealtAll()
-    avgDamageDealtStatsSummoner = avgDmgDealtSummonerAll(summIdDatabase)
-    avgGoldEarnt = avgGoldAll()
-    avgGoldEarntSummoner = avgGoldSummonerAll(summIdDatabase)
-
-
+    if summIdDatabase != None:
+        avgMinionsStatsSummoner = avgMinionsSummonerAll(summIdDatabase)
+        avgMinions = avgMinionsAll()
+        avgDamageTaken = avgDmgTakenAll()
+        avgDamageTakenStatsSummoner = avgDmgTakenSummonerAll(summIdDatabase)
+        avgDamageDealt = avgDmgDealtAll()
+        avgDamageDealtStatsSummoner = avgDmgDealtSummonerAll(summIdDatabase)
+        avgGoldEarnt = avgGoldAll()
+        avgGoldEarntSummoner = avgGoldSummonerAll(summIdDatabase)
+    else:
+        avgGoldEarntSummoner = [0,0,0,0,0,0,0,0,0]
+        avgMinionsStatsSummoner = [0,0,0,0,0,0,0,0,0]
+        avgMinions = [0,0,0,0,0,0,0,0,0]
+        avgDamageTaken = [0,0,0,0,0,0,0,0,0]
+        avgDamageTakenStatsSummoner = [0,0,0,0,0,0,0,0,0]
+        avgDamageDealt = [0,0,0,0,0,0,0,0,0]
+        avgDamageDealtStatsSummoner = [0,0,0,0,0,0,0,0,0]
+        avgGoldEarnt = [0,0,0,0,0,0,0,0,0]
     #Returns HTML and Variables
+
     return render_template('summonerPage.html', SummonerInfo = SummonerInfo,
     soloRanked = SOLO,flexRanked = FLEX,masteryScore = masteryScore,data=data, 
-    MeanData = MeanData, fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region,
+    #MeanData = MeanData, 
+    fullMatch = fullMatch,participants = participants,summonerName = summonerName,Region = Region,
     avgMinionsStatsSummoner = avgMinionsStatsSummoner, AvgMinions = avgMinions,
     avgDamageTaken = avgDamageTaken, avgDamageTakenStatsSummoner = avgDamageTakenStatsSummoner,
     DmgDealtAvg = avgDamageDealt, avgDamageDealtStatsSummoner = avgDamageDealtStatsSummoner,
@@ -216,7 +227,7 @@ def summData():
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
     print(SummId)
-    data = getMatchData5Matches(Region, SummId, SummonerInfo)
+    data = getMatchData5Matches(Region, SummId, SummonerInfo,RankedDetails)
     ### Gets Mastery Stats
     mastery = getMasteryStats(Region, SummId)
     mastery = getSingleMasteryScore(champ, mastery)
@@ -229,7 +240,7 @@ def summData():
     avg['enemyChamp'] = enemyChamp
     avg['lane'] = lane
     print(avg)
-
+    
     return jsonify(avg), 200
 
 
@@ -265,10 +276,18 @@ def predict():
         rf = randomForestSolo.randomForestPredict(rf,data['ChampionFk'],data['MinionsKilled'],data['kills'],data['deaths'],data['assists'],data['lane'], data['masteryPoints'],
                                             data['DmgDealt'],data['DmgTaken'],data['TurretDmgDealt'],data['TotalGold'],data['EnemyChampionFk'],
                                             data['GameDuration'],data['DragonKills'],data['BaronKills'])
+        if (int(rf) == 0):
+            rf = "Loss"
+        else:
+            rf = "Win"
+
+        
         Prediction = {
             "pred": str(rf)
         }
         print(Prediction)
+
+
         return jsonify(Prediction), 200
     else:
         return "Content type is not supported."
@@ -314,7 +333,7 @@ def teamPredictor():
 ### returns prediction json
 ###    {
 ###     'BlueTeam': x
-###       'RedTeam': y 
+###      'RedTeam': y 
 ###   }
 @app.route('/teamData', methods = ['GET','POST'])
 def teamData():
@@ -333,8 +352,21 @@ def teamData():
       
         rf = randomForest.randomForestMultiRun()
         prediction = randomForest.randomForestPredictMulti(rf,dataSet)
-        print(prediction)
-    return jsonify(prediction) ,200
+        print(prediction['BlueTeam'])
+        pred = {
+            "Blue": None,
+            "Red": None
+        }
+
+        if int(prediction['RedTeam']) == 0:
+            pred['Blue'] = 'Win'
+            pred['Red'] = 'Loss'
+        else:
+            pred['Blue'] = 'Loss'
+            pred['Red'] = 'Win'
+
+    print(pred)
+    return pred ,200
 
 ### Routing for the Main page
 @app.route('/')

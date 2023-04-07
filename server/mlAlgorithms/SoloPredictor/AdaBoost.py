@@ -56,3 +56,5 @@ def AdaBoostRun():
 def getPlotScore(model, X_test, y_test):
     svc_disp = RocCurveDisplay.from_estimator(model, X_test, y_test)
     return svc_disp
+
+AdaBoostRun()

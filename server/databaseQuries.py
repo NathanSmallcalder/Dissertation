@@ -345,8 +345,10 @@ def getSummonerIdFromDatabase(SummonerName):
     cursor =  connection.cursor()
     SummonerFk = cursor.execute("SELECT SummonerUserTbl.SummonerID from SummonerUserTbl where SummonerName = % s", (SummonerName, ))
     SummonerFk = cursor.fetchall()
-    SummonerFk = SummonerFk[0]['SummonerID']
-    print(SummonerFk)
+    try:
+        SummonerFk = SummonerFk[0]['SummonerID']
+    except:
+        SummonerFk = None
     return SummonerFk
 
 #Gets ItemLink
@@ -391,3 +393,79 @@ def getChampionBestPlayers(ChampId):
     cursor.execute(query, (ChampId,))
     data = cursor.fetchall()
     return data
+
+def insertUser(SummonerName):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("INSERT INTO `SummonerUserTbl`(`SummonerName`) VALUES (%s )", (SummonerName,))
+    connection.commit()
+
+    SummonerFk = cursor.execute("SELECT SummonerUserTbl.SummonerID from SummonerUserTbl where SummonerName = % s", (SummonerName, ))
+    SummonerFk = cursor.fetchall()
+    try:
+        SummonerFk = SummonerFk[0]['SummonerID']
+    except:
+        SummonerFk = None
+    return SummonerFk    
+
+def getRankId(Rank):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("SELECT `RankId` FROM `RankTbl` WHERE `Rank` = (%s)", (Rank ,))
+    RankId = cursor.fetchone()
+    RankId = RankId['RankId']
+    return RankId
+
+def matchCheck(matchId):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("SELECT `MatchId` FROM `MatchTbl` WHERE `MatchId` = (%s)", (str(matchId) ,))
+    matchCheck = cursor.fetchone()
+    if matchCheck != None:
+        matchCheck = matchCheck['MatchId']
+    else:
+        pass
+    return matchCheck
+
+def insertMatch(matchId,Patch,GameType,RankId,GameDuration):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("INSERT INTO `MatchTbl`(`MatchId`, `Patch`,  `QueueType`, `RankFk`,`GameDuration`) VALUES (%s ,%s , %s , %s, %s)", (matchId,Patch,GameType,int(RankId),int(GameDuration)))
+    connection.commit()
+
+def insertMatchStats(SummMatchId ,cs,dmgDealt,dmgTaken,TurretDmgDealt,goldEarned,Role,win,Item1,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,spell1,spell2,masteryPoints,Enemy,dragonKills,baronKills):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `SummonerSpell1`, `SummonerSpell2`, `CurrentMasteryPoints`, `EnemyChampionFk`, `DragonKills`, `BaronKills`) VALUES (%s, %s , %s ,%s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s)" ,(str(SummMatchId) ,cs,dmgDealt,dmgTaken,TurretDmgDealt,goldEarned,Role,win,Item1,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,spell1,spell2,masteryPoints,Enemy,dragonKills,baronKills))
+    connection.commit()
+
+def insertSummMatch(SummonerId,MatchVerify,Champion):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("INSERT INTO `SummonerMatchTbl`(`SummonerFk`, `MatchFk`, `ChampionFk`) VALUES (%s , %s , %s)", (SummonerId,MatchVerify,Champion))
+    connection.commit()
+    cursor.execute("SELECT `SummonerMatchId` FROM `SummonerMatchTbl` WHERE `MatchFk` = (%s) AND `SummonerFk` = (%s)", (str(MatchVerify) ,SummonerId))    
+    SummMatchId = cursor.fetchone()        
+    SummMatchId = SummMatchId['SummonerMatchId']
+    print("SummMatchID = " , SummMatchId)
+    return SummMatchId
+        
+def getChampId(champion):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("SELECT `ChampionId` FROM `ChampionTbl` WHERE `ChampionName` = (%s)", (champion, ))
+    champion = cursor.fetchone()
+    champion = champion['ChampionId']
+    return champion
+
+def checkSummMatch(SummonerId,MatchId):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("SELECT `SummonerMatchId` FROM `SummonerMatchTbl` WHERE `MatchFk` = (%s) AND `SummonerFk` = (%s)", (str(MatchId) ,SummonerId))    
+    SummMatchId = cursor.fetchone()
+    if SummMatchId != None:
+        SummMatchId = SummMatchId['SummonerMatchId']
+    else:
+        pass
+  
+    return SummMatchId

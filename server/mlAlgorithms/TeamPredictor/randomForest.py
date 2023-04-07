@@ -47,7 +47,7 @@ def randomForestMultiRun():
 
     df_games = pd.DataFrame(data,columns = columns)
     df_games.sample(frac=1)
-
+    print(df_games.head())
     df_games = df_games.drop('MatchFk',axis=1)
     df_games = df_games.drop('TeamId',axis=1)
     
@@ -111,3 +111,4 @@ def randomForestPredictMulti(rf, item):
     }
     return prediction
 
+randomForestMultiRun()

@@ -52,7 +52,7 @@ def runSVM():
     df_games['Win'] = df_games['Win']
     X = df_games.drop('Win', axis=1)
     y = df_games['Win']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.115)
 
     sc = StandardScaler()
     sc.fit(X_train)

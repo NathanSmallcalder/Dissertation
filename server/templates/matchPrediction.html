@@ -127,17 +127,19 @@
       EnemyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
       role = parseInt(document.querySelector('input[name="role"]:checked').value);
       alert(PickedChamp)
-      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
+      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu93.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
         .then(data => {
           obj = data;
           postItem(obj)
         })
       }
-
+function show(data){
+  alert(data)
+}
+var obj;
 function postItem(data){
-  alert("posted")
-  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/predictSolo', {
+  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu93.gitpod.io/predictSolo', {
     method: 'POST',
     headers: {
         'Accept': 'application/json',
@@ -161,8 +163,14 @@ function postItem(data){
         "lane": data['lane']
       })
   })
+  /* https://stackoverflow.com/questions/45018338/javascript-fetch-api-how-to-save-output-to-variable-as-an-object-not-the-prom */
     .then(response => response.json())
-    .then(response => console.log(JSON.stringify(response)))
+    .then(data => {
+      obj = data;
+    })
+    .then(() =>{ 
+      show(obj.pred);
+    })
   }
 
       
