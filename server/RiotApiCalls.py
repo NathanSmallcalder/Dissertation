@@ -128,9 +128,10 @@ def getMatchData(region,id,SummonerInfo,RankedDetails):
 
 ### Gets 5 MatchIds
 def getMatchData5Matches(region,id,SummonerInfo,RankedDetails):
+    mastery = getMasteryStats(region, SummonerInfo['id'])
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
-    data = getMatches("europe", MatchIDs, SummonerInfo,RankedDetails)
+    data = getMatches("europe", MatchIDs, SummonerInfo,RankedDetails,mastery)
     return data
 
 ### Gets x MatchIds
@@ -407,11 +408,13 @@ def avgStatsTeam(dataList):
 #calculate avgTeam Statistics over x games
 def calculateAvgTeamStats(Team,Region):
     list = []
+    RankedDetails = [{"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","leaguePoints":0,"wins":0,"losses":0,
+        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}]
     for item in Team:
         summName = item
         SummonerInfo = getSummonerDetails("EUW1",summName)
         SummId = SummonerInfo['id']
-        data = getMatchData5Matches(Region, SummId, SummonerInfo)
+        data = getMatchData5Matches(Region, SummId, SummonerInfo, RankedDetails)
         avg = avgStatsTeam(data) 
         list.append(avg)
 

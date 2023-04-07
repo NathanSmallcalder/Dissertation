@@ -227,6 +227,7 @@ def summData():
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
     print(SummId)
+    RankedDetails = getRankedStats(Region,SummId)
     data = getMatchData5Matches(Region, SummId, SummonerInfo,RankedDetails)
     ### Gets Mastery Stats
     mastery = getMasteryStats(Region, SummId)
@@ -345,7 +346,8 @@ def teamData():
                         str(data['B4Summ']),str(data['B5Summ'])]
         RedTeam = [str(data['R1Summ']),str(data['R2Summ']),str(data['R3Summ']),
                         str(data['R4Summ']),str(data['R5Summ'])]
-    
+        
+
         blueTeam = calculateAvgTeamStats(BlueTeam,Region)
         redTeam = calculateAvgTeamStats(RedTeam, Region)
         dataSet = makeDataSet(blueTeam,redTeam,data)
