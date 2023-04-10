@@ -469,3 +469,14 @@ def checkSummMatch(SummonerId,MatchId):
         pass
   
     return SummMatchId
+
+
+def getChampName(champion):
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("SELECT `ChampionName` FROM `ChampionTbl` WHERE `ChampionId` = (%s)", (champion, ))
+    champion = cursor.fetchone()
+    champion = champion['ChampionName']
+    print(champion)
+    return champion
+

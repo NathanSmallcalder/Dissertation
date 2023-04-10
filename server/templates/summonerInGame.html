@@ -1,22 +1,81 @@
 {% extends 'base.html'%}
 
 {%block content %}
-
-
+<style>
+  .card-R {
+    background-color:rgb(239, 27, 27);
+  }
+  .card-B {
+    background-color:rgb(37, 148, 239);
+  }
+</style>
 <div class="columns is-multiline"> 
-{% for user in Summoners %}
+{% for user in team %}
+  {% set link = ["https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" ~ user['Champion'] ~ ".png"]|join %}
+  
       <div class="column is-one-fifth">
-          <div class="card">
+          <div class="{{'card-R' if loop.index0 > 4  else 'card-B'}}">
               <div class="card-content">
-                <div class="content">
-                  <figure class="image is-128x128">
-						
-                    <img class="is-rounded" src="{{ user.profileIcon }}">
-                  </figure>
-                  </div>
-                </div>
+                <div class="content"> 
+                
+                  <h1> {{ user['Name'] }}</h1>
+
+                  <img src = "{{ link }}">
+                  <img src = "{{ user['profileIcon'] }}">
+
+                  <img src = "{{ user['Role'] }}"> 
+
+                  <h3> Avg Dragon Kills {{ user['dragonKills'] }}</h3>
+                  <h3> Avg Baron Kills {{ user['baronKills'] }}</h3>
+                  <h3> Avg Herald Kills {{ user['riftHeraldKills'] }}</h3>
+                  <h2>{{ user['kills'] }} / {{ user['deaths'] }} / {{ user['assists'] }}</h2>
+                  <h3> Turret Kills: {{ user['turretKills'] }}</h3>
+                  <img width="20" height="20" src = "/static/icon_gold.png" ></img> {{ user['goldEarned'] }} <br> 
+                  <img width="20" height="20" src = "/static/icon_minions.png"></img> {{ user['cs'] }}
+                 </div>
               </div>
+            </div>
       </div>
     {% endfor %}
   </div>
+
+<div>
+<div class="columns is-multiline"> 
+  <div class="column is-one-fifth">
+    <div class = "card has-background-info">
+      <div class="card-content">
+        <div class="content"> 
+        <h1> Blue Team </h1>
+        <h3>Avg Barons {{ dataset['BlueBaronKills'] }}</h3>
+        <h3>Avg Heralds {{ dataset['BlueRiftHeraldKills'] }}</h3>
+        <h3>Avg Dragons {{ dataset['BlueDragonKills'] }}</h3>
+        <h3>Avg Title {{ dataset['BlueTowerKills'] }}</h3>
+        <h3>Avg Kills {{ dataset['BlueKills'] }}</h3>
+      </div>
+      </div>
+  </div>
+</div>
+  <div class="column is-one-fifth">
+    <div class="has-background-danger">
+      <div class="card-content">
+        <div class="content"> 
+          <h1> Red Team </h1>
+          <h3>Avg Barons {{ dataset['RedBaronKills'] }}</h3>
+          <h3>Avg Heralds {{ dataset['RedRiftHeraldKills'] }}</h3>
+          <h3>Avg Dragons {{ dataset['RedDragonKills'] }}</h3>
+          <h3>Avg Title {{ dataset['RedTowerKills'] }}</h3>
+          <h3>Avg Kills {{ dataset['RedKills'] }}</h3>
+        </div>
+    </div>
+  </div>
+</div>
+  <div class="column">
+    <div class="card-content">
+        <div class="content"> 
+      <h1> Predicted Match Outcome: </h1>
+      <h1>  Blue Team:  {{ pred['Blue'] }} </h1>
+      <h1>  Red Team:  {{ pred['Red'] }} </h1>
+    </div>
+  </div>
+</div>
 {% endblock %}

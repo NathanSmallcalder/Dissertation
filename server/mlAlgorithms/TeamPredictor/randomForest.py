@@ -104,10 +104,10 @@ def randomForestPredictMulti(rf, item):
     print(row)
     prob = rf.predict_proba(row)
     yhat = rf.predict(row)
-    print('Prediction:', "Red Team:" ,yhat[0][1] ," Blue Team:", yhat[0][0])
+    print('Prediction:', "Red Team:" ,yhat[0][0] ," Blue Team:", yhat[0][1])
     prediction = {
-        "RedTeam":yhat[0][1],
-        "BlueTeam":yhat[0][0]
+        "RedTeam":yhat[0][0],
+        "BlueTeam":yhat[0][1]
     }
     return prediction
 

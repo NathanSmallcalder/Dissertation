@@ -90,7 +90,6 @@ def getSummonerDetails(Region,summonerName):
 #Gets Summoner Ranked Stats
 def getRankedStats(Region,id):
     RankedMatches = requests.get("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
-    print("https://" + Region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + id + "?api_key="+API)
     Ranked = RankedMatches.json()
     return Ranked
 
@@ -98,7 +97,6 @@ def getRankedStats(Region,id):
 def getMasteryStats(Region,id):
     masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
     masteryScore = masteryScore.json()
-    print("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
     getChampImages(masteryScore)
     return masteryScore
 
@@ -142,18 +140,24 @@ def getMatchIds(region,puuid):
 
 # Gets Summoner match data
 def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
-    print(SummonerInfo)
     puuid = SummonerInfo['puuid']
     SummId = SummonerInfo['id']
     summonerName = SummonerInfo['name']
     
     
     #if user doesnt exist insert into database
-    SummonerFk = getSummonerIdFromDatabase(summonerName)
+    try:
+        SummonerFk = getSummonerIdFromDatabase(summonerName)
+    except:
+        SummonerFk = None
+    
     if SummonerFk != None:
         pass
     else:
-        SummonerFk = insertUser(summonerName)
+        try:
+            SummonerFk = insertUser(summonerName)
+        except:
+            pass
     
     temp = []
     tempMatchIds = []
@@ -193,7 +197,6 @@ def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
         }
 
         MatchData = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
-        print("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchID +"?api_key=" + api_key)
    
         MatchData = MatchData.json()
         FullMatchData = MatchData
@@ -212,7 +215,7 @@ def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
         
         role = player_data['lane']
         champion = player_data['championName']
-
+        
         RankId = getRankId(RankedDetails[0]['tier'])
   
 
@@ -313,13 +316,16 @@ def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
             insertMatch(matchID,patch,GameType,RankId,gameMins)
         else:
             pass
-
+        print("ITEMS", Items[0] , " ", Items[1] , " ", Items[2] , " ", Items[3] , " ", Items[4] , " ", Items[5], " ", Items[6])
         SummMatchId = checkSummMatch(SummonerFk,matchID)
         if SummMatchId == None:
-            SummMatch = insertSummMatch(SummonerFk,matchID,champId)
-            insertMatchStats(SummMatch,cs,physicalDamageDealtToChampions,physicalDamageTaken,turretDmg,
-            GoldPerMin,role,win,Items[0],Items[1],Items[2],Items[3],Items[4],Items[5],k,d,a,KeyStone1[0],KeyStone1[1],KeyStone1[2],KeyStone1[3],
-            KeyStone2[0],KeyStone2[1],summSpell1,summSpell2,masteryScore,enemyChampion,dragonKills,baronKills)
+            try:
+                SummMatch = insertSummMatch(SummonerFk,matchID,champId)
+                insertMatchStats(SummMatch,cs,physicalDamageDealtToChampions,physicalDamageTaken,turretDmg,
+                GoldPerMin,role,win,Items[0],Items[1],Items[2],Items[3],Items[4],Items[5],k,d,a,KeyStone1[0],KeyStone1[1],KeyStone1[2],KeyStone1[3],
+                KeyStone2[0],KeyStone2[1],summSpell1,summSpell2,masteryScore,enemyChampion,dragonKills,baronKills)
+            except:
+                pass
         else:
             pass
        
@@ -368,7 +374,6 @@ def AvgStats(dataList):
         AvgStats['assists'] += dataList[i]['assists']
         AvgStats['deaths'] += dataList[i]['deaths']
         AvgStats['goldEarned'] += dataList[i]['goldEarned']
-        print(AvgStats['physicalDamageDealtToChampions'])
         AvgStats['physicalDamageDealtToChampions'] += dataList[i]['physicalDamageDealtToChampions'] 
         AvgStats['physicalDamageTaken'] += dataList[i]['physicalDamageTaken']
         AvgStats['dragonKills'] += dataList[i]['dragonKills']
@@ -388,7 +393,11 @@ def avgStatsTeam(dataList):
         'baronKills':0,
         'riftHeraldKills':0,
         'dragonKills':0,
-        'turretKills':0
+        'turretKills':0,
+        'deaths': 0,
+        'assists': 0,
+        'cs':0,
+        'goldEarned':0
     }
     i = 0
     while i < len(dataList): # Less than x games
@@ -397,6 +406,10 @@ def avgStatsTeam(dataList):
         AvgStats['riftHeraldKills'] += dataList[i]['teamRiftHeraldKills']
         AvgStats['dragonKills'] += dataList[i]['dragonKills']
         AvgStats['turretKills'] += dataList[i]['TowerDamageDealt']
+        AvgStats['deaths'] += dataList[i]['deaths']
+        AvgStats['assists'] += dataList[i]['assists']
+        AvgStats['cs'] += dataList[i]['cs']
+        AvgStats['goldEarned'] += dataList[i]['goldEarned']
         i = i + 1
 
     for keys in AvgStats: #Divide by number of games
@@ -423,6 +436,56 @@ def calculateAvgTeamStats(Team,Region):
         'baronKills':0,
         'riftHeraldKills':0,
         'dragonKills':0,
+        'turretKills':0,
+        'deaths': 0,
+        'assists': 0,
+        'cs':0,
+        'goldEarned':0
+    }
+    for item in list:
+        TeamData['kills'] += item['kills']
+        TeamData['baronKills'] += item['baronKills']
+        TeamData['riftHeraldKills'] += item['riftHeraldKills']
+        TeamData['dragonKills'] += item['dragonKills']
+        TeamData['turretKills'] += item['turretKills']
+        TeamData['deaths'] += item['deaths']
+        TeamData['assists'] += item['assists']
+        TeamData['cs'] += item['cs']
+        TeamData['goldEarned'] += item['goldEarned']
+        
+    return TeamData
+    
+
+def calculateAvgLiveTeamStats(Team,Region):
+    list = []
+    RankedDetails = [{"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","leaguePoints":0,"wins":0,"losses":0,
+        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}]
+    i = 0
+    print(Team)
+    while i < 5:
+        summName = Team[i]['Name']
+        SummonerInfo = getSummonerDetails("EUW1",summName)
+        SummId = SummonerInfo['id']
+        data = getMatchData5Matches(Region, SummId, SummonerInfo, RankedDetails)
+        avg = avgStatsTeam(data) 
+        list.append(avg)
+        Team[i]['kills'] = avg['kills']
+        Team[i]['baronKills'] = avg['baronKills']
+        Team[i]['riftHeraldKills'] = avg['riftHeraldKills']
+        Team[i]['dragonKills'] = avg['dragonKills']
+        Team[i]['turretKills'] = avg['turretKills']
+        Team[i]['deaths'] = avg['deaths']
+        Team[i]['assists'] = avg['assists']
+        Team[i]['cs'] = avg['cs']
+        Team[i]['goldEarned'] = avg['goldEarned']
+        i = i + 1
+
+
+    TeamData = {
+        'kills':0,
+        'baronKills':0,
+        'riftHeraldKills':0,
+        'dragonKills':0,
         'turretKills':0
     }
     for item in list:
@@ -431,8 +494,7 @@ def calculateAvgTeamStats(Team,Region):
         TeamData['riftHeraldKills'] += item['riftHeraldKills']
         TeamData['dragonKills'] += item['dragonKills']
         TeamData['turretKills'] += item['turretKills']
-    
-    print(TeamData)
+
     return TeamData
     
 ### Creates the dataset of to be returned to the /teamData endpoint
@@ -598,42 +660,25 @@ def SummonerInGame(LiveGame,region):
     LiveGame = LiveGame['participants']
     i = 0
     summonerIds = []
+
     while i < 10:
-        summonerIds.append(LiveGame[i]['summonerId'])
+        Summoner = {
+            'Name': None,
+            'Champion':None,
+            'profileIconId':None,
+        }
+        Summoner['Name'] = LiveGame[i]['summonerName']
+        Summoner['Champion'] = LiveGame[i]['championId']
+        Summoner['profileIconId'] = LiveGame[i]['profileIconId']
+        temp = Summoner
+        del Summoner
+
+        summonerIds.append(temp)
         i = i + 1
-    for summonerId in summonerIds:
-        stats = requests.get("https://"+ region + ".api.riotgames.com/lol/summoner/v4/summoners/" + summonerId + "?api_key=" + api_key)
-        stats = puuid.json()
-        name = stats['name']
-        puuid = stats['puuid']
-        Rank = "Unranked"
-        MatchIDs = getMatchIds(region,puuid)
-        SummonerDetails = getSummonerDetails(region, name)
-        Image = getImageLink(SummonerDetails)
-        img = str(SummonerDetails['profileIconId'])
-        ##GetMatch
-        Last5Games = getMatchData5Matches(region, MatchIDs, puuid)
-        MeanData = getMatchTimeline(region, summonerId, puuid, Last5Games)
-
-        champion = []
-        WinRate = 0
-        for rows in Last5Games:
-            if rows['win'] == True:
-                WinRate = WinRate + 1
-        
-
-        WinRate = WinRate / 5
-  
-
-        avgGoldPerMin = MeanData['avgGoldPerMin'].pop()
-        totalDamageTakenPerMin = MeanData['totalDamageTakenPerMin'].pop()
-        totalDamageTakenPerMin = MeanData['totalDamageTakenPerMin'].pop()
-        summ = SummonerInGameObj(name,Rank, WinRate, avgGoldPerMin,totalDamageTakenPerMin,totalDamageTakenPerMin,img)
-        Summoners.append(summ)
-        time.sleep(30) # Sleep to ensure requests do not overflow the API limit (200 every 2 mins)
-    return Summoners
+    print(summonerIds)
+    return summonerIds
     
-#Checks if user is in game
+#Checks if user is .,
 def summonerInGameCheck(region,summonerId):
     LiveGame = requests.get("https://"+ region + ".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + summonerId + "?api_key=" + api_key)
     LiveGame = LiveGame.json()

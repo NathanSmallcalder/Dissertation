@@ -55,11 +55,18 @@ def getSummoner():
         RankedImages(FLEX)
         RankedImages(SOLO)
     except:
-        FLEX = RankedDetails[0]
-        
-        SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","leaguePoints":0,"wins":0,"losses":0,
-        "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
-
+        try:
+            FLEX = RankedDetails[0]
+            SOLO ={"queueType":"RANKED_SOLO_5x5","tier":"Unranked","rank":"II","leaguePoints":0,"wins":0,"losses":0,
+            "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
+        except:
+            SOLO = {"queueType":"RANKED_SOLO_5x5","tier":"Unranked","rank":"II","leaguePoints":0,"wins":0,"losses":0,
+            "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
+            FLEX = {"queueType":"RANKED_SOLO_5x5","tier":"Unranked","rank":"II","leaguePoints":0,"wins":0,"losses":0,
+            "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}
+            RankedDetails = []
+            RankedDetails.append(SOLO)
+            RankedDetails.append(FLEX)
     #Profile Image
     getImageLink(SummonerInfo)
     #Mastery Score
@@ -111,7 +118,62 @@ def SummonerInGame():
     Region = request.args.get('region')
     #Checks if summoner in game
     Summoners = summonerInGameCheck(Region,SummonerName)
-    return render_template('summonerInGame.html', Summoners = Summoners)
+    blue = [Summoners[0],Summoners[1],Summoners[2],Summoners[3],Summoners[4]]
+    red = [Summoners[5],Summoners[6],Summoners[7],Summoners[8],Summoners[9]]
+    blueTeam = calculateAvgLiveTeamStats(blue,Region)
+    redTeam = calculateAvgLiveTeamStats(red,Region)
+
+    dataset = {
+        "B1": blue[0]['Champion'],
+        "B2":  blue[1]['Champion'],
+        "B3": blue[2]['Champion'],
+        "B4":  blue[3]['Champion'],
+        "B5":  blue[4]['Champion'],
+        "R1":  red[0]['Champion'],
+        "R2": red[1]['Champion'],
+        "R3":  red[2]['Champion'],
+        "R4":red[3]['Champion'],
+        "R5": red[4]['Champion'],
+        "BlueBaronKills": blueTeam['baronKills'],
+        "BlueRiftHeraldKills": blueTeam['riftHeraldKills'],
+        "BlueDragonKills": blueTeam['dragonKills'],
+        "BlueTowerKills": blueTeam['turretKills'],
+        "BlueKills": blueTeam['kills'],
+
+        "RedBaronKills": redTeam['baronKills'],
+        "RedRiftHeraldKills": redTeam['riftHeraldKills'],
+        "RedDragonKills": redTeam['dragonKills'],
+        "RedTowerKills": redTeam['turretKills'],
+        "RedKills": redTeam['kills'],
+    }
+
+    rf = randomForest.randomForestMultiRun()
+    prediction = randomForest.randomForestPredictMulti(rf,dataset)
+    pred = {
+            "Blue": None,
+            "Red": None
+    }
+    print(prediction)
+    if int(prediction['RedTeam']) == 0:
+        pred['Blue'] = 'Win'
+        pred['Red'] = 'Loss'
+    else:
+        pred['Blue'] = 'Loss'
+        pred['Red'] = 'Win'
+
+    team = [blue[0],blue[1],blue[2],blue[3],blue[4],
+            red[0],red[1],red[2],red[3],red[4]]    
+    
+    i = 0
+    for items in team:
+        items['Champion'] = getChampName(items['Champion'])
+        items['profileIconId'] = "http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/" + str(items['profileIconId']) + ".png"
+        i = i + 1
+        if i > 4:
+            i = 0
+
+    print(team)
+    return render_template('summonerInGame.html', Summoners = Summoners,pred = pred,team = team,dataset = dataset)
 
 #Champion Stats - From Database
 @app.route('/champions', methods=['GET','POST'])
@@ -120,8 +182,7 @@ def ChampionTablePage():
     data = getChampionAverages()
     #Gets Players Win,KDA,Dragon/Baron AVG for table
     players = getBestPlayers()
-    print(players)
-    return render_template('champions.html',data=  data,players = players)
+    return render_template('champions.html',data= data,players = players)
 
 
 ### InDepth Champion Stats
@@ -226,7 +287,6 @@ def summData():
     lane = request.args.get('lane')
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
-    print(SummId)
     RankedDetails = getRankedStats(Region,SummId)
     data = getMatchData5Matches(Region, SummId, SummonerInfo,RankedDetails)
     ### Gets Mastery Stats
@@ -240,8 +300,7 @@ def summData():
     avg['masteryPoints'] = mastery
     avg['enemyChamp'] = enemyChamp
     avg['lane'] = lane
-    print(avg)
-    
+        
     return jsonify(avg), 200
 
 
@@ -354,7 +413,6 @@ def teamData():
       
         rf = randomForest.randomForestMultiRun()
         prediction = randomForest.randomForestPredictMulti(rf,dataSet)
-        print(prediction['BlueTeam'])
         pred = {
             "Blue": None,
             "Red": None

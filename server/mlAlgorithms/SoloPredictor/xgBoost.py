@@ -56,7 +56,7 @@ def runxGboost():
 
     # split data into train and test sets
     seed = 7
-    test_size = 0.33
+    test_size = 0.25
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
 
     model = XGBClassifier()
@@ -70,6 +70,7 @@ def runxGboost():
     print(classification_report(y_test, y_pred))
     getPlotScore(model,X_test,y_test)
     svc_disp = clf_probs = model.predict_proba(X_test)
+
     score = log_loss(y_test, clf_probs)
     print("Log Loss", score)
     mse = mean_squared_error(y_test, y_pred)
