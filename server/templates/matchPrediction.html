@@ -127,7 +127,7 @@
       EnemyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
       role = parseInt(document.querySelector('input[name="role"]:checked').value);
       alert(PickedChamp)
-      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu93.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
+      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu94.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
         .then(data => {
           obj = data;
@@ -139,7 +139,7 @@ function show(data){
 }
 var obj;
 function postItem(data){
-  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu93.gitpod.io/predictSolo', {
+  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu94.gitpod.io/predictSolo', {
     method: 'POST',
     headers: {
         'Accept': 'application/json',

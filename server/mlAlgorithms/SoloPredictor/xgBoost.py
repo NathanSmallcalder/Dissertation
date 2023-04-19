@@ -52,10 +52,10 @@ def runxGboost():
 
     X = df_games.drop('Win', axis=1)
     y = df_games['Win']
-
+    print(X)
 
     # split data into train and test sets
-    seed = 7
+    seed = 1
     test_size = 0.25
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
 
@@ -82,4 +82,5 @@ def getPlotScore(model, X_test, y_test):
     print(svc_disp)
     return svc_disp
 
+print("RUN")
 runxGboost()

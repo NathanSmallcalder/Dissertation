@@ -10,28 +10,18 @@ import pandas as pd
 import numpy as np
 
 # Modelling
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from matplotlib import *
-import sys
-from pylab import *
-import seaborn as sns
-import mysql.connector
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import numpy as np
 from xgboost import XGBClassifier
-from sklearn.model_selection import train_test_split
+sys.path.append('../..')
+from config import *
+from RiotApiCalls import *
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay, classification_report
-import sys
-import pytest
-import requests
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
 from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_squared_error, log_loss
-
-from sklearn.metrics import mean_squared_error, log_loss
+from sklearn.multioutput import MultiOutputClassifier, MultiOutputRegressor
+import sklearn.metrics as metrics
 
 def connection():
     connection = mysql.connector.connect(host=host,
@@ -72,14 +62,13 @@ def adaBoostMultiRun():
     df_games = df_games.drop('BlueWin',axis=1)
     X = df_games
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, stratify=y)
 
     abc = MultiOutputClassifier(XGBClassifier())
 
     model = abc.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     clf_probs = model.predict_proba(X_test)
     #score = log_loss(y_test, clf_probs)

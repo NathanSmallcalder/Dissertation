@@ -50,57 +50,23 @@ def SVMRun():
     df_games = df_games.drop('TeamId',axis=1)
 
     y = pd.DataFrame(df_games['RedWin'],columns = ['RedWin','BlueWin'] )
-    b = pd.DataFrame(df_games['BlueWin'],columns = ['BlueWin'] )
+    y = pd.DataFrame(df_games['BlueWin'],columns = ['BlueWin'] )
     
-    y['RedWin'] = df_games['RedWin']
-    b['BlueWin'] = df_games['BlueWin']
- 
+    y['RedWin'] = df_games['RedWin'].astype('int')
+    y['BlueWin'] = df_games['BlueWin'].astype('int')
+    print(y)
     df_games = df_games.drop('RedWin',axis=1)
     df_games = df_games.drop('BlueWin',axis=1)
     X = df_games
-
-    X, y = make_regression(n_samples=1000, n_features=20, n_informative=5, n_targets=2, random_state=1, noise=0.5)
-
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25,stratify=y)
     model = MultiOutputRegressor(SVC(probability=True))
-    model.fit(X, y)
+    model.fit(X, y.astype(int))
+    y_pred = model.predict(X_test)
 
-    clf_probs = svc.predict_proba(X_test)
-    print(clf_probs)
-
-    #score = log_loss(y_test, clf_probs)
-    #print("Log Loss", score)
-    item = {
-        "B1": 44,
-        "B2": 876,
-        "B3": 136,
-        "B4": 221,
-        "B5": 74,
-        "R1": 122,
-        "R2": 20,
-        "R3": 99,
-        "R4": 202,
-        "R5": 412,
-        "BlueBaronKills": 1,
-        "BlueRiftHeraldKills":2 ,
-        "BlueDragonKills": 2.33,
-        "BlueTowerKills": 9,
-        "BlueKills": 37,
-
-        "RedBaronKills": 0.3333,
-        "RedRiftHeraldKills": 0,
-        "RedDragonKills": 0,
-        "RedTowerKills": 0,
-        "RedKills":0,
-    }
-    row = [[item['B1'],item['B2'],item['B3'],item['B4'],item['B5'],
-            item['R1'],item['R2'],item['R3'],item['R4'],item['R5'],
-            item['BlueBaronKills'],item['BlueRiftHeraldKills'],item['BlueDragonKills'],
-            item['BlueTowerKills'],item['BlueKills'],
-            item['RedBaronKills'],item['RedRiftHeraldKills'],item['RedDragonKills'],
-            item['RedTowerKills'],item['RedKills'],
-            ]]
-
-    yhat = model.predict(row)
-    print(yhat)
-
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy:", accuracy)
+    print(classification_report(y_test, y_pred))
+    
+    mse = mean_squared_error(y_test, y_pred)
+    print(mse)
 SVMRun()

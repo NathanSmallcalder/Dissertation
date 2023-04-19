@@ -56,7 +56,6 @@ def GetItemImages(itemList):
 #https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/
 #Gets Summoner Spell Icons and Replaces them in the match data store
 def getSummonerSpellsImages(match):
-
     spellId1 = match['summoner1Id']
     spellId2 = match['summoner2Id']
     spellId1 = summonerSpells[spellId1]
@@ -143,8 +142,7 @@ def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
     puuid = SummonerInfo['puuid']
     SummId = SummonerInfo['id']
     summonerName = SummonerInfo['name']
-    
-    
+
     #if user doesnt exist insert into database
     try:
         SummonerFk = getSummonerIdFromDatabase(summonerName)
@@ -254,7 +252,6 @@ def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
         KeyStone2= [
             player_data["perks"]['styles'][1]['selections'][0]['perk'],
             player_data["perks"]['styles'][1]['selections'][1]['perk'],
-
         ]
 
         ItemInGame = GetItemImages(Items)
@@ -421,7 +418,8 @@ def avgStatsTeam(dataList):
 #calculate avgTeam Statistics over x games
 def calculateAvgTeamStats(Team,Region):
     list = []
-    RankedDetails = [{"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","leaguePoints":0,"wins":0,"losses":0,
+    ###Tempory Rank Store (Run out of requests)
+    RankedDetails = [{"queueType":"RANKED_SOLO_5x5","tier":"unranked","rank":"II","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}]
     for item in Team:
         summName = item
@@ -694,7 +692,7 @@ def summonerInGameCheck(region,summonerId):
 ### Solo == Middle
 def getRoleImages(data):
     role = data['role'].lower()
-  
+    print(role)
     if str(role) == "carry":
         role == "bottom"
     if str(role) == "support":

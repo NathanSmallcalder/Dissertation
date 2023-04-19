@@ -41,7 +41,7 @@ def NaiveBayesRun():
     y = df_games['Win']
 
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25,stratify=y)
 
     model = GaussianNB()
     model.fit(X_train,y_train)

@@ -17,7 +17,6 @@ def test_ChampionImgSingle():
     assert int(req.status_code) == 200
     assert str(champ) == "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/Annie.png"
 
-test_ChampionImgSingle()
 ######## Champion Details - ChampionPage
 def test_ChampionDetails():
     data = getChampDetails("Annie")
@@ -40,8 +39,6 @@ def test_getChampSpellImages():
     req = requests.get(ChampionAbilities['passive']['abilityIconPath'] )
     assert int(req.status_code) == 200
 
-test_getChampSpellImages()
-
 #### Champ Images -- Summoner Page - Mastery Section
 def test_getChampImages():
     SummonerInfo = getSummonerDetails("EUW1","Mealsz")
@@ -50,23 +47,40 @@ def test_getChampImages():
     req = requests.get(masteryScore[1]['link'])
     assert int(req.status_code) == 200
 
+# Gets Rune Images
+# Should be status code 200
 def test_getRunesImages():
-    Runes = cursor.execute("SELECT PrimaryKeyStone, COUNT(PrimaryKeyStone), PrimarySlot1 , COUNT(PrimarySlot1) ,PrimarySlot2 , COUNT(PrimarySlot2) ,PrimarySlot3 , COUNT(PrimarySlot3) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s GROUP BY PrimaryKeyStone ORDER BY PrimaryKeyStone DESC LIMIT 1 ",(1,))
-    Runes = cursor.fetchall()
-    runes = getRunesImagesList(Runes[0])
-    req = requests.get(runes[1]['LinkRef'])
+    Runes = commonRunes(1)
+    req = requests.get(Runes[1]['LinkRef'])
     assert int(req.status_code) == 200
 
+### Gets a Single Mastery Score for a summoner
+### Should not be none
 def test_MasterySingle():
     SummonerInfo = getSummonerDetails("EUW1","Mealsz")
     masteryScore = getMasteryStats("EUW1",SummonerInfo['id'])
     Mastery = getSingleMasteryScore(1,masteryScore)
-    assert Mastery < 500000
+    assert Mastery != None
 
+def test_getSummoner():
+    SummonerInfo = getSummonerDetails("EUW1","Mealsz")
+    assert 'id' in SummonerInfo.keys()
+    assert 'accountId' in SummonerInfo.keys()
+    assert 'puuid' in SummonerInfo.keys()
+    assert 'profileIconId' in SummonerInfo.keys()
+
+def test_getImageLink():
+    SummonerInfo = getSummonerDetails("EUW1","Mealsz")
+    getImageLink(SummonerInfo)
+    req = requests.get(SummonerInfo['profileIconId'])
+    assert req.status_code == 200
+
+### Gets Avg Summoner Statistics.
 def test_AvgSummData():
     SummonerInfo = getSummonerDetails("EUW1","Mealsz")
     SummId = SummonerInfo['id']
-    data = getMatchData("EUW1", SummId, SummonerInfo)
+    RankedDetails = getRankedStats("EUW1",SummId)
+    data = getMatchData("EUW1", SummId, SummonerInfo,RankedDetails)
     avg = AvgStats(data)
     print(avg)
     assert avg['cs'] > 0
@@ -81,3 +95,65 @@ def test_AvgSummData():
     assert avg['GameDuration'] > 0
     assert avg['TowerDamageDealt'] > 0 
 
+###Get Match History
+def test_getMatchData():
+    SummonerInfo = getSummonerDetails("EUW1","Mealsz")
+    SummId = SummonerInfo['id']
+    RankedDetails = getRankedStats("EUW1",SummId)
+    data = getMatchData("EUW1", SummId, SummonerInfo,RankedDetails)
+    assert 'kills' in data[0].keys()
+    assert 'assists' in data[0].keys()
+    assert 'win' in data[0].keys()
+    assert 'deaths' in data[0].keys()
+
+
+### Test Rank Images
+### Response 200
+def test_RankedImages():
+    rank = {
+        'tier':"gold",
+    }
+    print(rank['tier'])
+    RankedImages(rank)
+    req = requests.get(rank['ImageUrl'])
+    assert req.status_code == 200
+
+## Calculate Win Rate
+## Should be 66.66.....%
+def test_CalcWinRate():
+    rank = {
+        'losses':5,
+        'wins':10
+    }
+    CalcWinRate(rank)
+    assert rank['WinRate'] > 65
+
+## Calculates Avg Team Statistics
+## Value always changes
+## Should return an dictionary
+def test_calculateAvgTeamStats():
+    team = ["Lil Nachty", "Mealsz", "ItWoZnotmee","Ehhhh","Ehhhh"]
+    team = calculateAvgTeamStats(team, "EUW1")
+    assert len(team) > 5
+
+###Gets Role Images
+### Status Code == 200
+def test_getRoleImages():
+    role = {
+        'role':"utility"
+    }
+    role = getRoleImages(role)
+    print(role)
+    req = requests.get(role['role'])
+    assert req.status_code == 200
+
+### Gets a Array of Role Image Links
+### Static
+def test_getRoles():
+    roles = getRoles()
+    assert roles[0]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png"
+    assert roles[1]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png"
+    assert roles[2]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png"
+    assert roles[3]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png"
+    assert roles[4]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png"
+    

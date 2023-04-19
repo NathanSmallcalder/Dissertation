@@ -9,7 +9,6 @@ from SoloPredictor import randomForestSolo
 from TeamPredictor import randomForest
 from databaseQuries import *
 
-
 rf = randomForestSolo.getRandomForest()
 rfTeam = randomForest.randomForestMultiRun()
 
@@ -132,7 +131,7 @@ def test_rf_RedTeamWinTeam():
     assert prediction['BlueTeam'] == 0
 
 def test_rf_ObviousLoss():
-    prediction = randomForestSolo.randomForestPredict(rf,1,0,0,50,2,1,200, 200,5000,0,2000,5,1220,0,0)
+    prediction = randomForestSolo.randomForestPredict(rf,1,0,0,50,2,1,200,200,5000,0,2000,5,1220,0,0)
     assert int(prediction) == 0
 
 def test_rf_MostLikelyLoss():
