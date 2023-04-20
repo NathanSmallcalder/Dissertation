@@ -206,6 +206,12 @@
             
 
 <script>
+
+let link = String(window.location.href)
+link = link.slice(0, -12); 
+alert(link)
+
+
 function summonerAvg(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5) {
       blueSumm1Champ = blueSumm1Champ.value;
       BlueSumm1 = BlueSumm1.value;
@@ -228,9 +234,7 @@ function summonerAvg(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3
       RedSumm4 = RedSumm4.value;
       redSumm5Champ = redSumm5Champ.value;
       RedSumm5 = RedSumm5.value;
-      alert("called")
       postItem(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5)
-
 
 }
 function show(pred){
@@ -239,7 +243,7 @@ function show(pred){
 
 function postItem(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5){
   alert("posted")
-  fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu94.gitpod.io/teamData", {
+  fetch(link + "/teamData", {
     method: 'POST',
     headers: {
         'Accept': 'application/json',

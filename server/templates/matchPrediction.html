@@ -117,8 +117,13 @@
     </div>
     </div>
 </div>
-  <script>    
+  <script> 
   var obj;
+  let link = String(window.location.href)
+  link = link.slice(0, -12); 
+  alert(link)
+
+
   function summonerAvg(summonerName, Region) {
       summonerName = summonerName.value;
       Region = Region.value;
@@ -127,19 +132,22 @@
       EnemyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
       role = parseInt(document.querySelector('input[name="role"]:checked').value);
       alert(PickedChamp)
-      fetch("https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu94.gitpod.io/summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
+      alert(link + "summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
+      fetch(link + "summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
         .then(data => {
           obj = data;
           postItem(obj)
         })
       }
+      
 function show(data){
   alert(data)
 }
+
 var obj;
 function postItem(data){
-  fetch('https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu94.gitpod.io/predictSolo', {
+  fetch(link + 'predictSolo', {
     method: 'POST',
     headers: {
         'Accept': 'application/json',

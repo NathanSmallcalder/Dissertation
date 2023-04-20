@@ -21,12 +21,10 @@
               </thead>
                 {% for d in data %}
                 {% set link = ["https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" ~ d['ChampionName'] ~ ".png"]|join %}
-                {% set linkPage = ["https://5000-nathansmall-dissertatio-uh0aul19608.ws-eu92.gitpod.io/champion?champion=" ~ d['ChampionName']]|join %}
 
-            
                 <tr>
                     <td><figure class="image is-12x12px"><img src= {{link}}> </figure></td>
-                    <td><a href = "{{linkPage}}"> {{ d['ChampionName'] }}</a></td>
+                    <td><a href = {{ url_for('championData', champion = d['ChampionName']) }}> {{ d['ChampionName'] }}</a></td>
                     <td>{{ d['AVG(`MatchStatsTbl`.`kills`)']  }}</td>
                     <td>{{ d['AVG(`MatchStatsTbl`.`deaths`)'] }}</td>
                     <td>{{ d['AVG(`MatchStatsTbl`.`assists`)'] }}</td>
