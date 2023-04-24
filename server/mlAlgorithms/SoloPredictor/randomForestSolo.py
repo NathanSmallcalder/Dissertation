@@ -109,4 +109,3 @@ def getPlotScore(rf, X_test, y_test):
     svc_disp = RocCurveDisplay.from_estimator(rf, X_test, y_test)
     return svc_disp
 
-randomForestRun()

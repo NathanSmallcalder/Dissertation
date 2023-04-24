@@ -78,7 +78,7 @@ def CalcWinRate(RankedMode):
 #Gets Profile Image
 def getImageLink(SummonerInfo):
     profileIcon = str(SummonerInfo['profileIconId'])
-    SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/' + profileIcon +'.png'
+    SummonerInfo['profileIconId'] = 'http://ddragon.leagueoflegends.com/cdn/13.6.1/img/profileicon/' + profileIcon +'.png'
 
 #Gets Basic Summoner Details
 def getSummonerDetails(Region,summonerName):
@@ -313,7 +313,6 @@ def getMatches(region,MatchIDs,SummonerInfo,RankedDetails,mastery):
             insertMatch(matchID,patch,GameType,RankId,gameMins)
         else:
             pass
-        print("ITEMS", Items[0] , " ", Items[1] , " ", Items[2] , " ", Items[3] , " ", Items[4] , " ", Items[5], " ", Items[6])
         SummMatchId = checkSummMatch(SummonerFk,matchID)
         if SummMatchId == None:
             try:
@@ -692,7 +691,6 @@ def summonerInGameCheck(region,summonerId):
 ### Solo == Middle
 def getRoleImages(data):
     role = data['role'].lower()
-    print(role)
     if str(role) == "carry":
         role == "bottom"
     if str(role) == "support":

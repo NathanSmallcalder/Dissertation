@@ -71,7 +71,7 @@ def getSummoner():
 
     #Gets Matches
     data = getMatchData(Region, SummId, SummonerInfo,RankedDetails)
-    print(data)
+
     participants = getGameParticipantsList()
     #MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
     fullMatch = getPlayerMatchData()
@@ -169,7 +169,7 @@ def SummonerInGame():
         if i > 4:
             i = 0
 
-    print(team)
+
     return render_template('summonerInGame.html', Summoners = Summoners,pred = pred,team = team,dataset = dataset)
 
 #Champion Stats - From Database
@@ -210,14 +210,16 @@ def championData():
     SecondaryBestRunes = bestSecondaryRunes((int(championStats['key'])))
     position = laneFromDatabase(int(championStats['key']))
     kda = kdaFromDatabase(int(championStats['key']))
-   
+    winRate = round(int(ChampWins) / TotalGames * 100,2)
+    totalGamesOnApp = getAllGamesCount()
+    playRate = round(TotalGames / totalGamesOnApp * 100,2)
     bestPlayers = getChampionBestPlayers(int(championStats['key']))
 
     return render_template('championData.html',championStats = championStats, 
                             ChampionAbilities = ChampionAbilities,wins = ChampWins,
                             totalGames = TotalGames,
                             champKills = ChampKills,
-                            position = position,#winRate = winRate,
+                            position = position,winRate = winRate,playRate= playRate,
                             CommonItems = CommonItems,
                             runes = CommonRunes, SecondRunes = SecondaryCommonRunes, 
                             BestRunes = BestRunes, BestSecondRunes = SecondaryBestRunes, 
@@ -236,33 +238,44 @@ def SummonerChampionStats():
     ChampionAbilities = getChampAbilities(championStats)
     getChampSpellImages(ChampionAbilities)
     SummID =  getSummonerIdFromDatabase(SummonerName)
+    print(SummID)
     TotalGames = totalGamesSummoner(int(championStats['key']), SummID)
     ChampWins = champWinsSummoner(int(championStats['key']),SummID)
     AvgMinionsSumm = avgMinionsSummoner(int(championStats['key']),SummID)
     AvgDmgTakenSumm  = avgDmgTakenSummoner(int(championStats['key']), SummID)
     AvgDmgDealtSumm  = avgDmgDealtSummoner(int(championStats['key']), SummID)
     TotalGoldSumm = avgGoldSummoner(int(championStats['key']),SummID)
- 
-    position = laneFromDatabaseSummoner(int(championStats['key']), SummID)
+
     kda = kdaFromDatabaseSummoner(int(championStats['key']),SummID)
     championKills = champKills(SummID)
 
+    winRate = round(int(ChampWins) / TotalGames * 100,2)
     AvgMinions = avgMinions(int(championStats['key']))
     DmgTakenAvg = avgDmgTaken(int(championStats['key']))
     DmgDealtAvg = avgDmgDealt(int(championStats['key']))
     AvgGold = avgGold(int(championStats['key']))
 
+    makeAverageGraphs(DmgDealtAvg,AvgDmgDealtSumm)
+    makeAverageGraphs(AvgGold,TotalGoldSumm)
+    makeAverageGraphs(DmgTakenAvg,AvgDmgTakenSumm)
+    makeAverageGraphs(AvgMinions,AvgMinionsSumm)
+    print(kda)
 
-    return render_template('summonerChampion.html',championStats = championStats, 
+
+    return render_template('summonerChampion.html',championStats = championStats, SummonerName = SummonerName,
                             ChampionAbilities = ChampionAbilities,wins = ChampWins,totalGames = TotalGames,
                             championKills = championKills,
-                            position = position,#winRate = winRate,
-                            AvgMinionsSumm = AvgMinionsSumm,
-                            TotalGoldSumm = TotalGoldSumm,
-                            AvgDmgDealtSumm = AvgDmgDealtSumm,
-                            AvgDmgTakenSumm = AvgDmgTakenSumm,
-                            kda = kda)
+                            #winRate = winRate,totalGames = totalGamesSummoner
+                            AvgMinions = AvgMinionsSumm,
+                            AvgGold = TotalGoldSumm,
+                            DmgDealtAvg = AvgDmgDealtSumm,
+                            DmgTakenAvg = AvgDmgTakenSumm,
+                            kda = kda, winRate = winRate)
 
+def makeAverageGraphs(arr,arr2):
+    arr2[0]['Rank'] = "You"
+    for data in arr:
+        arr2.append(data)
 
 ### Directory for Match Prediction Solo
 ### Returns UI for the Solo Match Prediction Screen
@@ -425,10 +438,15 @@ def teamData():
     print(pred)
     return pred ,200
 
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html'), 500
+
 ### Routing for the Main page
 @app.route('/')
 def index():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.9', port=8001, debug=True)
+    app.run(host="0.0.0.0", port=8001, debug=True)

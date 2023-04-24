@@ -8,10 +8,10 @@ from RiotApiCalls import *
 
 #Gets Champion base stats
 def getChampDetails(champion):
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion.json")
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data'][champion]
-    DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + str(DDRAGON['id']) + ".png"
+    DDRAGON['imageLink'] = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + str(DDRAGON['id']) + ".png"
     DDRAGON['full'] = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-splashes/" + str(DDRAGON['key']) + "/" +str(DDRAGON['key']) +"000" + ".jpg"
     return DDRAGON
 
@@ -29,7 +29,7 @@ def getChampAbilities(champion): #
 
 #Gets ChampionImage URLS into masteryScore JSON file
 def getChampImages(masteryScore):#
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
     for item in DDRAGON:
@@ -37,26 +37,25 @@ def getChampImages(masteryScore):#
         for mastery in masteryScore:
             if int(temp['key']) == int(mastery['championId']):
                 mastery['name'] = temp['id']
-                mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
+                mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + temp['id'] +".png"
 
 
 #Gets ChampionImage URLS for ChampionTable
 def getChampImagesSingle(ChampId): # 
-    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/12.6.1/data/en_US/champion.json")
+    DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
   
     for item in DDRAGON:
         temp = DDRAGON.get(item)
         if int(temp['key']) == (int(ChampId)):
-            ChampId = "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/" + temp['id'] +".png"
+            ChampId = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + temp['id'] +".png"
             return ChampId
 
 ### Gets Champion Spell Images for /champion?champion="" directory
 ### passes champion back by reference
 def getChampSpellImages(champion): #
     n = 29
-    print(champion)
     passive = champion['passive']['abilityIconPath'] 
     champion['passive']['abilityIconPath'] = "https://raw.communitydragon.org/latest/game/assets/" + passive[n:].lower()
     
@@ -71,8 +70,8 @@ def getChampSpellImages(champion): #
 ### Gets Rune images and Description
 def getRunesImages(runesList): 
     runesLinksList = []
-    print(runesList)
-    data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
+
+    data = requests.get("http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/runesReforged.json")
     data = data.json()
     try:
         for runes in data:
@@ -105,14 +104,13 @@ def getRunesImages(runesList):
 ### Gets Rune images and Description
 def getRunesImagesList(runesList): 
     runesLinksList = []
-    print(runesList)
-    data = requests.get("http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/runesReforged.json")
+    data = requests.get("http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/runesReforged.json")
     data = data.json()
     try:
         for runes in data:
             for data in runes['slots']:   
                 for data in data['runes']:
-                    for rune in runeList:
+                    for rune in runesList:
                         if int(rune) == int(data['id']):
                             MainRunes = runes
                             runesLinks = {

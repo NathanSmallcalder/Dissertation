@@ -110,5 +110,3 @@ def randomForestPredictMulti(rf, item):
         "BlueTeam":yhat[0][1]
     }
     return prediction
-
-randomForestMultiRun()

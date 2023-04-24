@@ -23,8 +23,8 @@ def totalGames(champId):
     connection = create_connection()
     cursor =  connection.cursor()
     TotalGames = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `SummonerMatchTbl`.`ChampionFk` = % s", (champId), )
-    TotalGames = cursor.fetchone()
-    TotalGames = TotalGames['COUNT(`MatchStatsTbl`.Win)']
+    TotalGames = cursor.fetchall()
+    TotalGames = TotalGames[0]['COUNT(`MatchStatsTbl`.Win)']
     return TotalGames
 
 #Gets Count of Total Games from a given championId and SummonerId
@@ -34,7 +34,7 @@ def totalGamesSummoner(champId,SummonerFk):
     cursor =  connection.cursor()
     TotalGames = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `SummonerMatchTbl`.`ChampionFk` = % s and SummonerMatchTbl.SummonerFk = % s", (champId, int(SummonerFk)))
     TotalGames = cursor.fetchall()
-    TotalGames = TotalGames[0]
+    TotalGames = TotalGames[0]['COUNT(`MatchStatsTbl`.Win)']
     return TotalGames
 
 #Gets Count of Wins  from a given championId by rank
@@ -43,8 +43,8 @@ def champWins(champId):
     connection = create_connection()
     cursor =  connection.cursor()
     ChampWins = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `MatchStatsTbl`.Win = 1 and `SummonerMatchTbl`.`ChampionFk` = % s", (champId, ))
-    ChampWins = cursor.fetchone()
-    ChampWins = ChampWins['COUNT(`MatchStatsTbl`.Win)']
+    ChampWins = cursor.fetchall()
+    ChampWins = ChampWins[0]['COUNT(`MatchStatsTbl`.Win)']
     return ChampWins
 
 #Gets Count of Wins from a given championId and SummonerId
@@ -54,6 +54,7 @@ def champWinsSummoner(champId,SummonerFk):
     cursor =  connection.cursor()
     ChampWins = cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl` JOIN `SummonerMatchTbl` on `MatchStatsTbl`.MatchStatsId = `SummonerMatchTbl`.`SummonerMatchId` JOIN `MatchTbl` on `SummonerMatchTbl`.`MatchFk` = `MatchTbl`.`MatchId` WHERE `MatchStatsTbl`.Win = 1 and `SummonerMatchTbl`.`ChampionFk` = % s and SummonerMatchTbl.SummonerFk = % s", (champId, int(SummonerFk)))
     ChampWins = cursor.fetchall()
+    ChampWins = ChampWins[0]['COUNT(`MatchStatsTbl`.Win)']
     return ChampWins
 
 #Gets Sum of Kills from a given championId by rank
@@ -304,7 +305,6 @@ def kdaFromDatabase(champId):
     cursor =  connection.cursor()
     kda = cursor.execute("SELECT AVG(kills), AVG(deaths), AVG(assists) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s",(champId))
     kda = cursor.fetchone()
-    print(kda)
     kda = str(int(kda['AVG(kills)'])) + "/" + str(int(kda['AVG(deaths)'])) + "/" + str(int(kda['AVG(assists)']))
     return kda
 
@@ -316,7 +316,7 @@ def kdaFromDatabaseSummoner(champId,SummonerFk):
     cursor =  connection.cursor()
     kda = cursor.execute("SELECT AVG(kills), AVG(deaths), AVG(assists) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s", (champId, int(SummonerFk)))
     kda = cursor.fetchall()
-    kda = str(int(kda[0]['AVG(kills)'])) + "/" + str(int(kda[0]['AVG(deaths)'])) + "/" + str(int(kda[0]['AVG(assists)']))
+    kda = str(kda[0]['AVG(kills)']) + "/" + str(kda[0]['AVG(deaths)']) + "/" + str(kda[0]['AVG(assists)'])
     return kda
 
 #Gets the most frequently played lane of a given champion by champId
@@ -336,7 +336,6 @@ def laneFromDatabaseSummoner(champId,SummonerFk):
     position = cursor.execute("SELECT Lane, COUNT(Lane) FROM MatchStatsTbl JOIN SummonerMatchTbl on SummonerMatchFk = SummonerMatchTbl.SummonerMatchId WHERE SummonerMatchTbl.ChampionFk = % s and SummonerMatchTbl.SummonerFk = % s GROUP BY Lane ORDER BY PrimaryKeyStone DESC ", (champId, int(SummonerFk)))
     position = cursor.fetchone()
     position = position['Lane']
-    print(position)
     return position
 
 #Gets the SummonerId from a given SummonerName
@@ -372,7 +371,7 @@ def getAllChampions():
 def getBestPlayers():
     connection = create_connection()
     cursor =  connection.cursor()
-    players = cursor.execute("SELECT DISTINCT SummonerName, COUNT(MatchStatsTbl.Win), AVG(MatchStatsTbl.kills),AVG(MatchStatsTbl.assists), AVG(MatchStatsTbl.deaths), AVG(MatchStatsTbl.BaronKills), AVG(MatchStatsTbl.DragonKills) FROM `SummonerUserTbl` JOIN SummonerMatchTbl on SummonerID = SummonerMatchTbl.SummonerFk JOIN MatchStatsTbl on SummonerMatchTbl.SummonerMatchId = MatchStatsTbl.SummonerMatchFk WHERE MatchStatsTbl.Win = 1 GROUP BY SummonerName ORDER by COUNT(MatchStatsTbl.Win) DESC LIMIT 15")
+    players = cursor.execute("SELECT DISTINCT SummonerName, COUNT(MatchStatsTbl.Win), AVG(MatchStatsTbl.kills),AVG(MatchStatsTbl.assists), AVG(MatchStatsTbl.deaths), AVG(MatchStatsTbl.BaronKills), AVG(MatchStatsTbl.DragonKills) FROM `SummonerUserTbl` JOIN SummonerMatchTbl on SummonerID = SummonerMatchTbl.SummonerFk JOIN MatchStatsTbl on SummonerMatchTbl.SummonerMatchId = MatchStatsTbl.SummonerMatchFk WHERE MatchStatsTbl.Win = 1 GROUP BY SummonerName ORDER by COUNT(MatchStatsTbl.Win) DESC LIMIT 25")
     players = cursor.fetchall()
     return players
 
@@ -394,6 +393,7 @@ def getChampionBestPlayers(ChampId):
     data = cursor.fetchall()
     return data
 
+#Insert user into database
 def insertUser(SummonerName):
     connection = create_connection()
     cursor =  connection.cursor()
@@ -408,6 +408,7 @@ def insertUser(SummonerName):
         SummonerFk = None
     return SummonerFk    
 
+#Gets the rankId from a string rank e.g Unranked = 0.
 def getRankId(Rank):
     connection = create_connection()
     cursor =  connection.cursor()
@@ -415,7 +416,7 @@ def getRankId(Rank):
     RankId = cursor.fetchone()
     RankId = RankId['RankId']
     return RankId
-
+#Check if a match exists
 def matchCheck(matchId):
     connection = create_connection()
     cursor =  connection.cursor()
@@ -426,19 +427,19 @@ def matchCheck(matchId):
     else:
         pass
     return matchCheck
-
+#Inserts a match into the database
 def insertMatch(matchId,Patch,GameType,RankId,GameDuration):
     connection = create_connection()
     cursor =  connection.cursor()
     cursor.execute("INSERT INTO `MatchTbl`(`MatchId`, `Patch`,  `QueueType`, `RankFk`,`GameDuration`) VALUES (%s ,%s , %s , %s, %s)", (matchId,Patch,GameType,int(RankId),int(GameDuration)))
     connection.commit()
-
+#Inserts the match stats of a user into the database
 def insertMatchStats(SummMatchId ,cs,dmgDealt,dmgTaken,TurretDmgDealt,goldEarned,Role,win,Item1,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,spell1,spell2,masteryPoints,Enemy,dragonKills,baronKills):
     connection = create_connection()
     cursor =  connection.cursor()
     cursor.execute("INSERT INTO `MatchStatsTbl`(`SummonerMatchFk`, `MinionsKilled`, `DmgDealt`, `DmgTaken`, `TurretDmgDealt`, `TotalGold`, `Lane`, `Win`, `item1`, `item2`, `item3`, `item4`, `item5`, `item6`, `kills`, `deaths`, `assists`, `PrimaryKeyStone`, `PrimarySlot1`, `PrimarySlot2`, `PrimarySlot3`, `SecondarySlot1`, `SecondarySlot2`, `SummonerSpell1`, `SummonerSpell2`, `CurrentMasteryPoints`, `EnemyChampionFk`, `DragonKills`, `BaronKills`) VALUES (%s, %s , %s ,%s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s , %s)" ,(str(SummMatchId) ,cs,dmgDealt,dmgTaken,TurretDmgDealt,goldEarned,Role,win,Item1,Item2,Item3,Item4,Item5,Item6,kills,deaths,asssts,PK1,PK2,PK3,PK4,SK1,SK2,spell1,spell2,masteryPoints,Enemy,dragonKills,baronKills))
     connection.commit()
-
+#Inserts a match into the SummonerMatchTbl
 def insertSummMatch(SummonerId,MatchVerify,Champion):
     connection = create_connection()
     cursor =  connection.cursor()
@@ -447,9 +448,9 @@ def insertSummMatch(SummonerId,MatchVerify,Champion):
     cursor.execute("SELECT `SummonerMatchId` FROM `SummonerMatchTbl` WHERE `MatchFk` = (%s) AND `SummonerFk` = (%s)", (str(MatchVerify) ,SummonerId))    
     SummMatchId = cursor.fetchone()        
     SummMatchId = SummMatchId['SummonerMatchId']
-    print("SummMatchID = " , SummMatchId)
     return SummMatchId
-        
+
+#Gets the id of a champion from a string championName
 def getChampId(champion):
     connection = create_connection()
     cursor =  connection.cursor()
@@ -457,7 +458,7 @@ def getChampId(champion):
     champion = cursor.fetchone()
     champion = champion['ChampionId']
     return champion
-
+#Check if the summoner has played in a match stored in database.
 def checkSummMatch(SummonerId,MatchId):
     connection = create_connection()
     cursor =  connection.cursor()
@@ -469,14 +470,20 @@ def checkSummMatch(SummonerId,MatchId):
         pass
   
     return SummMatchId
-
-
+#Gets the championName from champId
 def getChampName(champion):
     connection = create_connection()
     cursor =  connection.cursor()
     cursor.execute("SELECT `ChampionName` FROM `ChampionTbl` WHERE `ChampionId` = (%s)", (champion, ))
     champion = cursor.fetchone()
     champion = champion['ChampionName']
-    print(champion)
     return champion
 
+#Gets Count of all games played
+def getAllGamesCount():
+    connection = create_connection()
+    cursor =  connection.cursor()
+    cursor.execute("SELECT COUNT(`MatchStatsTbl`.Win) FROM `MatchStatsTbl`")
+    games = cursor.fetchall()
+    games = games[0]['COUNT(`MatchStatsTbl`.Win)']
+    return games
