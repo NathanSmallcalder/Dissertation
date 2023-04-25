@@ -1,8 +1,22 @@
 {% extends 'base.html'%}
 
 {%block content %}
+
+<div class="column half">
+  <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <h1> Match Predictor Tool</h1>
+          <p> Once Data has been submited please wait a couple of mins for a response. Please do not spam the run match button.</p>
+          <p> Submit summoner name in next to the role image of the role you want to assign the summoner and use the drop down to select a champion</p>
+        </div>
+      </div>
+  </div>
+</div>
+
+
 <form method="dialog" onsubmit='return summonerAvg(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5); return false;'>
-<div class="columns is-multiline"> 
+  <div class="columns is-multiline"> 
   <div class="column is-one-fifth">
     <div class="card has-background-info">
       <div class="card-content">
@@ -286,3 +300,4 @@ function postItem(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Cha
 </script>
 
 {% endblock %}
+

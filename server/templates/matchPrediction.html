@@ -50,6 +50,19 @@
 
 </style>
 
+<div class="column half">
+  <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <h1> Solo Predictor Tool</h1>
+          <p> Once Data has been submited please wait a couple of mins for a response. Please do not spam the run match button.</p>
+          <p> Submit summoner name, Select Region and Role by clicking on an Image</p>
+          <p> Select a champion for both red and blue side by clicking on a champion Image, then search.</p>
+        </div>
+      </div>
+  </div>
+</div>
+
 
 <div class="columns is-multiline"> 
       <div class="column half">
@@ -90,7 +103,7 @@
       <div class="card-content">
         <div class="content">
           {% for champ in Champions %}
-            {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+            {% set output = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + champ['ChampionName'] + ".png" %}
                 <label>
                   <input type="radio" name="champ" value="{{champ['ChampionId']}}">
                   <img src="{{output}}" height = 60 width = 60 alt="">
@@ -106,10 +119,10 @@
         <div class="card-content">
           <div class="content">
         {% for champ in Champions %}
-          {% set output = "https://ddragon.leagueoflegends.com/cdn/13.4.1/img/champion/" + champ['ChampionName'] + ".png" %}
+          {% set output = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + champ['ChampionName'] + ".png" %}
           <label>
             <input type="radio" name="enemyChamp" value="{{champ['ChampionId']}}">
-            <img src="{{output}}" height = 60 width = 60 alt = "">
+            <img src="{{output}}" height = 60 width = 60 alt = "{{champ['ChampionId']}}">
           </label>
       {% endfor %}
         </div>

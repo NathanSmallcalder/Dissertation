@@ -49,10 +49,10 @@
 		}
 
 		.card-L {
-			background-color:red;
+			background-color:#f14668;
 		}
 		.card-W {
-			background-color:green;
+			background-color:#48c78e;
 		}
 
 	</style>
@@ -151,7 +151,7 @@
 									</div>
 										<img height = 64 width = 64 class="is-rounded" src='https://raw.communitydragon.org/latest/game/assets/ux/mastery/mastery_icon_{{user.championLevel}}.png'>
 		
-									<h1>{{user.name}}</h1>
+									<h1> <a href = {{ url_for('SummonerChampionStats', summoner = SummonerInfo.name, champion = user.name ) }}>{{user.name}}</a></h1>
 									<p>Champion Points : {{user.championPoints}}</p>
 									
 
@@ -254,7 +254,7 @@
 					{% endfor %}
 				</div>
 				<div id="GraphsPanel" class="content-tab" >
-					<div class=" is-multiline">
+					<div class="is-multiline">
 					<label>
 						<input type="radio" name="test" value="0" checked>
 						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/iron.png" height = 60 width = 60 alt="Option 1">
@@ -292,19 +292,56 @@
 						<img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/challenger.png" height = 60 width = 60 alt="Option 2">
 					  </label>
 					</div>
-						<div class = "column">
-							<div class=" is-multiline">
-								<div class = collumn>
-									<canvas id="AvgDamageTakenChart" width="350" height="450"></canvas>
-									<canvas id="AvgDamageDealtChart" width="350" height="450"></canvas>
-									<canvas id="AvgCreepScoreChart" width="350" height="450"></canvas>
-									<canvas id="AvgGoldPerMinChart" width="350" height="450"></canvas>
-								</div>
+				
+			
+					<div class="columns is-multiline">
+						<div class="column">
+						  <div class="card">
+							<div class="card-content">
+							  <div class="content">
+					  
+							  <div class ="has-text-right">
+								<canvas id="AvgDDRanked" width="450" height="550"></canvas>
+							  </div>
+							  </div>
 							</div>
+						  </div>
+						</div>
+						<div class="column">
+						  <div class="card">
+							<div class="card-content">
+							  <div class="content">
+								<canvas id="AvgGoldRanked" width="450" height="550"></canvas>
+							  </div>
+							</div>
+						  </div>
+						</div>
+					</div>
+					<div class="columns is-multiline">
+						<div class="column">
+						  <div class="card">
+							<div class="card-content">
+							  <div class="content">
+					  
+							  <div class ="has-text-right">
+								<canvas id="AvgMinionKillsRanked" width="450" height="550"></canvas>
+							  </div>
+							  </div>
+							</div>
+						  </div>
+						</div>
+						<div class="column">
+						  <div class="card">
+							<div class="card-content">
+							  <div class="content">
+								<canvas id="AvgDTRanked" width="450" height="550"></canvas>
+							  </div>
+							</div>
+						  </div>
 						</div>
 					</div>
 				</div>
-
+			
 
 				<div id="Summary" class="content-tab" style="display:none">
 					<table class="table">
@@ -329,11 +366,6 @@
 							<td>{{ matches.win }}</td>
 						</tr>
 						{% endfor %}
-
-						<canvas id="AvgMinionKillsRanked" width="350" height="450"></canvas>
-						<canvas id="AvgDTRanked" width="350" height="450"></canvas>
-						<canvas id="AvgGoldRanked" width="350" height="450"></canvas>
-						<canvas id="AvgDDRanked" width="350" height="450"></canvas>
 				</tbody>
 			</table>
 		</div>
@@ -472,3 +504,4 @@
 	</script>
 </body>
 {% endblock %}
+

@@ -19,6 +19,7 @@ from SoloPredictor import randomForestSolo
 from TeamPredictor import randomForest
 from databaseQuries import *
 
+
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
@@ -31,7 +32,7 @@ app.config['MYSQL_PASSWORD'] = sql_password
 app.config['MYSQL_DB'] = 'o1gbu42_StatTracker'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
-API
+
 
 #Summoner Routing for Summoner Stats Page
 @app.route('/summoner',methods=['GET','POST'])
@@ -449,4 +450,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8001, debug=True)
+    app.run(host='0.0.0.0', port=8080)

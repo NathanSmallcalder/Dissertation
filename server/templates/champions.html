@@ -10,6 +10,7 @@
         <div class="card-content">
           <table class="table">
               <thead>
+                <h1>Champions List</h1>
                   <tr>
                     <th><abbr title="Champion">Champion</abbr></th>
                     <th><abbr title = "Name">Name</abbr></th>
@@ -42,6 +43,7 @@
             <div class="card-content">
               <table class="table">
                 <thead>
+                  <h1>Best Players</h1>
                     <tr>
                       <th><abbr title="Champion">SummonerName</abbr></th>
                       <th><abbr title="Won">W</abbr></th>
@@ -54,7 +56,7 @@
                 </thead>
                   {% for p in players %}
                   <tr>
-                      <td>{{ p['SummonerName']  }}</td>
+                      <td><a href = {{ url_for('getSummoner', summoner = p['SummonerName'], region = "EUW1") }}> {{ p['SummonerName']  }}</a></td>
                       <td>{{ p['COUNT(MatchStatsTbl.Win)'] }}</td>
                       <td>{{ p['AVG(MatchStatsTbl.kills)'] }}</td>
                       <td>{{ p['AVG(MatchStatsTbl.assists)'] }}</td>
@@ -68,13 +70,7 @@
             </div>
         </div>
     </div>
-    <div class="column is-three-fifths">
-      <div class="card">
-          <div class="card-content">
-
-
-          </div>
-      </div>
-  </div>
+</div>
 
 {% endblock %}
+

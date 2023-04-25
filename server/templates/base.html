@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-	
+
 <head>
 	<meta charset="utf-8" />
 	<link id="favicon" rel="shortcut icon" type="image/png" href="data:image/png;base64,....==" />
@@ -31,10 +31,6 @@
 			Team Peformance Match Prediction
 		  </a>
 
-		  <a class="navbar-item">
-			Featured Profiles
-		  </a>
-
 		  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
 			<span aria-hidden="true"></span>
 			<span aria-hidden="true"></span>
@@ -52,7 +48,17 @@
 
 
 {% endblock %}
-	
+
+{% block footer %}
+<footer class="footer is-link">
+	<div class="content has-text-centered">
+	  <p>
+		<strong>Project</strong> by <a href="https://github.com/NathanSmallcalder">Nathan Smallcalder</a>
+	  </p>
+	  <p> This Project is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc</p>
+	</div>
+  </footer>
+{%- endblock %}
 </body>
 </html>
 
