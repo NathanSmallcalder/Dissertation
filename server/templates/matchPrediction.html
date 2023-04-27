@@ -28,20 +28,20 @@
   height: 0;
   }
 
+  /* https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons */
   /* IMAGE STYLES */
   [type=radio] + img {
   cursor: pointer;
   }
-
   /* CHECKED STYLES */
   [type=radio]:checked + img {
     opacity: 1;
   }
-
+  
   [type=radio]:not(:checked) + img {
      opacity: 0.6;
   }
-  
+  /**/
   input[type=radio] {
     border: 0px;
     height: 2em;
@@ -131,21 +131,21 @@
     </div>
 </div>
   <script> 
+  /// Store Response
   var obj;
+
+  /// Get Link
+  // Remove /matchPredictor
   let link = String(window.location.href)
   link = link.slice(0, -12); 
-  alert(link)
 
 
   function summonerAvg(summonerName, Region) {
       summonerName = summonerName.value;
       Region = Region.value;
-
       PickedChamp = parseInt(document.querySelector('input[name="champ"]:checked').value);
       EnemyChamp = parseInt(document.querySelector('input[name="enemyChamp"]:checked').value);
       role = parseInt(document.querySelector('input[name="role"]:checked').value);
-      alert(PickedChamp)
-      alert(link + "summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
       fetch(link + "summData?summoner="+ summonerName + "&region=" + Region + "&champ=" + PickedChamp + "&enemyChamp= " + EnemyChamp + "&lane=" + role)
         .then((response) => response.json())
         .then(data => {
@@ -153,12 +153,7 @@
           postItem(obj)
         })
       }
-      
-function show(data){
-  alert(data)
-}
 
-var obj;
 function postItem(data){
   fetch(link + 'predictSolo', {
     method: 'POST',
@@ -190,7 +185,7 @@ function postItem(data){
       obj = data;
     })
     .then(() =>{ 
-      show(obj.pred);
+      alert(obj.pred);
     })
   }
 

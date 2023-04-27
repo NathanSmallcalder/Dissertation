@@ -260,7 +260,7 @@ def SummonerChampionStats():
     makeAverageGraphs(AvgGold,TotalGoldSumm)
     makeAverageGraphs(DmgTakenAvg,AvgDmgTakenSumm)
     makeAverageGraphs(AvgMinions,AvgMinionsSumm)
-    print(kda)
+    
 
 
     return render_template('summonerChampion.html',championStats = championStats, SummonerName = SummonerName,
@@ -273,6 +273,7 @@ def SummonerChampionStats():
                             DmgTakenAvg = AvgDmgTakenSumm,
                             kda = kda, winRate = winRate)
 
+# Adds First collumn of Players Rank.
 def makeAverageGraphs(arr,arr2):
     arr2[0]['Rank'] = "You"
     for data in arr:
@@ -361,8 +362,7 @@ def predict():
 
         return jsonify(Prediction), 200
     else:
-        return "Content type is not supported."
-
+        return "Invalid Request Data, Make Sure all summoners exist",500
 
 ### Routing for the /teamPredict Endpoint
 ### Returns UI for teamPrediction
@@ -436,10 +436,12 @@ def teamData():
             pred['Blue'] = 'Loss'
             pred['Red'] = 'Win'
 
-    print(pred)
-    return pred ,200
+        print(pred)
+        return pred ,200
+    else:
+        return "Invalid Request Data, Make Sure all summoners exist", 500
 
-
+### Error 500 Page (Thrown when api runs out, summoner not found ...)
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('500.html'), 500
@@ -450,4 +452,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8001)

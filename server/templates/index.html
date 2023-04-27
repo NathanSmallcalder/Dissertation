@@ -1,5 +1,6 @@
 {% extends 'base.html'%}
 
+<!---Search Summoner Page---->
 {%block content %}
 <section class="hero is-link is-fullheight">
     <div class="hero-body">
@@ -33,6 +34,7 @@
 </section>
 
 <script>
+  ///Search Summoner by Name,Region redirect to stats page
 	function searchSummoner(summonerName, Region) {
 		summonerName = summonerName.value;
 		Region = Region.value;

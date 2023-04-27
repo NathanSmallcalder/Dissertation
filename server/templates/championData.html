@@ -65,7 +65,7 @@
       display: block;
     }
 
-    p:hover span{
+    p:hover span{ /* Code From http://jsfiddle.net/UNs9J/1/ */
         display: block;
         height: auto;
         width: auto;  
@@ -79,22 +79,18 @@
     .inlineB{
       display: inline-block;
     }
-
-
-
-
 		.card {
 			height: 100%;
 			margin: auto;
-		}.columns.is-vcentered {
+		}.columns.is-vcentered { 
 			-webkit-box-align: center;
 			-ms-flex-align: center;
 			align-items: center;
 		}
 		.column.is.half-inline{
 			flex-wrap: wrap;
-			align-content: center; /* used this for multiple child */
-			align-items: center; /* if an only child */
+			align-content: center; 
+			align-items: center; 
 			display: inline
 		}
 		ul {
@@ -119,7 +115,7 @@
   
    
 	</style>
-
+ <!--Champion details Section -->
 <div class="columns is-multiline">
     <div class="column is-three-fifths">
         <div class="card">
@@ -140,6 +136,7 @@
             </div>
         </div>
     </div>
+     <!--Common stats Section -->
     <div class="column">
       <div class="card">
           <div class="card-content">
@@ -153,15 +150,13 @@
               <h3 class="heading">Win Rate</h3>
               <h3 class ="title">{{winRate}} %</h3>
 
-              <h3 class="heading">Play Rate</h3>
-              <h3 class ="title">{{winRate}} %</h3>
                 </div>
               </div>
             </div>
           </div>
       </div>
     </div>
-
+    <!--Common stats Section -->
     <div class="column">
       <div class="card">
           <div class="card-content">
@@ -206,7 +201,7 @@
               </h1>
             </div>
         </div> 
-        
+    <!--Tab Section -->
     <div class="hero-foot">
       <nav class="tabs is-boxed is-fullwidth is-large">
               <div class="container">
@@ -222,7 +217,7 @@
             </nav>
         </div>
       </section>
-      
+      <!--Champion Passive Ability Section -->
       <div class="container section">
         <div id="Passive" class="content-tab" >
           <div class = "card"> 
@@ -240,7 +235,7 @@
             </div>
           </div>
       </div>
-        
+      <!--Champion Q Ability Section -->
       <div id="Q" class="content-tab" style="display:none">
         <div class = "card"> 
               <div class="card-content">
@@ -257,7 +252,7 @@
               </div>
             </div>
         </div>
-
+        <!--Champion W Ability Section -->
         <div id="W" class="content-tab" style="display:none">
           <div class = "card"> 
             <div class="card-content">
@@ -278,7 +273,7 @@
           </div>
       </div>
 
-
+          <!--Champion E Ability Section -->
           <div id="E" class="content-tab"style="display:none">
             <div class = "card"> 
               <div class="card-content">
@@ -299,7 +294,7 @@
             </div>
         </div>
 
-
+          <!--Champion R ability Section -->
           <div id="R" class="content-tab"style="display:none" >
             <div class = "card"> 
               <div class="card-content">
@@ -325,10 +320,11 @@
             <div class="card-content">
               <div class="content">
                 <div style="display:inline-block;">
-    
+
                   <div class="column is-three-fifths">
                     <div class="card">
                         <div class="card-content">
+                          <!--Best Players Table -->
                           <table class="table">
                             <thead>
                                 <tr>
@@ -367,7 +363,7 @@
     </div>
   
 
-  
+    <!--Items Section -->
     <div class="column is-one-quarter">
       <div class="card ">
           <div class="card-content">
@@ -390,12 +386,11 @@
         </div>
     </div>
   
-    
+        <!--Runes Section -->
         <div class="column">
           <div class="card">
             <div class="card-content">
               <div class="content">
-       
                 <div class = "column">
                   <h3> Popular Primary Runes</h3>
                   <div>
@@ -410,7 +405,6 @@
                   </div>
                 </div>
               </div>
-
                 <div class="contentE">
                     <div>
                       {% for BestSecondary in BestSecondRunes %}
@@ -432,13 +426,12 @@
   </div>
 
 
-
+<!--Graph Section -->
 <div class="columns is-multiline">
   <div class="column">
     <div class="card">
       <div class="card-content">
         <div class="content">
-
         <div class ="has-text-right">
           <canvas id="AvgMinions" width="450" height="550"></canvas>
         </div>
@@ -475,6 +468,8 @@
 </div>
 
 <script  type="text/javascript">
+/// https://codepen.io/t7team/pen/ZowdRN
+/// Changing Content Tab
 function openTab(evt, tabName) {
   var i, x, tablinks;
   x = document.getElementsByClassName("content-tab");
@@ -489,7 +484,7 @@ function openTab(evt, tabName) {
   evt.currentTarget.className += " is-active";
 }
 
-
+/// Dmg Dealt Graph
 var yValues = ["{{DmgDealtAvg[0]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[1]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}"
             ,"{{DmgDealtAvg[2]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}","{{DmgDealtAvg[3]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}",
               "{{DmgDealtAvg[4]['AVG(`MatchStatsTbl`.`DmgDealt`)']}}"];
@@ -519,7 +514,7 @@ new Chart("DmgDealtAvg", {
   }
 });
 
-
+///Dmg Taken Graph
 var yValues = ["{{DmgTakenAvg[0]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{DmgTakenAvg[1]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"
             ,"{{DmgTakenAvg[2]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}","{{DmgTakenAvg[3]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}",
               "{{DmgTakenAvg[4]['AVG(`MatchStatsTbl`.`DmgTaken`)']}}"];
@@ -549,7 +544,7 @@ new Chart("DmgTakenAvg", {
   }
 });
 
-
+///Avg Minions Graph
 var yValues = ["{{AvgMinions[0]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[1]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"
             ,"{{AvgMinions[2]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}","{{AvgMinions[3]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}",
               "{{AvgMinions[4]['AVG(`MatchStatsTbl`.`MinionsKilled`)']}}"];
@@ -579,6 +574,7 @@ new Chart("AvgMinions", {
   }
 });
 
+///AvgGold graph
 var yValues = ["{{AvgGold[0]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[1]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"
             ,"{{AvgGold[2]['AVG(`MatchStatsTbl`.`TotalGold`)']}}","{{AvgGold[3]['AVG(`MatchStatsTbl`.`TotalGold`)']}}",
               "{{AvgGold[4]['AVG(`MatchStatsTbl`.`TotalGold`)']}}"];
