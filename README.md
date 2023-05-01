@@ -16,13 +16,17 @@ To Search for a summoner enter a summoner name and region as shown below.
 ### Match Predictor Solo
 
 
+[SoloPredictor.webm](https://user-images.githubusercontent.com/74361286/235540717-139ac77e-5f96-4f95-bc75-d500a72b17b3.webm)
 
 
 
 ### Match Predictor Team
 
-
-
+[TeamPredictor.webm](https://user-images.githubusercontent.com/74361286/235540711-49027c7a-7615-4782-b390-632ee31b5b2e.webm)
 
 
 ### Champions Page
+
+The champions page can be found under the champions tab of the navbar, it shows winrates, kda of best players and champions. Players and champions are updated as more games are stored.
+
+[ChampionsPage.webm](https://user-images.githubusercontent.com/74361286/235540587-d8edec08-a45b-4fcc-b73e-d858db12ae45.webm)
