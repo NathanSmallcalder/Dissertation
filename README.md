@@ -12,9 +12,12 @@ If the App is unavalable, please email me at nsmallcalder5@gmail.com
 ### Hosting
 
 Request a Config file from me nsmallcalder5@gmail.com
-Clone Git
-make run
+clone or download repository
+```
+cd server
 make build
+make run
+```
 
 ####
 
