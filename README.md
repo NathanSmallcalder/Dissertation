@@ -3,7 +3,20 @@ Dissertation Project on the Analysis and Prediction of eSports Matches(League of
 
 In order to analyse and predict matches in league of legends, I will be creating a flask web-app that utilizes Riot's api to store match data, aswell as create infographics to aid players in improving their peformance. This data will also be used in a machine learning algorithm to predict the winner of live games.
 
+### Access
 
+App can be found at https://leaguetracker.ngrok.app/
+
+If the App is unavalable, please email me at nsmallcalder5@gmail.com
+
+### Hosting
+
+Request a Config file from me nsmallcalder5@gmail.com
+Clone Git
+make run
+make build
+
+####
 
 ### Search Summmoner
 
