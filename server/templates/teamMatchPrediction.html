@@ -223,7 +223,7 @@
 
 let link = String(window.location.href)
 link = link.slice(0, -12); 
-alert(link)
+
 
 
 function summonerAvg(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5) {
@@ -256,7 +256,6 @@ function show(pred){
 }
 
 function postItem(blueSumm1Champ,BlueSumm1,blueSumm2Champ,BlueSumm2,blueSumm3Champ,BlueSumm3,blueSumm4Champ,BlueSumm4,blueSumm5Champ,BlueSumm5,redSumm1Champ,RedSumm1,redSumm2Champ,RedSumm2,redSumm3Champ,RedSumm3,redSumm4Champ,RedSumm4,redSumm5Champ,RedSumm5){
-  alert("posted")
   fetch(link + "/teamData", {
     method: 'POST',
     headers: {
