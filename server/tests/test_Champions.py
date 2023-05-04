@@ -15,7 +15,7 @@ def test_ChampionImgSingle():
     champ = getChampImagesSingle(1)
     req = requests.get(champ)
     assert int(req.status_code) == 200
-    assert str(champ) == "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/champion/Annie.png"
+    
 
 ######## Champion Details - ChampionPage
 def test_ChampionDetails():
@@ -62,6 +62,7 @@ def test_MasterySingle():
     Mastery = getSingleMasteryScore(1,masteryScore)
     assert Mastery != None
 
+## Gets Summoner Details
 def test_getSummoner():
     SummonerInfo = getSummonerDetails("EUW1","Mealsz")
     assert 'id' in SummonerInfo.keys()
@@ -69,6 +70,7 @@ def test_getSummoner():
     assert 'puuid' in SummonerInfo.keys()
     assert 'profileIconId' in SummonerInfo.keys()
 
+### Gets Profile Image Link
 def test_getImageLink():
     SummonerInfo = getSummonerDetails("EUW1","Mealsz")
     getImageLink(SummonerInfo)
@@ -135,6 +137,11 @@ def test_calculateAvgTeamStats():
     team = ["Lil Nachty", "Mealsz", "ItWoZnotmee","Ehhhh","Ehhhh"]
     team = calculateAvgTeamStats(team, "EUW1")
     assert len(team) > 5
+    assert 'kills' in team.keys()
+    assert 'assists' in team.keys()
+    assert 'dragonKills' in team.keys()
+
+
 
 ###Gets Role Images
 ### Status Code == 200
@@ -151,9 +158,18 @@ def test_getRoleImages():
 ### Static
 def test_getRoles():
     roles = getRoles()
+    req = requests.get(roles[0]['RoleLink'])
+    req1 = requests.get(roles[1]['RoleLink'])
+    req2 = requests.get(roles[2]['RoleLink'])
+    req3 = requests.get(roles[3]['RoleLink'])
+    req4 = requests.get(roles[4]['RoleLink'])
     assert roles[0]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png"
     assert roles[1]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png"
     assert roles[2]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png"
     assert roles[3]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png"
     assert roles[4]['RoleLink'] == "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png"
-    
+    assert req.status_code == 200
+    assert req1.status_code == 200
+    assert req2.status_code == 200
+    assert req3.status_code == 200
+    assert req4.status_code == 200

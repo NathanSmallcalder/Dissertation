@@ -162,7 +162,6 @@ def test_champWinsSummoner():
 # 67(Vayne) , 4(Lil Nachty), Role should be BOTTOM
 def test_laneFromDatabaseSummoner():
     lane = laneFromDatabaseSummoner(67,4)
-    print(lane)
     assert lane == "BOTTOM"
 
 #Returns summonerID from database
