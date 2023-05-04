@@ -9,6 +9,16 @@ App can be found at https://leaguetracker.ngrok.app/
 
 If the App is unavalable, please email me at nsmallcalder5@gmail.com
 
+### Running App
+
+Users can query League of Legends account names to use the application.
+If a user does not have a League of Legends Account, use any from below:
+
+Name          Region
+Mealsz        EUW1
+Lil Natchy    EUW1
+ItWoZnOtMee   EUW1
+
 ### Hosting
 
 Request a Config file from me nsmallcalder5@gmail.com
