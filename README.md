@@ -41,12 +41,15 @@ To Search for a summoner enter a summoner name and region as shown below.
 
 ### Match Predictor Solo
 
+Users can input their name, role, region, champion and enemy champ and run the simulator, after a short period of time, the server will return a match prediction.
 
 [SoloPredictor.webm](https://user-images.githubusercontent.com/74361286/235540717-139ac77e-5f96-4f95-bc75-d500a72b17b3.webm)
 
 
 
 ### Match Predictor Team
+
+Users can select 10 summoners, champions and run the simulator, after 1-2 mins, the server will return a response either blue or red match win.
 
 [TeamPredictor.webm](https://user-images.githubusercontent.com/74361286/235540711-49027c7a-7615-4782-b390-632ee31b5b2e.webm)
 
@@ -60,5 +63,6 @@ The champions page can be found under the champions tab of the navbar, it shows 
 
 ### Live Game
 
-[LiveGame.webm](https://user-images.githubusercontent.com/74361286/236352848-46b3a501-c217-458e-bd7f-5d341a5e8b9d.webm)
+If a user is currently in a game, then they can click on the in-game button on the summoner search, after 1-2 mins, the server will return a summary screen of all users and team, and present a prediction of the match.
 
+[LiveGameDemo.webm](https://user-images.githubusercontent.com/74361286/236353174-b344154c-946f-4117-9d03-bcc12b751523.webm)
