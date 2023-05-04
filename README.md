@@ -56,3 +56,9 @@ To Search for a summoner enter a summoner name and region as shown below.
 The champions page can be found under the champions tab of the navbar, it shows winrates, kda of best players and champions. Players and champions are updated as more games are stored.
 
 [ChampionsPage.webm](https://user-images.githubusercontent.com/74361286/235540587-d8edec08-a45b-4fcc-b73e-d858db12ae45.webm)
+
+
+### Live Game
+
+[LiveGame.webm](https://user-images.githubusercontent.com/74361286/236352848-46b3a501-c217-458e-bd7f-5d341a5e8b9d.webm)
+
