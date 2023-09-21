@@ -14,9 +14,8 @@ import sys
 import json
 import databaseQuries
 from mlAlgorithms import *
-sys.path.append('mlAlgorithms')
-from SoloPredictor import randomForestSolo
-from TeamPredictor import randomForest
+from mlAlgorithms.SoloPredictor import randomForestSolo
+from mlAlgorithms.TeamPredictor import randomForest
 from databaseQuries import *
 
 
@@ -42,9 +41,8 @@ def getSummoner():
     Region = request.args.get('region')
     #Gets basic Summoner Information
     SummonerInfo = getSummonerDetails(Region,summonerName)
-    SummId = SummonerInfo['id']
     #Ranked Stats
-    RankedDetails = getRankedStats(Region,SummId)
+    RankedDetails = getRankedStats(Region, SummonerInfo['id'])
     try:
         SOLO = RankedDetails[1]
         FLEX = RankedDetails[0]
@@ -68,10 +66,10 @@ def getSummoner():
     #Profile Image
     getImageLink(SummonerInfo)
     #Mastery Score
-    masteryScore = getMasteryStats(Region,SummId)
+    masteryScore = getMasteryStats(Region,SummonerInfo['id'])
 
     #Gets Matches
-    data = getMatchData(Region, SummId, SummonerInfo,RankedDetails)
+    data = getMatchData(Region, SummonerInfo['id'], SummonerInfo,RankedDetails)
 
     participants = getGameParticipantsList()
     #MeanData = getMatchTimeline(Region, SummId, SummonerInfo['puuid'],data)
