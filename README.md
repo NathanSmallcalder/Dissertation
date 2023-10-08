@@ -61,8 +61,3 @@ The champions page can be found under the champions tab of the navbar, it shows 
 [ChampionsPage.webm](https://user-images.githubusercontent.com/74361286/235540587-d8edec08-a45b-4fcc-b73e-d858db12ae45.webm)
 
 
-### Live Game
-
-If a user is currently in a game, then they can click on the in-game button on the summoner search, after 1-2 mins, the server will return a summary screen of all users and team, and present a prediction of the match.
-
-[2023-05-05 00-37-17.webm](https://user-images.githubusercontent.com/74361286/236353788-9c436168-c77c-4530-8359-838d29d45eb2.webm)
