@@ -31,13 +31,6 @@ make run
 
 ####
 
-### Search Summmoner
-
-To Search for a summoner enter a summoner name and region as shown below.
-
-[Home.webm](https://user-images.githubusercontent.com/74361286/235540045-e6afcfe2-7486-4533-a37a-bce150ffa3d7.webm)
-
-
 
 ### Match Predictor Solo
 
@@ -52,12 +45,5 @@ Users can input their name, role, region, champion and enemy champ and run the s
 Users can select 10 summoners, champions and run the simulator, after 1-2 mins, the server will return a response either blue or red match win.
 
 [TeamPredictor.webm](https://user-images.githubusercontent.com/74361286/235540711-49027c7a-7615-4782-b390-632ee31b5b2e.webm)
-
-
-### Champions Page
-
-The champions page can be found under the champions tab of the navbar, it shows winrates, kda of best players and champions. Players and champions are updated as more games are stored.
-
-[ChampionsPage.webm](https://user-images.githubusercontent.com/74361286/235540587-d8edec08-a45b-4fcc-b73e-d858db12ae45.webm)
 
 
