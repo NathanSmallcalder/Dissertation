@@ -32,13 +32,17 @@ def getChampImages(masteryScore):#
     DDRAGON = requests.get("http://ddragon.leagueoflegends.com/cdn/13.6.1/data/en_US/champion.json")
     DDRAGON = DDRAGON.json()
     DDRAGON = DDRAGON['data']
-    for item in DDRAGON:
-        temp = DDRAGON.get(item)
-        for mastery in masteryScore:
-            if int(temp['key']) == int(mastery['championId']):
-                mastery['name'] = temp['id']
-                mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + temp['id'] +".png"
+    try:
+        for item in DDRAGON:
+            temp = DDRAGON.get(item)
+            for mastery in masteryScore:
+                if int(temp['key']) == int(mastery['championId']):
+                    mastery['name'] = temp['id']
+                    mastery['link'] = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + temp['id'] +".png"
+    except:
+        pass
 
+    return masteryScore
 
 #Gets ChampionImage URLS for ChampionTable
 def getChampImagesSingle(ChampId): # 

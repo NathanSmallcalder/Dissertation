@@ -66,7 +66,7 @@ def getSummoner():
     #Profile Image
     getImageLink(SummonerInfo)
     #Mastery Score
-    masteryScore = getMasteryStats(Region,SummonerInfo['id'])
+    masteryScore = getMasteryStats(Region,SummonerInfo['puuid'])
 
     #Gets Matches
     data = getMatchData(Region, SummonerInfo['id'], SummonerInfo,RankedDetails)
@@ -237,7 +237,6 @@ def SummonerChampionStats():
     ChampionAbilities = getChampAbilities(championStats)
     getChampSpellImages(ChampionAbilities)
     SummID =  getSummonerIdFromDatabase(SummonerName)
-    print(SummID)
     TotalGames = totalGamesSummoner(int(championStats['key']), SummID)
     ChampWins = champWinsSummoner(int(championStats['key']),SummID)
     AvgMinionsSumm = avgMinionsSummoner(int(championStats['key']),SummID)
@@ -295,12 +294,13 @@ def summData():
     champ = request.args.get('champ')
     enemyChamp = request.args.get('enemyChamp')
     lane = request.args.get('lane')
+
     SummonerInfo = getSummonerDetails(Region,summonerName)
     SummId = SummonerInfo['id']
     RankedDetails = getRankedStats(Region,SummId)
     data = getMatchData5Matches(Region, SummId, SummonerInfo,RankedDetails)
     ### Gets Mastery Stats
-    mastery = getMasteryStats(Region, SummId)
+    mastery = getMasteryStats(Region, SummonerInfo['puuid'])
     mastery = getSingleMasteryScore(champ, mastery)
 
     ### Find Avg Stats for previous games
@@ -355,7 +355,6 @@ def predict():
         Prediction = {
             "pred": str(rf)
         }
-        print(Prediction)
 
 
         return jsonify(Prediction), 200

@@ -1,5 +1,6 @@
 import requests
 from config import *
+from championsRequest import *
 import pandas as pd
 import time
 import sys
@@ -94,15 +95,16 @@ def getRankedStats(Region,id):
 
 #Gets Mastery Stats
 def getMasteryStats(Region,id):
-    masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + API)
+    masteryScore = requests.get("https://" + Region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/" + id + "?api_key=" + API)
     masteryScore = masteryScore.json()
-    getChampImages(masteryScore)
+    masteryScore = getChampImages(masteryScore)
     return masteryScore
 
 ### Gets a single mastery score value
 ### pass in the desired champion id and mastery score array from getMasteryStats
 def getSingleMasteryScore(champId, mastery):
     masteryScore = None
+    print(mastery)
     for m in mastery:
         champMastery = m['championId']
         if int(champId) == int(champMastery):
@@ -117,7 +119,7 @@ def getSingleMasteryScore(champId, mastery):
 ### calls getMatches
 ### Returns data from getMatches
 def getMatchData(region,id,SummonerInfo,RankedDetails):
-    mastery = getMasteryStats(region, SummonerInfo['id'])
+    mastery = getMasteryStats(region, SummonerInfo['puuid'])
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=10&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo,RankedDetails,mastery)
@@ -125,7 +127,7 @@ def getMatchData(region,id,SummonerInfo,RankedDetails):
 
 ### Gets 5 MatchIds
 def getMatchData5Matches(region,id,SummonerInfo,RankedDetails):
-    mastery = getMasteryStats(region, SummonerInfo['id'])
+    mastery = getMasteryStats(region, SummonerInfo['puuid'])
     MatchIDs = requests.get("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"+ SummonerInfo['puuid'] +  "/ids?start=0&count=5&api_key=" + API)
     MatchIDs = MatchIDs.json()
     data = getMatches("europe", MatchIDs, SummonerInfo,RankedDetails,mastery)
@@ -458,7 +460,6 @@ def calculateAvgLiveTeamStats(Team,Region):
     RankedDetails = [{"queueType":"RANKED_SOLO_5x5","tier":"GOLD","rank":"II","leaguePoints":0,"wins":0,"losses":0,
         "ImageUrl":'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/unranked.png',"WinRate":"0%"}]
     i = 0
-    print(Team)
     while i < 5:
         summName = Team[i]['Name']
         SummonerInfo = getSummonerDetails("EUW1",summName)
@@ -672,7 +673,6 @@ def SummonerInGame(LiveGame,region):
 
         summonerIds.append(temp)
         i = i + 1
-    print(summonerIds)
     return summonerIds
     
 #Checks if user is .,
