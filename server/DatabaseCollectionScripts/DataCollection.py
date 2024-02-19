@@ -41,7 +41,7 @@ Match = matchData2[1]['MatchIDS']
 Match = Normalise(Match)
 mastery = getMasteryStats(Region, SummId)
 
-
+print(SummId)
 i = 0
 for MatchId in MatchIDs:
     #MatchData

@@ -103,7 +103,7 @@
       <div class="card-content">
         <div class="content">
           {% for champ in Champions %}
-            {% set output = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + champ['ChampionName'] + ".png" %}
+            {% set output = "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/" + champ['ChampionName'] + ".png" %}
                 <label>
                   <input type="radio" name="champ" value="{{champ['ChampionId']}}">
                   <img src="{{output}}" height = 60 width = 60 alt="">
@@ -119,7 +119,7 @@
         <div class="card-content">
           <div class="content">
         {% for champ in Champions %}
-          {% set output = "https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/" + champ['ChampionName'] + ".png" %}
+          {% set output = "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/" + champ['ChampionName'] + ".png" %}
           <label>
             <input type="radio" name="enemyChamp" value="{{champ['ChampionId']}}">
             <img src="{{output}}" height = 60 width = 60 alt = "{{champ['ChampionId']}}">
