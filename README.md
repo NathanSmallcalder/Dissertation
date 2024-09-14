@@ -5,7 +5,7 @@ In order to analyse and predict matches in league of legends, I will be creating
 
 ### Access
 
-App can be found at https://leaguetracker.ngrok.app/
+App can be found at http://leaguematchpredictor.net/
 
 If the App is unavalable, please email me at nsmallcalder5@gmail.com
 
